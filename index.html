@@ -1,0 +1,1314 @@
+<title>Ritehome Modular Systems</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,200..600&family=IBM+Plex+Mono:wght@300;400;500&family=Inter+Tight:wght@300;400;500&display=swap">
+
+<style>
+/* ============================================================
+   RITEHOME MODULAR SYSTEMS
+   Palette sourced from the company's own board list:
+   Marine Graphite / Warm White laminate / exposed MDF core.
+   Dark-first: the fabrication shop. Light: the drawing sheet.
+   ============================================================ */
+
+:root{
+  /* DARK — the shop (default) */
+  --ink:        #0D0E0E;
+  --ink-2:      #131516;
+  --panel:      #17191A;
+  --panel-2:    #1D2022;
+  --chalk:      #EDE7DC;
+  --chalk-dim:  #B9B2A6;
+  --draft:      #7C8B93;
+  --draft-dim:  #4A555B;
+  --rule:       #262A2C;
+  --rule-soft:  #1E2223;
+  --core:       #C98A46;
+  --core-lift:  #E0A860;
+  --grain-a:    #8A6A4B;
+  --grain-b:    #6B5038;
+  --sheen:      255,255,255;
+  --grid-op:    .055;
+  --noise-op:   .04;
+
+  --f-display: "Fraunces", "Iowan Old Style", Georgia, serif;
+  --f-body:    "Inter Tight", "Helvetica Neue", Arial, sans-serif;
+  --f-mono:    "IBM Plex Mono", ui-monospace, "SF Mono", Menlo, monospace;
+
+  --rail: 68px;
+  --pad: 40px;
+  --maxw: 1320px;
+  --ease: cubic-bezier(.16,1,.3,1);
+}
+
+/* LIGHT — the drawing sheet. System-light unless the reader forced dark. */
+@media (prefers-color-scheme: light){
+  :root:not([data-theme="dark"]){
+    --ink:        #E8E2D6;
+    --ink-2:      #E2DBCD;
+    --panel:      #F1ECE2;
+    --panel-2:    #F7F3EB;
+    --chalk:      #16181A;
+    --chalk-dim:  #4C5257;
+    --draft:      #5C6B73;
+    --draft-dim:  #97A2A8;
+    --rule:       #CFC7B7;
+    --rule-soft:  #DCD5C7;
+    --core:       #9A6222;
+    --core-lift:  #7E4E17;
+    --grain-a:    #9C7A57;
+    --grain-b:    #7A5C3E;
+    --sheen:      255,255,255;
+    --grid-op:    .09;
+    --noise-op:   .05;
+  }
+}
+:root[data-theme="light"]{
+  --ink:        #E8E2D6;
+  --ink-2:      #E2DBCD;
+  --panel:      #F1ECE2;
+  --panel-2:    #F7F3EB;
+  --chalk:      #16181A;
+  --chalk-dim:  #4C5257;
+  --draft:      #5C6B73;
+  --draft-dim:  #97A2A8;
+  --rule:       #CFC7B7;
+  --rule-soft:  #DCD5C7;
+  --core:       #9A6222;
+  --core-lift:  #7E4E17;
+  --grain-a:    #9C7A57;
+  --grain-b:    #7A5C3E;
+  --sheen:      255,255,255;
+  --grid-op:    .09;
+  --noise-op:   .05;
+}
+:root[data-theme="dark"]{
+  --ink:#0D0E0E; --ink-2:#131516; --panel:#17191A; --panel-2:#1D2022;
+  --chalk:#EDE7DC; --chalk-dim:#B9B2A6; --draft:#7C8B93; --draft-dim:#4A555B;
+  --rule:#262A2C; --rule-soft:#1E2223; --core:#C98A46; --core-lift:#E0A860;
+  --grain-a:#8A6A4B; --grain-b:#6B5038; --grid-op:.055; --noise-op:.04;
+}
+
+*{box-sizing:border-box;}
+
+body{
+  margin:0;
+  background:var(--ink);
+  color:var(--chalk);
+  font-family:var(--f-body);
+  font-weight:300;
+  font-size:16px;
+  line-height:1.62;
+  -webkit-font-smoothing:antialiased;
+  overflow-x:hidden;
+}
+
+/* ---------- atmosphere: sheet grid + grain + vignette ---------- */
+.atmos{position:fixed;inset:0;pointer-events:none;z-index:0;}
+.atmos-grid{
+  position:absolute;inset:0;
+  background-image:
+    linear-gradient(to right, var(--draft) 1px, transparent 1px),
+    linear-gradient(to bottom, var(--draft) 1px, transparent 1px);
+  background-size:96px 96px;
+  opacity:var(--grid-op);
+}
+.atmos-noise{
+  position:absolute;inset:0;opacity:var(--noise-op);
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='220' height='220'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='3'/%3E%3C/filter%3E%3Crect width='220' height='220' filter='url(%23n)'/%3E%3C/svg%3E");
+}
+.atmos-vig{
+  position:absolute;inset:0;
+  background:radial-gradient(120% 80% at 22% 12%, transparent 30%, var(--ink) 100%);
+  opacity:.85;
+}
+
+/* ---------- the datum: one line down the whole sheet ---------- */
+.datum{
+  position:fixed;left:var(--rail);top:0;bottom:0;width:1px;
+  background:linear-gradient(to bottom, transparent, var(--rule) 8%, var(--rule) 92%, transparent);
+  z-index:1;pointer-events:none;
+}
+.datum-mark{
+  position:fixed;left:calc(var(--rail) - 5px);width:11px;height:1px;
+  background:var(--core);z-index:2;pointer-events:none;
+  transition:top .5s var(--ease);
+}
+
+.shell{position:relative;z-index:3;}
+
+.wrap{
+  max-width:var(--maxw);
+  margin:0 auto;
+  padding-left:calc(var(--rail) + var(--pad));
+  padding-right:var(--pad);
+}
+
+/* ---------- masthead ---------- */
+.masthead{
+  position:sticky;top:0;z-index:40;
+  backdrop-filter:blur(14px);
+  background:color-mix(in srgb, var(--ink) 78%, transparent);
+  border-bottom:1px solid var(--rule-soft);
+}
+.masthead-in{
+  max-width:var(--maxw);margin:0 auto;
+  padding:0 var(--pad) 0 calc(var(--rail) + var(--pad));
+  height:66px;display:flex;align-items:center;gap:28px;
+}
+.mark{display:flex;flex-direction:column;line-height:1;margin-right:auto;}
+.mark-a{
+  font-family:var(--f-display);
+  font-variation-settings:"opsz" 60;
+  font-weight:400;font-size:20px;letter-spacing:.16em;
+  text-transform:uppercase;color:var(--chalk);
+}
+.mark-b{
+  font-family:var(--f-mono);font-size:9px;letter-spacing:.34em;
+  text-transform:uppercase;color:var(--draft);margin-top:5px;
+}
+.navlinks{display:flex;gap:24px;}
+.navlinks a{
+  font-family:var(--f-mono);font-size:10.5px;letter-spacing:.2em;
+  text-transform:uppercase;color:var(--draft);text-decoration:none;
+  padding:4px 0;border-bottom:1px solid transparent;transition:color .3s,border-color .3s;
+}
+.navlinks a:hover,.navlinks a:focus-visible{color:var(--chalk);border-bottom-color:var(--core);}
+
+.themebtn{
+  font-family:var(--f-mono);font-size:9.5px;letter-spacing:.2em;text-transform:uppercase;
+  background:none;border:1px solid var(--rule);color:var(--draft);
+  padding:7px 11px;cursor:pointer;transition:color .3s,border-color .3s;
+}
+.themebtn:hover,.themebtn:focus-visible{color:var(--chalk);border-color:var(--draft);}
+
+.cta{
+  font-family:var(--f-mono);font-size:10.5px;letter-spacing:.18em;text-transform:uppercase;
+  color:var(--ink);background:var(--core);border:1px solid var(--core);
+  padding:10px 18px;text-decoration:none;display:inline-block;cursor:pointer;
+  transition:background .35s var(--ease), color .35s var(--ease);
+}
+.cta:hover,.cta:focus-visible{background:var(--core-lift);border-color:var(--core-lift);}
+.cta-ghost{
+  color:var(--chalk);background:transparent;border:1px solid var(--rule);
+}
+.cta-ghost:hover,.cta-ghost:focus-visible{background:transparent;border-color:var(--core);color:var(--core);}
+
+/* ---------- shared section furniture ---------- */
+.sec{padding:118px 0;position:relative;}
+.sec + .sec{border-top:1px solid var(--rule-soft);}
+
+.eyebrow{
+  font-family:var(--f-mono);font-size:10px;letter-spacing:.32em;text-transform:uppercase;
+  color:var(--draft);display:flex;align-items:center;gap:14px;margin:0 0 26px;
+}
+.eyebrow::before{
+  content:"";width:26px;height:1px;background:var(--core);flex:none;
+}
+
+h2.head{
+  font-family:var(--f-display);
+  font-variation-settings:"opsz" 110;
+  font-weight:300;
+  font-size:clamp(32px,4.4vw,58px);
+  line-height:1.06;letter-spacing:-.02em;
+  margin:0 0 22px;text-wrap:balance;color:var(--chalk);
+}
+h3.sub{
+  font-family:var(--f-display);
+  font-variation-settings:"opsz" 40;
+  font-weight:400;font-size:19px;line-height:1.35;margin:0 0 10px;color:var(--chalk);
+}
+.lede{font-size:17px;line-height:1.66;color:var(--chalk-dim);max-width:58ch;margin:0 0 18px;}
+.body{font-size:15px;line-height:1.72;color:var(--chalk-dim);max-width:62ch;margin:0 0 14px;}
+.note{
+  font-family:var(--f-mono);font-size:11px;line-height:1.7;letter-spacing:.02em;
+  color:var(--draft);max-width:64ch;
+}
+
+.split{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.9fr);gap:60px;align-items:start;}
+
+/* reveal — from a visible resting state, never parked invisible */
+.rv{opacity:1;transform:none;}
+@media (prefers-reduced-motion:no-preference){
+  .js .rv{opacity:0;transform:translateY(16px);transition:opacity .9s var(--ease),transform .9s var(--ease);}
+  .js .rv.in{opacity:1;transform:none;}
+}
+
+/* ============================================================
+   01 — DATUM (hero)
+   ============================================================ */
+.hero{padding:96px 0 84px;}
+.hero-top{display:flex;justify-content:space-between;align-items:flex-end;gap:40px;flex-wrap:wrap;margin-bottom:40px;}
+.hero h1{
+  font-family:var(--f-display);
+  font-variation-settings:"opsz" 144;
+  font-weight:250;
+  font-size:clamp(46px,8.2vw,116px);
+  line-height:.94;letter-spacing:-.035em;
+  margin:0;text-wrap:balance;color:var(--chalk);
+}
+.hero h1 em{
+  font-style:normal;font-weight:400;
+  font-variation-settings:"opsz" 144;
+  color:var(--core);
+}
+.hero-meta{
+  font-family:var(--f-mono);font-size:10.5px;letter-spacing:.2em;text-transform:uppercase;
+  color:var(--draft);text-align:right;line-height:2;flex:none;
+}
+.hero-lede{max-width:52ch;font-size:17.5px;line-height:1.62;color:var(--chalk-dim);margin:30px 0 0;}
+.hero-acts{display:flex;gap:14px;margin-top:34px;flex-wrap:wrap;}
+
+.elev{width:100%;margin-top:64px;border-top:1px solid var(--rule-soft);padding-top:34px;}
+.elev svg{width:100%;height:auto;display:block;overflow:visible;}
+.ln{fill:none;stroke:var(--draft);stroke-width:1.1;vector-effect:non-scaling-stroke;}
+.ln-h{stroke:var(--chalk);stroke-width:1.3;}
+.ln-f{fill:var(--panel);stroke:var(--draft);stroke-width:1.1;}
+.ln-d{stroke:var(--core);stroke-width:1;}
+.dimtxt{
+  font-family:var(--f-mono);font-size:11px;fill:var(--core);letter-spacing:.1em;
+}
+.lbltxt{
+  font-family:var(--f-mono);font-size:10px;fill:var(--draft-dim);letter-spacing:.16em;
+}
+
+@media (prefers-reduced-motion:no-preference){
+  .js .draw{stroke-dasharray:var(--len);stroke-dashoffset:var(--len);animation:draw 1.5s var(--ease) forwards;}
+  @keyframes draw{to{stroke-dashoffset:0;}}
+  .js .fadein{opacity:0;animation:fadein .8s var(--ease) 1.15s forwards;}
+  @keyframes fadein{to{opacity:1;}}
+}
+
+/* ============================================================
+   02 — STATEMENT
+   ============================================================ */
+.statement{padding:110px 0;}
+.statement p{
+  font-family:var(--f-display);
+  font-variation-settings:"opsz" 90;
+  font-weight:300;
+  font-size:clamp(24px,3.2vw,40px);
+  line-height:1.28;letter-spacing:-.018em;
+  max-width:23ch;margin:0 0 26px;color:var(--chalk);text-wrap:balance;
+}
+.statement .after{
+  font-family:var(--f-body);font-size:16px;line-height:1.7;
+  font-weight:300;color:var(--chalk-dim);max-width:56ch;letter-spacing:0;
+}
+
+/* ============================================================
+   04 — MATERIAL
+   ============================================================ */
+.swatch-wall{
+  display:grid;grid-template-columns:repeat(3,1fr);gap:2px;
+  background:var(--rule-soft);border:1px solid var(--rule-soft);
+  position:relative;overflow:hidden;
+}
+.swatch{
+  position:relative;background:var(--panel);padding:0;
+  aspect-ratio:4/3.1;display:flex;flex-direction:column;justify-content:flex-end;
+  overflow:hidden;
+}
+/* the face */
+.sw-face{position:absolute;inset:0 0 14px 0;}
+/* the 18mm cut edge — exposed core */
+.sw-edge{
+  position:absolute;left:0;right:0;bottom:0;height:14px;
+  background:linear-gradient(to bottom, var(--core) 0%, #8f6231 55%, #5d3f1e 100%);
+}
+.sw-edge::after{
+  content:"";position:absolute;left:0;right:0;top:0;height:1.5px;
+  background:rgba(var(--sheen),.35);
+}
+.sw-band .sw-edge{
+  background:linear-gradient(to bottom, var(--grain-a), var(--grain-b));
+}
+/* raking light follows the cursor, as on a finish check */
+.sw-light{
+  position:absolute;inset:0;pointer-events:none;
+  background:radial-gradient(340px 200px at var(--mx,30%) var(--my,20%),
+    rgba(var(--sheen),.16), rgba(var(--sheen),0) 70%);
+  opacity:0;transition:opacity .5s var(--ease);
+}
+.swatch:hover .sw-light,.swatch:focus-within .sw-light{opacity:1;}
+.sw-gloss .sw-light{
+  background:radial-gradient(300px 170px at var(--mx,30%) var(--my,20%),
+    rgba(var(--sheen),.42), rgba(var(--sheen),0) 62%);
+}
+/* labels sit over material faces — light solids and dark woodgrain alike —
+   so they take fixed values over a scrim, never a theme token */
+.sw-tag{
+  position:relative;z-index:2;padding:38px 16px 22px;
+  display:flex;justify-content:space-between;align-items:flex-end;gap:10px;
+}
+.sw-tag::before{
+  content:"";position:absolute;inset:0;z-index:-1;
+  background:linear-gradient(to top, rgba(8,9,9,.86), rgba(8,9,9,.36) 58%, rgba(8,9,9,0));
+}
+.sw-name{
+  font-family:var(--f-mono);font-size:10.5px;letter-spacing:.2em;text-transform:uppercase;
+  color:#F2EDE4;
+}
+.sw-num{
+  font-family:var(--f-mono);font-size:9.5px;letter-spacing:.14em;
+  color:#E0A860;
+}
+/* faces */
+.f-solid-matte{background:linear-gradient(168deg,#F0EBE1,#D9D2C5);}
+.f-solid-stip{
+  background:
+    radial-gradient(circle at 1px 1px, rgba(0,0,0,.10) .6px, transparent .7px) 0 0/4px 4px,
+    linear-gradient(168deg,#E9E3D8,#CFC8BA);
+}
+.f-solid-gloss{
+  background:
+    linear-gradient(112deg, rgba(255,255,255,.62) 0%, rgba(255,255,255,0) 28%, rgba(255,255,255,0) 62%, rgba(255,255,255,.30) 76%, rgba(255,255,255,0) 92%),
+    linear-gradient(168deg,#F6F2EA,#CFC8BB);
+}
+.f-wood-matte{
+  background:
+    repeating-linear-gradient(94deg, rgba(0,0,0,.055) 0 2px, rgba(255,255,255,.035) 2px 5px, rgba(0,0,0,0) 5px 11px),
+    linear-gradient(168deg,#9B7A57,#6E5238);
+}
+.f-wood-stip{
+  background:
+    radial-gradient(circle at 1px 1px, rgba(0,0,0,.13) .6px, transparent .7px) 0 0/4px 4px,
+    repeating-linear-gradient(94deg, rgba(0,0,0,.06) 0 2px, rgba(255,255,255,.03) 2px 5px, rgba(0,0,0,0) 5px 11px),
+    linear-gradient(168deg,#8E7050,#654B33);
+}
+.f-wood-gloss{
+  background:
+    linear-gradient(112deg, rgba(255,255,255,.40) 0%, rgba(255,255,255,0) 26%, rgba(255,255,255,0) 64%, rgba(255,255,255,.22) 78%, rgba(255,255,255,0) 92%),
+    repeating-linear-gradient(94deg, rgba(0,0,0,.05) 0 2px, rgba(255,255,255,.04) 2px 5px, rgba(0,0,0,0) 5px 11px),
+    linear-gradient(168deg,#A5825C,#6B4F36);
+}
+
+.spec-list{list-style:none;padding:0;margin:26px 0 0;border-top:1px solid var(--rule-soft);}
+.spec-list li{
+  display:flex;justify-content:space-between;gap:20px;align-items:baseline;
+  padding:13px 0;border-bottom:1px solid var(--rule-soft);
+}
+.spec-k{
+  font-family:var(--f-mono);font-size:10px;letter-spacing:.2em;text-transform:uppercase;color:var(--draft);
+}
+.spec-v{
+  font-family:var(--f-mono);font-size:12.5px;color:var(--chalk);
+  font-variant-numeric:tabular-nums;text-align:right;
+}
+
+/* ============================================================
+   05 — MODULE (exploded carcass)
+   ============================================================ */
+.module-stage{
+  position:relative;border:1px solid var(--rule-soft);background:var(--ink-2);
+  padding:20px;overflow:hidden;
+}
+.module-stage svg{width:100%;height:auto;display:block;}
+.pnl{
+  fill:var(--panel-2);stroke:var(--draft);stroke-width:1.1;
+  vector-effect:non-scaling-stroke;
+  transition:transform 1.1s var(--ease);
+}
+.pnl-top{fill:var(--panel);}
+.pnl-door{fill:color-mix(in srgb, var(--core) 16%, var(--panel-2));stroke:var(--core);}
+.exploded .p-left {transform:translate(-84px, 12px);}
+.exploded .p-right{transform:translate( 84px,-12px);}
+.exploded .p-top  {transform:translate( 0px,-72px);}
+.exploded .p-back {transform:translate( 62px,-36px);}
+.exploded .p-shelf{transform:translate(-46px, 34px);}
+.exploded .p-door {transform:translate(-96px, 54px);}
+.exploded .p-base {transform:translate( 0px, 40px);}
+
+.mod-legend{
+  display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:1px;
+  background:var(--rule-soft);border:1px solid var(--rule-soft);border-top:0;
+}
+.mod-legend div{
+  background:var(--ink-2);padding:13px 15px;
+  font-family:var(--f-mono);font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:var(--draft);
+}
+.mod-legend div b{display:block;color:var(--chalk);font-weight:400;font-size:11.5px;letter-spacing:.1em;margin-bottom:3px;}
+
+.togglebtn{
+  font-family:var(--f-mono);font-size:10px;letter-spacing:.2em;text-transform:uppercase;
+  background:transparent;border:1px solid var(--rule);color:var(--draft);
+  padding:9px 15px;cursor:pointer;margin-top:20px;transition:color .3s,border-color .3s;
+}
+.togglebtn:hover,.togglebtn:focus-visible{color:var(--core);border-color:var(--core);}
+
+/* ============================================================
+   06 — RANGE
+   ============================================================ */
+.range{border-top:1px solid var(--rule);}
+.range-row{
+  display:grid;grid-template-columns:64px 1fr 190px 76px;gap:24px;align-items:center;
+  padding:24px 0;border-bottom:1px solid var(--rule-soft);
+  position:relative;transition:padding-left .55s var(--ease);
+}
+.range-row:hover{padding-left:16px;}
+.range-row::before{
+  content:"";position:absolute;left:0;top:0;bottom:0;width:2px;background:var(--core);
+  transform:scaleY(0);transform-origin:top;transition:transform .55s var(--ease);
+}
+.range-row:hover::before{transform:scaleY(1);}
+.range-n{
+  font-family:var(--f-mono);font-size:10.5px;color:var(--draft-dim);letter-spacing:.14em;
+  font-variant-numeric:tabular-nums;
+}
+.range-name{
+  font-family:var(--f-display);font-variation-settings:"opsz" 48;
+  font-weight:300;font-size:clamp(20px,2.4vw,29px);letter-spacing:-.015em;color:var(--chalk);line-height:1.15;
+}
+.range-desc{
+  font-family:var(--f-mono);font-size:10.5px;line-height:1.6;letter-spacing:.06em;color:var(--draft);
+}
+.range-glyph{justify-self:end;opacity:.42;transition:opacity .5s var(--ease);}
+.range-row:hover .range-glyph{opacity:1;}
+.range-glyph svg{display:block;}
+.gl{fill:none;stroke:var(--core);stroke-width:1.2;vector-effect:non-scaling-stroke;}
+
+/* ============================================================
+   07 — LEDGER
+   ============================================================ */
+.ledger-wrap{border:1px solid var(--rule);background:var(--ink-2);overflow-x:auto;}
+table.ledger{width:100%;border-collapse:collapse;min-width:640px;}
+table.ledger caption{
+  caption-side:top;text-align:left;padding:16px 20px;border-bottom:1px solid var(--rule);
+  font-family:var(--f-mono);font-size:10px;letter-spacing:.22em;text-transform:uppercase;color:var(--draft);
+  display:flex;justify-content:space-between;gap:16px;flex-wrap:wrap;
+}
+table.ledger th{
+  font-family:var(--f-mono);font-weight:400;font-size:9.5px;letter-spacing:.18em;text-transform:uppercase;
+  color:var(--draft-dim);text-align:left;padding:11px 14px;border-bottom:1px solid var(--rule);
+  white-space:nowrap;
+}
+table.ledger td{
+  font-family:var(--f-mono);font-size:11.5px;color:var(--chalk-dim);
+  padding:11px 14px;border-bottom:1px solid var(--rule-soft);
+  font-variant-numeric:tabular-nums;white-space:nowrap;
+}
+table.ledger td.desc{white-space:normal;min-width:230px;color:var(--chalk);}
+table.ledger tr.grp td{
+  background:var(--panel);color:var(--core);
+  font-size:10px;letter-spacing:.22em;text-transform:uppercase;padding:10px 14px;
+}
+table.ledger td.amt{text-align:right;color:var(--draft-dim);}
+.ledger-foot{
+  padding:16px 20px;border-top:1px solid var(--rule);
+  font-family:var(--f-mono);font-size:10.5px;line-height:1.7;color:var(--draft);
+}
+
+/* ============================================================
+   08 — SEQUENCE
+   ============================================================ */
+.seq{display:grid;grid-template-columns:repeat(4,1fr);gap:1px;background:var(--rule-soft);border:1px solid var(--rule-soft);}
+.seq-cell{background:var(--ink-2);padding:28px 22px 30px;position:relative;}
+.seq-cell::before{
+  content:"";position:absolute;top:0;left:0;height:2px;width:100%;
+  background:var(--core);transform:scaleX(0);transform-origin:left;
+  transition:transform 1s var(--ease);
+}
+.seq-cell.in::before{transform:scaleX(1);}
+.seq-cell:nth-child(2)::before{transition-delay:.12s;}
+.seq-cell:nth-child(3)::before{transition-delay:.24s;}
+.seq-cell:nth-child(4)::before{transition-delay:.36s;}
+.seq-n{
+  font-family:var(--f-mono);font-size:10px;letter-spacing:.2em;color:var(--core);margin-bottom:18px;display:block;
+}
+.seq-h{
+  font-family:var(--f-display);font-variation-settings:"opsz" 40;
+  font-weight:400;font-size:21px;letter-spacing:-.01em;color:var(--chalk);margin:0 0 10px;
+}
+.seq-role{
+  font-family:var(--f-mono);font-size:9.5px;letter-spacing:.18em;text-transform:uppercase;
+  color:var(--draft-dim);margin-bottom:14px;
+}
+.seq-cell p{font-size:14px;line-height:1.66;color:var(--chalk-dim);margin:0;}
+
+/* ============================================================
+   09 — ENGAGEMENT
+   ============================================================ */
+.terms{display:grid;grid-template-columns:repeat(4,1fr);gap:1px;background:var(--rule-soft);border:1px solid var(--rule-soft);margin-bottom:28px;}
+.term{background:var(--ink-2);padding:26px 22px;}
+.term-pct{
+  font-family:var(--f-display);font-variation-settings:"opsz" 100;
+  font-weight:250;font-size:clamp(32px,4vw,50px);line-height:1;letter-spacing:-.03em;
+  color:var(--chalk);margin-bottom:12px;font-variant-numeric:tabular-nums;
+}
+.term-pct span{font-size:.42em;color:var(--core);letter-spacing:.02em;}
+.term-k{
+  font-family:var(--f-mono);font-size:10px;letter-spacing:.2em;text-transform:uppercase;color:var(--core);margin-bottom:8px;
+}
+.term p{font-size:13.5px;line-height:1.6;color:var(--chalk-dim);margin:0;}
+
+.tiers{display:grid;grid-template-columns:repeat(3,1fr);gap:1px;background:var(--rule-soft);border:1px solid var(--rule-soft);}
+.tier{background:var(--ink-2);padding:24px 22px;}
+.tier-n{font-family:var(--f-mono);font-size:9.5px;letter-spacing:.24em;color:var(--draft-dim);margin-bottom:10px;}
+.tier-h{
+  font-family:var(--f-display);font-variation-settings:"opsz" 40;
+  font-weight:400;font-size:20px;color:var(--chalk);margin:0 0 8px;letter-spacing:-.01em;
+}
+.tier p{font-size:13.5px;line-height:1.62;color:var(--chalk-dim);margin:0;}
+
+/* ============================================================
+   10 — ENQUIRY
+   ============================================================ */
+.enq{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.15fr);gap:60px;align-items:start;}
+.field{display:flex;flex-direction:column;gap:8px;margin-bottom:20px;}
+.field label{
+  font-family:var(--f-mono);font-size:9.5px;letter-spacing:.22em;text-transform:uppercase;color:var(--draft);
+}
+.field input,.field select,.field textarea{
+  font-family:var(--f-mono);font-size:13px;color:var(--chalk);
+  background:transparent;border:0;border-bottom:1px solid var(--rule);
+  padding:10px 2px;outline:none;transition:border-color .4s var(--ease);
+  border-radius:0;
+}
+.field input:focus,.field select:focus,.field textarea:focus{border-bottom-color:var(--core);}
+.field select{appearance:none;cursor:pointer;}
+.field select option{background:var(--panel);color:var(--chalk);}
+.field textarea{resize:vertical;min-height:84px;line-height:1.6;}
+.form-row{display:grid;grid-template-columns:1fr 1fr;gap:22px;}
+
+.enq-status{
+  margin-top:18px;font-family:var(--f-mono);font-size:11px;line-height:1.7;
+  color:var(--core);border-left:2px solid var(--core);padding:10px 0 10px 14px;
+  display:none;
+}
+.enq-status.show{display:block;}
+
+.contactcard{border:1px solid var(--rule);background:var(--ink-2);}
+.contactcard-h{
+  padding:14px 20px;border-bottom:1px solid var(--rule);
+  font-family:var(--f-mono);font-size:9.5px;letter-spacing:.24em;text-transform:uppercase;color:var(--draft);
+}
+.cfield{
+  display:flex;justify-content:space-between;gap:18px;align-items:baseline;
+  padding:14px 20px;border-bottom:1px solid var(--rule-soft);
+}
+.cfield:last-child{border-bottom:0;}
+.cfield-k{font-family:var(--f-mono);font-size:9.5px;letter-spacing:.2em;text-transform:uppercase;color:var(--draft-dim);}
+.cfield-v{font-family:var(--f-mono);font-size:12px;color:var(--chalk);text-align:right;}
+.cfield-v.empty{color:var(--core);opacity:.75;}
+
+/* ---------- title block (fixed, corner of the sheet) ---------- */
+.titleblock{
+  position:fixed;right:22px;bottom:22px;z-index:35;
+  border:1px solid var(--rule);background:color-mix(in srgb, var(--ink) 88%, transparent);
+  backdrop-filter:blur(10px);
+  display:grid;grid-template-columns:auto auto;
+  font-family:var(--f-mono);font-size:9px;letter-spacing:.16em;text-transform:uppercase;
+}
+.titleblock span{padding:7px 12px;border-bottom:1px solid var(--rule-soft);}
+.titleblock span:nth-child(odd){color:var(--draft-dim);border-right:1px solid var(--rule-soft);}
+.titleblock span:nth-child(even){color:var(--chalk);text-align:right;font-variant-numeric:tabular-nums;}
+.titleblock span:nth-last-child(-n+2){border-bottom:0;}
+.tb-stage{color:var(--core) !important;}
+
+/* ---------- footer ---------- */
+.foot{
+  border-top:1px solid var(--rule);padding:52px 0 90px;
+  display:flex;justify-content:space-between;gap:30px;flex-wrap:wrap;align-items:flex-end;
+}
+.foot-note{
+  font-family:var(--f-mono);font-size:10px;letter-spacing:.14em;line-height:2;color:var(--draft-dim);
+  text-transform:uppercase;
+}
+
+/* ---------- responsive ---------- */
+@media (max-width:1080px){
+  .swatch-wall{grid-template-columns:repeat(2,1fr);}
+  .seq,.terms{grid-template-columns:repeat(2,1fr);}
+  .split,.enq{grid-template-columns:1fr;gap:38px;}
+}
+@media (max-width:760px){
+  :root{--rail:22px;--pad:20px;}
+  .atmos-grid{background-size:64px 64px;}
+  .navlinks{display:none;}
+  .sec{padding:76px 0;}
+  .hero{padding:62px 0 56px;}
+  .hero-meta{text-align:left;}
+  .swatch-wall{grid-template-columns:1fr;}
+  .seq,.terms,.tiers{grid-template-columns:1fr;}
+  .range-row{grid-template-columns:40px 1fr;gap:14px;}
+  .range-desc,.range-glyph{display:none;}
+  .form-row{grid-template-columns:1fr;}
+  .titleblock{display:none;}
+  .datum,.datum-mark{display:none;}
+  .statement p{max-width:none;}
+}
+@media (max-width:420px){
+  .masthead-in{gap:12px;}
+  .themebtn{display:none;}
+}
+</style>
+
+<div class="atmos" aria-hidden="true">
+  <div class="atmos-grid"></div>
+  <div class="atmos-noise"></div>
+  <div class="atmos-vig"></div>
+</div>
+<div class="datum" aria-hidden="true"></div>
+<div class="datum-mark" id="datumMark" aria-hidden="true"></div>
+
+<div class="shell">
+
+<header class="masthead">
+  <div class="masthead-in">
+    <a class="mark" href="#top" style="text-decoration:none">
+      <span class="mark-a">Ritehome</span>
+      <span class="mark-b">Modular Systems</span>
+    </a>
+    <nav class="navlinks" aria-label="Sections">
+      <a href="#drawing">Drawing</a>
+      <a href="#material">Material</a>
+      <a href="#module">Module</a>
+      <a href="#range">Range</a>
+      <a href="#ledger">Ledger</a>
+      <a href="#sequence">Sequence</a>
+    </nav>
+    <button class="themebtn" id="themeBtn" type="button" aria-label="Switch between shop and sheet appearance">Sheet</button>
+    <a class="cta" href="#enquiry">Request a quotation</a>
+  </div>
+</header>
+
+<!-- ============ 01 DATUM ============ -->
+<section class="wrap hero" id="top" data-sheet="01" data-stage="Datum">
+  <div class="hero-top">
+    <div>
+      <p class="eyebrow" style="margin-bottom:32px">Cagayan de Oro &nbsp;·&nbsp; Northern Mindanao</p>
+      <h1>Decided<br>before it is <em>cut</em>.</h1>
+    </div>
+    <div class="hero-meta">
+      Sheet 01 / 10<br>
+      Scale 1 : 20<br>
+      Rev &nbsp;—
+    </div>
+  </div>
+
+  <p class="hero-lede">Modular cabinetry drawn to the millimetre, itemised board by board, and
+  built off site by our own crew. You approve the drawing and the quantities before a single
+  sheet goes on the saw.</p>
+
+  <div class="hero-acts">
+    <a class="cta" href="#enquiry">Request a quotation</a>
+    <a class="cta cta-ghost" href="#ledger">See how a quotation is built</a>
+  </div>
+
+  <div class="elev">
+    <svg viewBox="0 0 1200 440" role="img" aria-label="Orthographic elevation of a modular kitchen run: base cabinets, counter, wall units, extractor recess and a tall unit, with dimensions.">
+      <!-- floor -->
+      <line class="ln draw" x1="30" y1="372" x2="1170" y2="372" style="--len:1140"></line>
+
+      <!-- base run -->
+      <rect class="ln-f draw" x="120" y="212" width="700" height="160" style="--len:1720"></rect>
+      <line class="ln draw" x1="260" y1="212" x2="260" y2="372" style="--len:160"></line>
+      <line class="ln draw" x1="400" y1="212" x2="400" y2="372" style="--len:160"></line>
+      <line class="ln draw" x1="540" y1="212" x2="540" y2="372" style="--len:160"></line>
+      <line class="ln draw" x1="680" y1="212" x2="680" y2="372" style="--len:160"></line>
+      <!-- drawer lines -->
+      <line class="ln draw" x1="126" y1="262" x2="254" y2="262" style="--len:128"></line>
+      <line class="ln draw" x1="126" y1="312" x2="254" y2="312" style="--len:128"></line>
+      <line class="ln draw" x1="546" y1="262" x2="674" y2="262" style="--len:128"></line>
+      <line class="ln draw" x1="546" y1="312" x2="674" y2="312" style="--len:128"></line>
+      <!-- handles -->
+      <line class="ln-h draw" x1="300" y1="238" x2="360" y2="238" style="--len:60"></line>
+      <line class="ln-h draw" x1="440" y1="238" x2="500" y2="238" style="--len:60"></line>
+      <line class="ln-h draw" x1="716" y1="238" x2="784" y2="238" style="--len:68"></line>
+
+      <!-- counter slab -->
+      <rect class="ln-f draw" x="108" y="198" width="724" height="14" style="--len:1476"></rect>
+
+      <!-- wall units -->
+      <rect class="ln-f draw" x="120" y="46" width="300" height="118" style="--len:836"></rect>
+      <line class="ln draw" x1="270" y1="46" x2="270" y2="164" style="--len:118"></line>
+      <rect class="ln-f draw" x="600" y="46" width="220" height="118" style="--len:676"></rect>
+      <line class="ln draw" x1="710" y1="46" x2="710" y2="164" style="--len:118"></line>
+      <line class="ln-h draw" x1="170" y1="154" x2="220" y2="154" style="--len:50"></line>
+      <line class="ln-h draw" x1="320" y1="154" x2="370" y2="154" style="--len:50"></line>
+      <line class="ln-h draw" x1="640" y1="154" x2="672" y2="154" style="--len:32"></line>
+      <line class="ln-h draw" x1="748" y1="154" x2="780" y2="154" style="--len:32"></line>
+
+      <!-- extractor recess -->
+      <path class="ln draw" d="M 440 46 L 580 46 L 552 118 L 468 118 Z" style="--len:400"></path>
+      <line class="ln draw" x1="468" y1="118" x2="468" y2="150" style="--len:32"></line>
+      <line class="ln draw" x1="552" y1="118" x2="552" y2="150" style="--len:32"></line>
+      <line class="ln draw" x1="468" y1="150" x2="552" y2="150" style="--len:84"></line>
+
+      <!-- tall unit -->
+      <rect class="ln-f draw" x="880" y="28" width="200" height="344" style="--len:1088"></rect>
+      <line class="ln draw" x1="880" y1="176" x2="1080" y2="176" style="--len:200"></line>
+      <line class="ln draw" x1="880" y1="252" x2="1080" y2="252" style="--len:200"></line>
+      <line class="ln-h draw" x1="1060" y1="100" x2="1060" y2="150" style="--len:50"></line>
+      <line class="ln-h draw" x1="1060" y1="200" x2="1060" y2="230" style="--len:30"></line>
+
+      <!-- horizontal dimension -->
+      <g class="fadein">
+        <line class="ln-d" x1="108" y1="406" x2="1080" y2="406"></line>
+        <line class="ln-d" x1="108" y1="398" x2="108" y2="414"></line>
+        <line class="ln-d" x1="832" y1="398" x2="832" y2="414"></line>
+        <line class="ln-d" x1="1080" y1="398" x2="1080" y2="414"></line>
+        <text class="dimtxt" x="440" y="429" text-anchor="middle">3 620</text>
+        <text class="dimtxt" x="956" y="429" text-anchor="middle">1 240</text>
+        <text class="lbltxt" x="108" y="392">A</text>
+        <text class="lbltxt" x="1074" y="392">B</text>
+      </g>
+      <!-- vertical dimension -->
+      <g class="fadein">
+        <line class="ln-d" x1="1122" y1="28" x2="1122" y2="372"></line>
+        <line class="ln-d" x1="1114" y1="28" x2="1130" y2="28"></line>
+        <line class="ln-d" x1="1114" y1="372" x2="1130" y2="372"></line>
+        <text class="dimtxt" x="1140" y="204">2 340</text>
+      </g>
+      <!-- callouts -->
+      <g class="fadein">
+        <text class="lbltxt" x="120" y="38">WALL UNIT — 18 MM CARCASS</text>
+        <text class="lbltxt" x="880" y="20">TALL UNIT</text>
+        <text class="lbltxt" x="112" y="192">COUNTER — QUARTZ / GRANITE / SYNTHETIC</text>
+        <text class="lbltxt" x="1140" y="222">MM</text>
+      </g>
+    </svg>
+  </div>
+</section>
+
+<!-- ============ 02 STATEMENT ============ -->
+<section class="wrap statement" data-sheet="02" data-stage="Brief">
+  <p class="rv">Renovation anxiety is rarely about taste. It is about not knowing.</p>
+  <p class="after rv">Not knowing what the number covers. Not knowing whether the finish on the
+  last cabinet will match the first. Not knowing what changed between the day you agreed and
+  the day it arrived. We built the company around removing that, which is why the drawing and
+  the itemised quantities come before the price, and why nothing is fabricated on your floor.</p>
+</section>
+
+<!-- ============ 03 DRAWING ============ -->
+<section class="wrap sec" id="drawing" data-sheet="03" data-stage="Drafting">
+  <div class="split">
+    <div>
+      <p class="eyebrow rv">01 — Drafting</p>
+      <h2 class="head rv">The drawing is the product.</h2>
+    </div>
+    <div>
+      <p class="lede rv">Before material is discussed, your space is measured and drawn as a
+      dimensioned elevation. Every carcass, every door swing, every filler against an out-of-square
+      wall is resolved on the sheet, where a change costs a revision number rather than a panel.</p>
+      <p class="body rv">Each drawing carries a revision counter and a status. When it moves, you
+      see the new number. Nothing goes to procurement until the sheet you approved is the sheet
+      being cut from.</p>
+      <ul class="spec-list rv">
+        <li><span class="spec-k">Drawn to</span><span class="spec-v">1 mm</span></li>
+        <li><span class="spec-k">Carcass board</span><span class="spec-v">18 mm</span></li>
+        <li><span class="spec-k">Sheet size</span><span class="spec-v">1 219 × 2 438 mm</span></li>
+        <li><span class="spec-k">Revision control</span><span class="spec-v">Per drawing, numbered</span></li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<!-- ============ 04 MATERIAL ============ -->
+<section class="wrap sec" id="material" data-sheet="04" data-stage="Procurement">
+  <div class="split" style="margin-bottom:44px">
+    <div>
+      <p class="eyebrow rv">02 — Material</p>
+      <h2 class="head rv">Two looks.<br>Three textures.</h2>
+    </div>
+    <div>
+      <p class="lede rv">The range is deliberately narrow, because a narrow range is one we can
+      match. Solid colours and woodgrain, each available matte, stipple, or UV gloss. Move across
+      a sample below — the light rakes low, the same way a finish is checked on the bench.</p>
+      <p class="note rv">Every panel shows its 18 mm edge. The warm band along the bottom of each
+      sample is the board core — the colour you only meet at a cut, and the colour the edgebanding
+      is there to close.</p>
+    </div>
+  </div>
+
+  <div class="swatch-wall rv" id="swatchWall">
+    <div class="swatch sw-matte" tabindex="0">
+      <div class="sw-face f-solid-matte"></div><div class="sw-light"></div><div class="sw-edge"></div>
+      <div class="sw-tag"><span class="sw-name">Solid — Matte</span><span class="sw-num">01</span></div>
+    </div>
+    <div class="swatch sw-stip" tabindex="0">
+      <div class="sw-face f-solid-stip"></div><div class="sw-light"></div><div class="sw-edge"></div>
+      <div class="sw-tag"><span class="sw-name">Solid — Stipple</span><span class="sw-num">02</span></div>
+    </div>
+    <div class="swatch sw-gloss" tabindex="0">
+      <div class="sw-face f-solid-gloss"></div><div class="sw-light"></div><div class="sw-edge"></div>
+      <div class="sw-tag"><span class="sw-name">Solid — UV Gloss</span><span class="sw-num">03</span></div>
+    </div>
+    <div class="swatch sw-band sw-matte" tabindex="0">
+      <div class="sw-face f-wood-matte"></div><div class="sw-light"></div><div class="sw-edge"></div>
+      <div class="sw-tag"><span class="sw-name">Woodgrain — Matte</span><span class="sw-num">04</span></div>
+    </div>
+    <div class="swatch sw-band sw-stip" tabindex="0">
+      <div class="sw-face f-wood-stip"></div><div class="sw-light"></div><div class="sw-edge"></div>
+      <div class="sw-tag"><span class="sw-name">Woodgrain — Stipple</span><span class="sw-num">05</span></div>
+    </div>
+    <div class="swatch sw-band sw-gloss" tabindex="0">
+      <div class="sw-face f-wood-gloss"></div><div class="sw-light"></div><div class="sw-edge"></div>
+      <div class="sw-tag"><span class="sw-name">Woodgrain — UV Gloss</span><span class="sw-num">06</span></div>
+    </div>
+  </div>
+
+  <div class="split rv" style="margin-top:44px">
+    <div><h3 class="sub">Counter surfaces</h3></div>
+    <div>
+      <ul class="spec-list" style="margin-top:0">
+        <li><span class="spec-k">Quartz</span><span class="spec-v">Slab</span></li>
+        <li><span class="spec-k">Natural granite</span><span class="spec-v">Slab</span></li>
+        <li><span class="spec-k">Synthetic</span><span class="spec-v">Sheet</span></li>
+      </ul>
+      <p class="note" style="margin-top:16px">Counters are priced by the slab your run actually
+      consumes, not by an averaged rate. Hardware is specified by brand and model on your
+      quotation.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ============ 05 MODULE ============ -->
+<section class="wrap sec" id="module" data-sheet="05" data-stage="Fabrication">
+  <div class="split" style="margin-bottom:40px">
+    <div>
+      <p class="eyebrow rv">03 — Module</p>
+      <h2 class="head rv">Modular does not mean less custom.</h2>
+    </div>
+    <div>
+      <p class="lede rv">It means the carcass is built to your dimensions in the shop, on a bench,
+      under controlled conditions — then carried in finished and set. The dust, the offcuts and the
+      margin for error stay with us.</p>
+      <p class="body rv">Backs are the same 18 mm board as the carcass, not a 3 mm skin. It costs
+      more and it is the reason a cabinet still sits square after it has been loaded.</p>
+      <button class="togglebtn" id="explodeBtn" type="button" aria-pressed="true">Assemble module</button>
+    </div>
+  </div>
+
+  <div class="module-stage rv exploded" id="modStage">
+    <svg viewBox="0 0 1000 520" role="img" aria-label="Axonometric drawing of a single cabinet module, shown exploded into its side panels, back, base, shelf, top and door.">
+      <polygon class="pnl p-base"  points="300,420 600,420 750,335 450,335"></polygon>
+      <polygon class="pnl p-back"  points="450,335 750,335 750,35 450,35"></polygon>
+      <polygon class="pnl p-left"  points="300,420 300,120 450,35 450,335"></polygon>
+      <polygon class="pnl p-right" points="600,420 600,120 750,35 750,335"></polygon>
+      <polygon class="pnl pnl-top p-top" points="300,120 600,120 750,35 450,35"></polygon>
+      <polygon class="pnl p-shelf" points="300,278 600,278 750,193 450,193"></polygon>
+      <polygon class="pnl pnl-door p-door" points="300,420 600,420 600,120 300,120"></polygon>
+      <g class="p-door">
+        <circle cx="330" cy="160" r="4" fill="none" stroke="var(--core)" stroke-width="1.1"></circle>
+        <circle cx="330" cy="380" r="4" fill="none" stroke="var(--core)" stroke-width="1.1"></circle>
+        <line x1="565" y1="240" x2="565" y2="300" stroke="var(--chalk)" stroke-width="2"></line>
+      </g>
+    </svg>
+  </div>
+  <div class="mod-legend rv">
+    <div><b>Side panels</b>18 mm, edgebanded</div>
+    <div><b>Back panel</b>18 mm, same board</div>
+    <div><b>Shelf</b>Adjustable</div>
+    <div><b>Door</b>Concealed hinge</div>
+    <div><b>Base</b>Levelled on site</div>
+  </div>
+</section>
+
+<!-- ============ 06 RANGE ============ -->
+<section class="wrap sec" id="range" data-sheet="06" data-stage="Range">
+  <p class="eyebrow rv">04 — Range</p>
+  <h2 class="head rv" style="max-width:16ch">Eight lines, one standard.</h2>
+  <p class="lede rv" style="margin-bottom:44px">Domestic and commercial work run through the same
+  drawing office, the same board specification and the same in-house crew.</p>
+
+  <div class="range rv">
+    <div class="range-row">
+      <span class="range-n">01</span>
+      <span class="range-name">Modular kitchen</span>
+      <span class="range-desc">U-shape, L-shape, galley or island — set out against your measured wall</span>
+      <span class="range-glyph"><svg width="56" height="34" viewBox="0 0 56 34"><rect class="gl" x="1" y="14" width="24" height="19"></rect><rect class="gl" x="31" y="14" width="24" height="19"></rect><rect class="gl" x="1" y="1" width="18" height="9"></rect></svg></span>
+    </div>
+    <div class="range-row">
+      <span class="range-n">02</span>
+      <span class="range-name">Cabinets</span>
+      <span class="range-desc">Base, wall and tall units for any room in the house</span>
+      <span class="range-glyph"><svg width="56" height="34" viewBox="0 0 56 34"><rect class="gl" x="8" y="1" width="40" height="32"></rect><line class="gl" x1="28" y1="1" x2="28" y2="33"></line></svg></span>
+    </div>
+    <div class="range-row">
+      <span class="range-n">03</span>
+      <span class="range-name">Closets</span>
+      <span class="range-desc">Hanging, shelving and drawer banks to a fitted opening</span>
+      <span class="range-glyph"><svg width="56" height="34" viewBox="0 0 56 34"><rect class="gl" x="4" y="1" width="48" height="32"></rect><line class="gl" x1="4" y1="11" x2="52" y2="11"></line><line class="gl" x1="28" y1="11" x2="28" y2="33"></line></svg></span>
+    </div>
+    <div class="range-row">
+      <span class="range-n">04</span>
+      <span class="range-name">Walk-in closets</span>
+      <span class="range-desc">Full-room joinery, drawn as a set of elevations</span>
+      <span class="range-glyph"><svg width="56" height="34" viewBox="0 0 56 34"><path class="gl" d="M2 33 V6 H26 V33"></path><path class="gl" d="M30 33 V6 H54 V33"></path><line class="gl" x1="2" y1="18" x2="26" y2="18"></line></svg></span>
+    </div>
+    <div class="range-row">
+      <span class="range-n">05</span>
+      <span class="range-name">Vanity</span>
+      <span class="range-desc">Counter, basin cut-out, mirror and lighting as one unit</span>
+      <span class="range-glyph"><svg width="56" height="34" viewBox="0 0 56 34"><rect class="gl" x="6" y="16" width="44" height="17"></rect><line class="gl" x1="4" y1="16" x2="52" y2="16"></line><circle class="gl" cx="28" cy="7" r="6"></circle></svg></span>
+    </div>
+    <div class="range-row">
+      <span class="range-n">06</span>
+      <span class="range-name">Office partition</span>
+      <span class="range-desc">Workstation divisions with cable management drawn in</span>
+      <span class="range-glyph"><svg width="56" height="34" viewBox="0 0 56 34"><line class="gl" x1="28" y1="1" x2="28" y2="33"></line><line class="gl" x1="2" y1="12" x2="54" y2="12"></line><line class="gl" x1="2" y1="12" x2="2" y2="33"></line><line class="gl" x1="54" y1="12" x2="54" y2="33"></line></svg></span>
+    </div>
+    <div class="range-row">
+      <span class="range-n">07</span>
+      <span class="range-name">CR partition</span>
+      <span class="range-desc">Cubicle systems in moisture-rated board</span>
+      <span class="range-glyph"><svg width="56" height="34" viewBox="0 0 56 34"><line class="gl" x1="2" y1="4" x2="54" y2="4"></line><line class="gl" x1="14" y1="4" x2="14" y2="30"></line><line class="gl" x1="34" y1="4" x2="34" y2="30"></line><line class="gl" x1="2" y1="30" x2="54" y2="30"></line></svg></span>
+    </div>
+    <div class="range-row">
+      <span class="range-n">08</span>
+      <span class="range-name">Office tables</span>
+      <span class="range-desc">Desks and meeting tables to match the partition specification</span>
+      <span class="range-glyph"><svg width="56" height="34" viewBox="0 0 56 34"><line class="gl" x1="2" y1="10" x2="54" y2="10"></line><line class="gl" x1="8" y1="10" x2="8" y2="32"></line><line class="gl" x1="48" y1="10" x2="48" y2="32"></line></svg></span>
+    </div>
+  </div>
+</section>
+
+<!-- ============ 07 LEDGER ============ -->
+<section class="wrap sec" id="ledger" data-sheet="07" data-stage="Ledger">
+  <div class="split" style="margin-bottom:40px">
+    <div>
+      <p class="eyebrow rv">05 — Ledger</p>
+      <h2 class="head rv">A quotation you can audit.</h2>
+    </div>
+    <div>
+      <p class="lede rv">Your quotation is not a lump sum with a signature line. It is a bill of
+      quantities: every board, every metre of edgebanding, every hinge and every accessory, listed
+      with its thickness, its dimensions and the quantity your drawing consumes.</p>
+      <p class="body rv">It is organised in the same six sections every time, so a quotation from
+      us can be read against a quotation from anyone else — line by line, rather than number
+      against number.</p>
+    </div>
+  </div>
+
+  <div class="ledger-wrap rv">
+    <table class="ledger">
+      <caption>
+        <span>Bill of quantities — structure</span>
+        <span>Format sample · not a price</span>
+      </caption>
+      <thead>
+        <tr>
+          <th scope="col">Item</th>
+          <th scope="col">Material / description</th>
+          <th scope="col">Thk</th>
+          <th scope="col">Width</th>
+          <th scope="col">Length</th>
+          <th scope="col">Qty</th>
+          <th scope="col">Unit</th>
+          <th scope="col" style="text-align:right">Amount</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr class="grp"><td colspan="8">A — Sheet goods</td></tr>
+        <tr><td>A.1</td><td class="desc">Carcass board, moisture resistant</td><td>18</td><td>1 219</td><td>2 438</td><td>—</td><td>sheet</td><td class="amt">— — —</td></tr>
+        <tr><td>A.2</td><td class="desc">Door panel, finish per schedule</td><td>18</td><td>1 219</td><td>2 438</td><td>—</td><td>sheet</td><td class="amt">— — —</td></tr>
+        <tr class="grp"><td colspan="8">B — Countertop</td></tr>
+        <tr><td>B.1</td><td class="desc">Slab, material per selection</td><td>—</td><td>—</td><td>—</td><td>—</td><td>slab</td><td class="amt">— — —</td></tr>
+        <tr class="grp"><td colspan="8">C — Edgebanding</td></tr>
+        <tr><td>C.1</td><td class="desc">Edge tape, matched to panel finish</td><td>—</td><td>22</td><td>—</td><td>—</td><td>m</td><td class="amt">— — —</td></tr>
+        <tr class="grp"><td colspan="8">D — Hardware</td></tr>
+        <tr><td>D.1</td><td class="desc">Concealed hinge, brand and model named</td><td>—</td><td>—</td><td>—</td><td>—</td><td>pc</td><td class="amt">— — —</td></tr>
+        <tr><td>D.2</td><td class="desc">Drawer runner, soft close</td><td>—</td><td>—</td><td>—</td><td>—</td><td>set</td><td class="amt">— — —</td></tr>
+        <tr class="grp"><td colspan="8">E — Accessories</td></tr>
+        <tr><td>E.1</td><td class="desc">Pull-outs, bins, cutlery inserts, lighting</td><td>—</td><td>—</td><td>—</td><td>—</td><td>pc</td><td class="amt">— — —</td></tr>
+        <tr class="grp"><td colspan="8">F — Client appliances and fixtures</td></tr>
+        <tr><td>F.1</td><td class="desc">Sink, faucet, hood, range — supplied or specified</td><td>—</td><td>—</td><td>—</td><td>—</td><td>pc</td><td class="amt">— — —</td></tr>
+      </tbody>
+    </table>
+    <div class="ledger-foot">
+      Quantities and rates are computed from your approved drawing, so this page carries the
+      structure and none of the figures. Ritehome is VAT registered and quotes VAT inclusive.
+    </div>
+  </div>
+</section>
+
+<!-- ============ 08 SEQUENCE ============ -->
+<section class="wrap sec" id="sequence" data-sheet="08" data-stage="Sequence">
+  <p class="eyebrow rv">06 — Sequence</p>
+  <h2 class="head rv" style="max-width:18ch">Four stages, each with a name attached.</h2>
+  <p class="lede rv" style="margin-bottom:44px">A job moves through four tracked stages. At any
+  point you can ask which stage yours is in and who is holding it, and get an answer rather than
+  an estimate.</p>
+
+  <div class="seq rv">
+    <div class="seq-cell">
+      <span class="seq-n">01</span>
+      <h3 class="seq-h">Drafting</h3>
+      <p class="seq-role">Drafter</p>
+      <p>Site measured, elevations drawn, revisions logged. Ends when you approve the sheet.</p>
+    </div>
+    <div class="seq-cell">
+      <span class="seq-n">02</span>
+      <h3 class="seq-h">Procurement</h3>
+      <p class="seq-role">Procurement officer</p>
+      <p>Boards, edging, hardware and accessories bought against the approved bill of quantities.</p>
+    </div>
+    <div class="seq-cell">
+      <span class="seq-n">03</span>
+      <h3 class="seq-h">Fabrication</h3>
+      <p class="seq-role">Fabricator</p>
+      <p>Cut, edged and assembled in our own shop by our own salaried crew. Not subcontracted.</p>
+    </div>
+    <div class="seq-cell">
+      <span class="seq-n">04</span>
+      <h3 class="seq-h">Installation</h3>
+      <p class="seq-role">Installer</p>
+      <p>Delivered finished, levelled and set. Your floor sees assembly, not a workshop.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ============ 09 ENGAGEMENT ============ -->
+<section class="wrap sec" id="engagement" data-sheet="09" data-stage="Terms">
+  <div class="split" style="margin-bottom:40px">
+    <div>
+      <p class="eyebrow rv">07 — Engagement</p>
+      <h2 class="head rv">What it takes to start.</h2>
+    </div>
+    <div>
+      <p class="lede rv">A design deposit of ₱5,000 opens the drawing stage and is credited against
+      your down payment. From there the schedule is fixed and published, so no stage is a surprise.</p>
+    </div>
+  </div>
+
+  <div class="terms rv">
+    <div class="term">
+      <p class="term-k">Design deposit</p>
+      <div class="term-pct">₱5,000</div>
+      <p>Before rendered and 3D design begins. Credited against the down payment.</p>
+    </div>
+    <div class="term">
+      <p class="term-k">On order</p>
+      <div class="term-pct">50<span>%</span></div>
+      <p>Down payment, once the drawing and quantities are approved.</p>
+    </div>
+    <div class="term">
+      <p class="term-k">On delivery</p>
+      <div class="term-pct">40<span>%</span></div>
+      <p>Payable when the finished modules reach your site.</p>
+    </div>
+    <div class="term">
+      <p class="term-k">On completion</p>
+      <div class="term-pct">10<span>%</span></div>
+      <p>Held until installation is finished and accepted.</p>
+    </div>
+  </div>
+
+  <p class="note rv" style="margin:0 0 34px">Delivery within the first 50 km of Cagayan de Oro is
+  included. Beyond that, delivery is charged in bands of ₱10,000 per 100 km. All figures VAT inclusive.</p>
+
+  <h3 class="sub rv">Specification levels</h3>
+  <p class="body rv" style="margin-bottom:22px">Three levels, set against your drawing rather than
+  a brochure. What sits in each is agreed line by line before the quotation is issued.</p>
+  <div class="tiers rv">
+    <div class="tier"><p class="tier-n">Tier 01</p><h4 class="tier-h">Essential</h4><p>The core specification — carcass, doors, counter and working hardware.</p></div>
+    <div class="tier"><p class="tier-n">Tier 02</p><h4 class="tier-h">Premium</h4><p>Upgraded finishes and hardware, with accessories brought into the drawing.</p></div>
+    <div class="tier"><p class="tier-n">Tier 03</p><h4 class="tier-h">Executive</h4><p>The full specification, with counter and accessory selections opened up.</p></div>
+  </div>
+</section>
+
+<!-- ============ 10 ENQUIRY ============ -->
+<section class="wrap sec" id="enquiry" data-sheet="10" data-stage="Enquiry">
+  <div class="enq">
+    <div>
+      <p class="eyebrow rv">08 — Enquiry</p>
+      <h2 class="head rv">Start with the measurement.</h2>
+      <p class="lede rv">Tell us the room and where you are. A site visit is arranged from there,
+      and the drawing follows the visit.</p>
+      <p class="note rv" style="margin-top:24px">Three measurements worth having ready before the
+      first call: the full length of each wall the run meets, the ceiling height, and the position
+      of any window, door or service point along that wall.</p>
+
+      <div class="contactcard rv" style="margin-top:34px">
+        <div class="contactcard-h">Contact</div>
+        <div class="cfield"><span class="cfield-k">Office</span><span class="cfield-v">Cagayan de Oro City</span></div>
+        <div class="cfield"><span class="cfield-k">Telephone</span><span class="cfield-v empty">[ to be supplied ]</span></div>
+        <div class="cfield"><span class="cfield-k">Email</span><span class="cfield-v empty">[ to be supplied ]</span></div>
+        <div class="cfield"><span class="cfield-k">Showroom</span><span class="cfield-v empty">[ to be supplied ]</span></div>
+      </div>
+    </div>
+
+    <div class="rv">
+      <form id="enqForm" novalidate>
+        <div class="form-row">
+          <div class="field">
+            <label for="f-name">Name</label>
+            <input id="f-name" name="name" type="text" autocomplete="name">
+          </div>
+          <div class="field">
+            <label for="f-contact">Phone or email</label>
+            <input id="f-contact" name="contact" type="text" autocomplete="tel">
+          </div>
+        </div>
+        <div class="form-row">
+          <div class="field">
+            <label for="f-line">Product line</label>
+            <select id="f-line" name="line">
+              <option>Modular kitchen</option>
+              <option>Cabinets</option>
+              <option>Closets</option>
+              <option>Walk-in closets</option>
+              <option>Vanity</option>
+              <option>Office partition</option>
+              <option>CR partition</option>
+              <option>Office tables</option>
+            </select>
+          </div>
+          <div class="field">
+            <label for="f-loc">Site location</label>
+            <input id="f-loc" name="location" type="text" placeholder="City or municipality">
+          </div>
+        </div>
+        <div class="field">
+          <label for="f-notes">The room, in your own words</label>
+          <textarea id="f-notes" name="notes" placeholder="Approximate wall lengths, ceiling height, and anything already fixed in the space."></textarea>
+        </div>
+        <button class="cta" type="submit" style="margin-top:8px">Request a site visit</button>
+        <div class="enq-status" id="enqStatus" role="status"></div>
+      </form>
+    </div>
+  </div>
+</section>
+
+<footer class="wrap foot">
+  <div class="foot-note">
+    Ritehome Modular Systems<br>
+    Cagayan de Oro City · Northern Mindanao<br>
+    VAT registered
+  </div>
+  <div class="foot-note" style="text-align:right">
+    Drawn in house<br>
+    Built in house<br>
+    Installed in house
+  </div>
+</footer>
+
+</div><!-- /shell -->
+
+<div class="titleblock" id="titleBlock" aria-hidden="true">
+  <span>Project</span><span>Ritehome</span>
+  <span>Sheet</span><span id="tbSheet">01 / 10</span>
+  <span>Stage</span><span class="tb-stage" id="tbStage">Datum</span>
+  <span>Scale</span><span>1 : 20</span>
+</div>
+
+<script>
+(function(){
+  "use strict";
+  var root = document.documentElement;
+  root.classList.add("js");
+
+  var reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+  /* ---- theme: shop (dark) / sheet (light) ---- */
+  var btn = document.getElementById("themeBtn");
+  function currentIsDark(){
+    var stamped = root.getAttribute("data-theme");
+    if (stamped) return stamped === "dark";
+    return !window.matchMedia("(prefers-color-scheme: light)").matches;
+  }
+  function syncLabel(){ btn.textContent = currentIsDark() ? "Sheet" : "Shop"; }
+  syncLabel();
+  btn.addEventListener("click", function(){
+    root.setAttribute("data-theme", currentIsDark() ? "light" : "dark");
+    syncLabel();
+  });
+
+  /* ---- reveal on scroll, from a visible resting state ---- */
+  if (!reduced && "IntersectionObserver" in window){
+    var revObs = new IntersectionObserver(function(entries){
+      entries.forEach(function(e){
+        if (e.isIntersecting){ e.target.classList.add("in"); revObs.unobserve(e.target); }
+      });
+    }, { rootMargin: "0px 0px -12% 0px", threshold: 0.08 });
+    document.querySelectorAll(".rv").forEach(function(el){ revObs.observe(el); });
+    document.querySelectorAll(".seq-cell").forEach(function(el){ revObs.observe(el); });
+  } else {
+    document.querySelectorAll(".rv, .seq-cell").forEach(function(el){ el.classList.add("in"); });
+  }
+
+  /* ---- title block tracks the sheet you are on ---- */
+  var tbSheet = document.getElementById("tbSheet");
+  var tbStage = document.getElementById("tbStage");
+  var mark = document.getElementById("datumMark");
+  var sheets = Array.prototype.slice.call(document.querySelectorAll("[data-sheet]"));
+
+  if ("IntersectionObserver" in window){
+    var secObs = new IntersectionObserver(function(entries){
+      entries.forEach(function(e){
+        if (e.isIntersecting){
+          tbSheet.textContent = e.target.dataset.sheet + " / 10";
+          tbStage.textContent = e.target.dataset.stage;
+        }
+      });
+    }, { rootMargin: "-45% 0px -45% 0px" });
+    sheets.forEach(function(s){ secObs.observe(s); });
+  }
+
+  /* ---- datum mark: rides the scroll position ---- */
+  function moveMark(){
+    var h = document.documentElement.scrollHeight - window.innerHeight;
+    var p = h > 0 ? window.scrollY / h : 0;
+    mark.style.top = (72 + p * (window.innerHeight - 144)) + "px";
+  }
+  moveMark();
+  window.addEventListener("scroll", moveMark, { passive: true });
+  window.addEventListener("resize", moveMark);
+
+  /* ---- raking light across the material samples ---- */
+  document.querySelectorAll(".swatch").forEach(function(sw){
+    sw.addEventListener("pointermove", function(ev){
+      var r = sw.getBoundingClientRect();
+      sw.style.setProperty("--mx", ((ev.clientX - r.left) / r.width * 100) + "%");
+      sw.style.setProperty("--my", ((ev.clientY - r.top) / r.height * 100) + "%");
+    });
+    sw.addEventListener("focus", function(){
+      sw.style.setProperty("--mx", "50%");
+      sw.style.setProperty("--my", "30%");
+    });
+  });
+
+  /* ---- module: exploded <-> assembled ---- */
+  var stage = document.getElementById("modStage");
+  var exBtn = document.getElementById("explodeBtn");
+  function setExploded(on){
+    stage.classList.toggle("exploded", on);
+    exBtn.textContent = on ? "Assemble module" : "Explode module";
+    exBtn.setAttribute("aria-pressed", String(on));
+  }
+  exBtn.addEventListener("click", function(){
+    setExploded(!stage.classList.contains("exploded"));
+  });
+  if (!reduced && "IntersectionObserver" in window){
+    var once = false;
+    var modObs = new IntersectionObserver(function(entries){
+      entries.forEach(function(e){
+        if (e.isIntersecting && !once){
+          once = true;
+          setTimeout(function(){ setExploded(false); }, 500);
+          modObs.unobserve(e.target);
+        }
+      });
+    }, { threshold: 0.35 });
+    modObs.observe(stage);
+  }
+
+  /* ---- enquiry form ---- */
+  var form = document.getElementById("enqForm");
+  var status = document.getElementById("enqStatus");
+  form.addEventListener("submit", function(ev){
+    ev.preventDefault();
+    var name = form.querySelector("#f-name").value.trim();
+    var contact = form.querySelector("#f-contact").value.trim();
+    if (!name || !contact){
+      status.textContent = "Add a name and one way to reach you, then send it again.";
+      status.classList.add("show");
+      return;
+    }
+    status.textContent = "This form has no destination yet — connect it to the enquiry inbox before the site goes live, or enquiries will be lost.";
+    status.classList.add("show");
+  });
+})();
+</script>
