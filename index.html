@@ -147,6 +147,10 @@ body.on-photo .menubtn .lbl{color:rgba(244,243,241,.7);}
   text-decoration:none;display:flex;flex-direction:column;align-items:center;gap:3px;
   z-index:71;
 }
+.wm-icon{
+  width:14px;height:auto;color:var(--chalk);margin-bottom:2px;
+}
+body.on-photo .wm-icon{color:#F4F3F1;}
 .wm-a{
   font-family:var(--f-display);font-weight:400;font-size:13px;
   letter-spacing:.42em;text-indent:.42em;text-transform:uppercase;color:var(--chalk);
@@ -756,6 +760,11 @@ table.ledger tr.grp td{
   </div>
 </header>
 <a class="wordmark" href="#" id="wordmark">
+  <svg class="wm-icon" viewBox="0 0 132 152" aria-hidden="true">
+    <rect x="0" y="0" width="24" height="140" fill="currentColor"/>
+    <path d="M 24,0 L 96,0 C 106,0 112,8 112,20 C 112,42 92,58 60,60 L 24,60 Z" fill="currentColor"/>
+    <path d="M 24,60 L 24,92 L 132,152 Z" fill="var(--core)"/>
+  </svg>
   <span class="wm-a">Ritehome</span>
   <span class="wm-b">Modular Systems</span>
 </a>
