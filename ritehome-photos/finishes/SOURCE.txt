@@ -1,0 +1,65 @@
+Finish face scans - sheet 08, Material
+======================================
+
+The wall was reduced from six samples (2 looks x 3 textures) to FOUR
+categories on 2026-09-10, at Jason's instruction:
+
+    01 Solid Colours   solid.jpg
+    02 Matte           matte.jpg
+    03 Woodgrain       wood.jpg
+    04 High Gloss      gloss.jpg
+
+In use
+------
+solid.jpg   Royale Touche "Crystal 1199"        https://royaletouche.com/product/crystal-1199/
+            Flat cream / greige. Stands in for the solid-colour range.
+matte.jpg   Royale Touche "Crystal Matty+ 1122" https://royaletouche.com/product/crystal-matty-1122/
+            Saturated peach, matte surface.
+wood.jpg    Royale Touche "SK 679"              https://royaletouche.com/product/sk-679/
+            Pale straight-grain oak. Keeps the .sw-band grain core edge.
+gloss.jpg   Royale Touche "PU 1810"             https://royaletouche.com/product/pu-1810/
+            Dark walnut-burl with metallic fleck. Carries the .sw-gloss
+            raking streak and the stronger hover light.
+
+Still on disk, no longer wired up
+---------------------------------
+woodgrain.jpg           ambientCG "Wood 089", CC0   https://ambientcg.com/view?id=Wood089
+woodgrain-light-oak.jpg ambientCG "Wood 087", CC0   https://ambientcg.com/view?id=Wood087
+                        The CC0 scans the six-sample wall used. Kept as a
+                        licence-clean fallback for the woodgrain slot - swap
+                        the .swatch.sw-wood rule in ritehome-website.html to
+                        point back at woodgrain.jpg.
+
+Licence - READ THIS
+-------------------
+solid/matte/wood/gloss.jpg are cropped from Royale Touche's own product
+renders (royaletouchewp.s3.ap-south-1.amazonaws.com). They are Royale
+Touche's copyright and show Royale Touche's decors, not Ritehome's.
+Jason chose them over the CC0 scans on 2026-09-10, aware of the risk.
+This is the same call recorded in the memory note "Ritehome website is
+drawing-led" - supplier images were investigated and flagged before.
+
+The clean fix remains: photograph Ritehome's own sample chips (see below).
+
+Processing
+----------
+Source renders are 1372x1868 staged sheet-on-grey shots with an "A4"
+badge. Cropped to the sheet interior (x 330, y 420, 790 x 1230), resized
+to 760x1183, JPEG q88, with PowerShell System.Drawing (no ImageMagick on
+this machine). Script: scratchpad/crop_all.ps1 in the session that made
+these. The page oversizes each face (background-size:auto 128%) and gives
+each a --face-pos, so nothing tiles obviously.
+
+Replacing any of these with Ritehome's own photographs
+------------------------------------------------------
+Shoot the chip flat, filling the frame, light from one side. Then point
+the matching rule in ritehome-website.html at the new file:
+
+    .swatch.sw-solid{--face:url("ritehome-photos/finishes/solid.jpg");...}
+    .swatch.sw-matte{--face:url("ritehome-photos/finishes/matte.jpg");...}
+    .swatch.sw-wood {--face:url("ritehome-photos/finishes/wood.jpg"); ...}
+    .swatch.sw-gloss{--face:url("ritehome-photos/finishes/gloss.jpg");...}
+
+Nothing else has to change - the finish overlay, the hover rake and the
+board-core edge all sit above the face and work over a photograph as they
+do over the drawn fallback (.f-solid / .f-matte / .f-wood / .f-gloss).

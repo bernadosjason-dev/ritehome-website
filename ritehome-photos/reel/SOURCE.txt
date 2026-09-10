@@ -1,0 +1,37 @@
+Hero background loop — slide 01 (Graphite Gloss)
+================================================
+
+graphite-gloss-loop.mp4   (in use)
+  Source : C:\Users\JB\Downloads\IMG_2388.MOV  — a REAL phone video of the
+           black-gloss glass-front kitchen (the actual installation the
+           slide-01 still shows). Supplied by Jason 2026-09-10 to replace
+           the earlier AI/Veo clip: "its better quality".
+  Original: 1080x1920 portrait, ~54 fps, 30.8 MB, H.264, moov atom at the
+           end (no faststart), rotate=90 metadata.
+  Encoded : ffmpeg -an -r 30 -vf scale=1080:1920 -c:v libx264 -profile high
+           -pix_fmt yuv420p -preset slow -crf 24 -metadata:s:v:0 rotate=0
+           -movflags +faststart   ->  1080x1920, 30 fps, no audio,
+           faststart (moov first), 2.6 MB.
+  ffmpeg came from the npm package ffmpeg-static (no ffmpeg on this box
+  otherwise); scratchpad/vid/ in the session that made this.
+
+graphite-gloss-loop-720.mp4   (alternate, not wired)
+  Same encode at scale=720:1280, crf 25 -> 0.95 MB. Swap the <video>
+  data-src / the reel filename to this if page weight ever matters more
+  than sharpness behind the scrim.
+
+Not used: Rite Home Opener.mp4 (60s, real landscape, 18 MB) and the 16
+AI/Veo vertical clips, all still in ~/Downloads.
+
+How it is wired (ritehome-website.html) — unchanged from before:
+  <video class="photo-vid" autoplay muted loop playsinline preload="none"
+         poster="ritehome-photos/enhanced/01-graphite-gloss.jpg"
+         data-src="ritehome-photos/reel/graphite-gloss-loop.mp4">
+  Sits over the <img>, under the .photo::after scrim. JS sets src on first
+  reach and pauses it whenever slide 01 is off screen. object-fit:cover ->
+  the 9:16 clip is cropped to a centre band (counter + island) on a wide
+  screen. @media (prefers-reduced-motion) hides the video, the still shows.
+
+Note: this is real Ritehome project footage, so no AI-disclosure question
+any more — but the slide-01 still and this clip should stay the same
+kitchen so the swap between poster and video is invisible.
