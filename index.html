@@ -674,7 +674,34 @@ body.reading .stagetab,body.reading .hint{display:none;}
 .spec-k{font-family:var(--f-mono);font-size:10px;letter-spacing:.18em;text-transform:uppercase;color:var(--draft);}
 .spec-v{font-family:var(--f-mono);font-size:12px;color:var(--chalk);font-variant-numeric:tabular-nums;text-align:right;}
 
-.seq{display:grid;grid-template-columns:repeat(4,1fr);gap:1px;background:var(--rule-soft);margin-top:34px;border:1px solid var(--rule-soft);}
+/* ---------- photo galleries — every photo on file, grouped by system ---------- */
+.gallery-head{display:flex;justify-content:space-between;align-items:flex-end;gap:20px;flex-wrap:wrap;margin-bottom:8px;}
+.gallery-count{font-family:var(--f-mono);font-size:11px;letter-spacing:.1em;color:var(--draft);white-space:nowrap;}
+.photogrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:14px;margin-top:26px;}
+.photogrid a{
+  display:block;position:relative;aspect-ratio:4/3;overflow:hidden;
+  background:var(--panel);border:1px solid var(--rule-soft);text-decoration:none;
+}
+.photogrid img{width:100%;height:100%;object-fit:cover;display:block;transition:transform .5s var(--ease);}
+.photogrid a:hover img{transform:scale(1.06);}
+.photogrid .cap{
+  position:absolute;left:0;right:0;bottom:0;padding:9px 11px 8px;
+  background:linear-gradient(to top, rgba(6,6,7,.85), rgba(6,6,7,0));
+  color:#F4F3F1;font-family:var(--f-mono);font-size:10px;letter-spacing:.05em;line-height:1.5;
+}
+.range-more{padding:9px 0 20px;text-align:right;}
+.range-more button{
+  background:none;border:0;padding:0;cursor:pointer;
+  font-family:var(--f-mono);font-size:10.5px;letter-spacing:.1em;text-transform:uppercase;
+  color:var(--draft);transition:color .3s;
+}
+.range-more button:hover{color:var(--core);}
+@media (max-width:720px){
+  .photogrid{grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:10px;}
+}
+
+.seq{display:grid;grid-template-columns:repeat(5,1fr);gap:1px;background:var(--rule-soft);margin-top:34px;border:1px solid var(--rule-soft);}
+@media (min-width:1001px) and (max-width:1220px){.seq{grid-template-columns:repeat(3,1fr);}}
 .seq-cell{background:var(--ink);padding:24px 20px;position:relative;}
 .seq-cell::before{content:"";position:absolute;left:0;top:0;bottom:0;width:2px;background:var(--core);}
 .seq-n{font-family:var(--f-mono);font-size:10px;letter-spacing:.2em;color:var(--core);display:block;margin-bottom:16px;}
@@ -843,9 +870,10 @@ body.reading .stagetab,body.reading .hint{display:none;}
     <div class="copy">
       <p class="eyebrow rise">Project 02</p>
       <h2 class="rise">One narrow range,<br>matched every time.</h2>
-      <p class="lede rise">Shaker fronts in a charcoal matte, run against a full-height oven and
-      microwave tower. The finish is chosen from a deliberately short list — a short list is one we
-      can match on the second cabinet and the twentieth.</p>
+      <p class="lede rise">A single-wall run in shaker fronts of charcoal matte, set against a
+      full-height oven and microwave tower, with a freestanding island carrying the breakfast bar.
+      The finish is chosen from a deliberately short list — a short list is one we can match on the
+      second cabinet and the twentieth.</p>
       <div class="acts rise">
         <button class="togglebtn" type="button" data-doc="detail-02">View project details</button>
       </div>
@@ -906,8 +934,8 @@ body.reading .stagetab,body.reading .hint{display:none;}
     <div class="copy">
       <p class="eyebrow rise">Project 05</p>
       <h2 class="rise">Two finishes,<br>one specification.</h2>
-      <p class="lede rise">Grey fronts against an oak shelving column and a slatted timber
-      peninsula. Both finishes came off the same board list and through the same shop, so the
+      <p class="lede rise">An L-shaped run in grey against an oak shelving column and a slatted
+      timber peninsula. Both finishes came off the same board list and through the same shop, so the
       colours meet the way they were drawn to meet.</p>
       <div class="acts rise">
         <button class="togglebtn" type="button" data-doc="detail-05">View project details</button>
@@ -1218,24 +1246,28 @@ body.reading .stagetab,body.reading .hint{display:none;}
             <span class="range-desc">Base cabinets · overhead cabinets · built-in storage · utility storage</span>
             <span class="range-glyph"><svg width="56" height="34" viewBox="0 0 56 34"><rect class="gl" x="4" y="1" width="48" height="32"></rect><line class="gl" x1="4" y1="11" x2="52" y2="11"></line><line class="gl" x1="28" y1="11" x2="28" y2="33"></line></svg></span>
           </button>
+          <div class="range-more"><button type="button" data-doc="gallery-storage">See all 5 storage photos &rarr;</button></div>
           <button type="button" class="range-row" data-back-slide="0" aria-label="View kitchen systems examples">
             <span class="range-n">02</span>
             <span class="range-name">Kitchen systems</span>
             <span class="range-desc">Kitchen cabinetry · counter systems · work surfaces · storage solutions</span>
             <span class="range-glyph"><svg width="56" height="34" viewBox="0 0 56 34"><rect class="gl" x="1" y="14" width="24" height="19"></rect><rect class="gl" x="31" y="14" width="24" height="19"></rect><rect class="gl" x="1" y="1" width="18" height="9"></rect></svg></span>
           </button>
+          <div class="range-more"><button type="button" data-doc="gallery-kitchen">See all 16 kitchen photos &rarr;</button></div>
           <button type="button" class="range-row" data-back-slide="9" aria-label="View partition systems examples">
             <span class="range-n">03</span>
             <span class="range-name">Partition systems</span>
             <span class="range-desc">Toilet partitions · office partitions · desk partitions · workspace dividers</span>
             <span class="range-glyph"><svg width="56" height="34" viewBox="0 0 56 34"><line class="gl" x1="2" y1="4" x2="54" y2="4"></line><line class="gl" x1="14" y1="4" x2="14" y2="30"></line><line class="gl" x1="34" y1="4" x2="34" y2="30"></line><line class="gl" x1="2" y1="30" x2="54" y2="30"></line></svg></span>
           </button>
+          <div class="range-more"><button type="button" data-doc="gallery-partition">See all 2 partition photos &rarr;</button></div>
           <button type="button" class="range-row" data-back-slide="11" aria-label="View workspace systems examples">
             <span class="range-n">04</span>
             <span class="range-name">Workspace systems</span>
             <span class="range-desc">Corporate setups · office storage · desk systems · workplace configurations</span>
             <span class="range-glyph"><svg width="56" height="34" viewBox="0 0 56 34"><line class="gl" x1="28" y1="1" x2="28" y2="33"></line><line class="gl" x1="2" y1="12" x2="54" y2="12"></line><line class="gl" x1="2" y1="12" x2="2" y2="33"></line><line class="gl" x1="54" y1="12" x2="54" y2="33"></line></svg></span>
           </button>
+          <div class="range-more"><button type="button" data-doc="gallery-workspace">See all 2 workspace photos &rarr;</button></div>
         </div>
       </div>
     </div>
@@ -1290,27 +1322,32 @@ body.reading .stagetab,body.reading .hint{display:none;}
 
   <section class="docsec" id="sequence">
     <p class="eyebrow">19 — Sequence</p>
-    <h2 style="max-width:18ch">Four stages, each with a name attached.</h2>
-    <p class="lede" style="max-width:64ch">A job moves through four tracked stages. At any point you
+    <h2 style="max-width:18ch">Five stages, each with a name attached.</h2>
+    <p class="lede" style="max-width:64ch">A job moves through five tracked stages. At any point you
     can ask which stage yours is in and who is holding it, and get an answer rather than an estimate.</p>
     <div class="seq">
       <div class="seq-cell">
-        <span class="seq-n">01</span><h3>Drafting</h3>
-        <p class="seq-role">Drafter</p>
+        <span class="seq-n">01</span><h3>Consultation</h3>
+        <p class="seq-role">Consultant</p>
+        <p>Site visit booked, the room and budget discussed, and a schedule agreed. Ends when a visit date is set.</p>
+      </div>
+      <div class="seq-cell">
+        <span class="seq-n">02</span><h3>Design Phase</h3>
+        <p class="seq-role">Designer</p>
         <p>Site measured, elevations drawn, revisions logged. Ends when you approve the sheet.</p>
       </div>
       <div class="seq-cell">
-        <span class="seq-n">02</span><h3>Procurement</h3>
+        <span class="seq-n">03</span><h3>Procurement</h3>
         <p class="seq-role">Procurement officer</p>
         <p>Boards, edging, hardware and accessories bought against the approved bill of quantities.</p>
       </div>
       <div class="seq-cell">
-        <span class="seq-n">03</span><h3>Fabrication</h3>
+        <span class="seq-n">04</span><h3>Fabrication</h3>
         <p class="seq-role">Fabricator</p>
         <p>Cut, edged and assembled in our own shop by our own salaried crew. Not subcontracted.</p>
       </div>
       <div class="seq-cell">
-        <span class="seq-n">04</span><h3>Installation</h3>
+        <span class="seq-n">05</span><h3>Installation</h3>
         <p class="seq-role">Installer</p>
         <p>Delivered finished, levelled and set. Your floor sees assembly, not a workshop.</p>
       </div>
@@ -1427,6 +1464,7 @@ body.reading .stagetab,body.reading .hint{display:none;}
         <div class="acts" style="margin-top:26px">
           <button class="cta" type="button" data-doc="enquiry">Request a quotation</button>
           <button class="togglebtn" type="button" data-back-slide="0">&larr; Back to the work</button>
+          <button class="togglebtn" type="button" data-doc="gallery-kitchen">See all 16 kitchen photos</button>
         </div>
       </div>
       <div>
@@ -1446,11 +1484,13 @@ body.reading .stagetab,body.reading .hint{display:none;}
       <div>
         <p class="eyebrow">Kitchen systems — Project 02</p>
         <h2>Charcoal Shaker</h2>
-        <p class="lede">Shaker fronts in charcoal matte against a herringbone stone backsplash,
-        with a full-height oven and microwave tower and a quartz breakfast bar.</p>
+        <p class="lede">A single-wall run in charcoal matte shaker fronts against a herringbone
+        stone backsplash, with a full-height oven and microwave tower and a freestanding island
+        carrying the quartz breakfast bar.</p>
         <div class="acts" style="margin-top:26px">
           <button class="cta" type="button" data-doc="enquiry">Request a quotation</button>
           <button class="togglebtn" type="button" data-back-slide="1">&larr; Back to the work</button>
+          <button class="togglebtn" type="button" data-doc="gallery-kitchen">See all 16 kitchen photos</button>
         </div>
       </div>
       <div>
@@ -1470,11 +1510,12 @@ body.reading .stagetab,body.reading .hint{display:none;}
       <div>
         <p class="eyebrow">Kitchen systems — Project 03</p>
         <h2>Light Oak</h2>
-        <p class="lede">Glazed display uppers and a full-height appliance housing in a light oak
-        woodgrain, set around an island with bar-stool seating.</p>
+        <p class="lede">An L-shaped run in light oak woodgrain, with glazed display uppers, a
+        full-height appliance housing and an island for bar-stool seating.</p>
         <div class="acts" style="margin-top:26px">
           <button class="cta" type="button" data-doc="enquiry">Request a quotation</button>
           <button class="togglebtn" type="button" data-back-slide="2">&larr; Back to the work</button>
+          <button class="togglebtn" type="button" data-doc="gallery-kitchen">See all 16 kitchen photos</button>
         </div>
       </div>
       <div>
@@ -1500,6 +1541,7 @@ body.reading .stagetab,body.reading .hint{display:none;}
         <div class="acts" style="margin-top:26px">
           <button class="cta" type="button" data-doc="enquiry">Request a quotation</button>
           <button class="togglebtn" type="button" data-back-slide="3">&larr; Back to the work</button>
+          <button class="togglebtn" type="button" data-doc="gallery-kitchen">See all 16 kitchen photos</button>
         </div>
       </div>
       <div>
@@ -1519,11 +1561,12 @@ body.reading .stagetab,body.reading .hint{display:none;}
       <div>
         <p class="eyebrow">Kitchen systems — Project 05</p>
         <h2>Grey &amp; Oak</h2>
-        <p class="lede">Grey fronts against an oak open-shelving column and a slatted timber
-        peninsula, both finishes drawn from the same board list and shop.</p>
+        <p class="lede">An L-shaped run in grey against an oak open-shelving column and a slatted
+        timber peninsula, both finishes drawn from the same board list and shop.</p>
         <div class="acts" style="margin-top:26px">
           <button class="cta" type="button" data-doc="enquiry">Request a quotation</button>
           <button class="togglebtn" type="button" data-back-slide="4">&larr; Back to the work</button>
+          <button class="togglebtn" type="button" data-doc="gallery-kitchen">See all 16 kitchen photos</button>
         </div>
       </div>
       <div>
@@ -1549,6 +1592,7 @@ body.reading .stagetab,body.reading .hint{display:none;}
         <div class="acts" style="margin-top:26px">
           <button class="cta" type="button" data-doc="enquiry">Request a quotation</button>
           <button class="togglebtn" type="button" data-back-slide="5">&larr; Back to the work</button>
+          <button class="togglebtn" type="button" data-doc="gallery-kitchen">See all 16 kitchen photos</button>
         </div>
       </div>
       <div>
@@ -1574,6 +1618,7 @@ body.reading .stagetab,body.reading .hint{display:none;}
         <div class="acts" style="margin-top:26px">
           <button class="cta" type="button" data-doc="enquiry">Request a quotation</button>
           <button class="togglebtn" type="button" data-back-slide="6">&larr; Back to the work</button>
+          <button class="togglebtn" type="button" data-doc="gallery-storage">See all 5 storage photos</button>
         </div>
       </div>
       <div>
@@ -1598,6 +1643,7 @@ body.reading .stagetab,body.reading .hint{display:none;}
         <div class="acts" style="margin-top:26px">
           <button class="cta" type="button" data-doc="enquiry">Request a quotation</button>
           <button class="togglebtn" type="button" data-back-slide="7">&larr; Back to the work</button>
+          <button class="togglebtn" type="button" data-doc="gallery-storage">See all 5 storage photos</button>
         </div>
       </div>
       <div>
@@ -1621,6 +1667,7 @@ body.reading .stagetab,body.reading .hint{display:none;}
         <div class="acts" style="margin-top:26px">
           <button class="cta" type="button" data-doc="enquiry">Request a quotation</button>
           <button class="togglebtn" type="button" data-back-slide="8">&larr; Back to the work</button>
+          <button class="togglebtn" type="button" data-doc="gallery-storage">See all 5 storage photos</button>
         </div>
       </div>
       <div>
@@ -1645,6 +1692,7 @@ body.reading .stagetab,body.reading .hint{display:none;}
         <div class="acts" style="margin-top:26px">
           <button class="cta" type="button" data-doc="enquiry">Request a quotation</button>
           <button class="togglebtn" type="button" data-back-slide="9">&larr; Back to the work</button>
+          <button class="togglebtn" type="button" data-doc="gallery-partition">See all 2 partition photos</button>
         </div>
       </div>
       <div>
@@ -1668,6 +1716,7 @@ body.reading .stagetab,body.reading .hint{display:none;}
         <div class="acts" style="margin-top:26px">
           <button class="cta" type="button" data-doc="enquiry">Request a quotation</button>
           <button class="togglebtn" type="button" data-back-slide="10">&larr; Back to the work</button>
+          <button class="togglebtn" type="button" data-doc="gallery-partition">See all 2 partition photos</button>
         </div>
       </div>
       <div>
@@ -1691,6 +1740,7 @@ body.reading .stagetab,body.reading .hint{display:none;}
         <div class="acts" style="margin-top:26px">
           <button class="cta" type="button" data-doc="enquiry">Request a quotation</button>
           <button class="togglebtn" type="button" data-back-slide="11">&larr; Back to the work</button>
+          <button class="togglebtn" type="button" data-doc="gallery-workspace">See all 2 workspace photos</button>
         </div>
       </div>
       <div>
@@ -1715,6 +1765,7 @@ body.reading .stagetab,body.reading .hint{display:none;}
         <div class="acts" style="margin-top:26px">
           <button class="cta" type="button" data-doc="enquiry">Request a quotation</button>
           <button class="togglebtn" type="button" data-back-slide="12">&larr; Back to the work</button>
+          <button class="togglebtn" type="button" data-doc="gallery-workspace">See all 2 workspace photos</button>
         </div>
       </div>
       <div>
@@ -1726,6 +1777,88 @@ body.reading .stagetab,body.reading .hint{display:none;}
           <li><span class="spec-k">Fit-out scale</span><span class="spec-v">Single office through full-floor roll-outs</span></li>
         </ul>
       </div>
+    </div>
+  </section>
+
+  <section class="docsec" id="gallery-kitchen">
+    <div class="gallery-head">
+      <div>
+        <p class="eyebrow">Kitchen systems — All work</p>
+        <h2>Every kitchen on file.</h2>
+        <p class="lede" style="max-width:64ch">Sixteen kitchens, u-shaped and l-shaped runs, gloss and
+        woodgrain and matte, islands and peninsulas — every finish and layout we have actually built,
+        not a rendering of what we could.</p>
+      </div>
+      <button class="togglebtn" type="button" data-back-slide="0">&larr; Back to the work</button>
+    </div>
+    <div class="photogrid">
+      <a href="ritehome-photos/enhanced/01-graphite-gloss.jpg" target="_blank" rel="noopener"><img src="ritehome-photos/enhanced/01-graphite-gloss.jpg" alt="U-shaped kitchen in black gloss with backlit glass wall units and a grey island." loading="lazy"><span class="cap">Graphite Gloss<br>U-shaped · Backlit glass uppers</span></a>
+      <a href="ritehome-photos/enhanced/02-charcoal-shaker.jpg" target="_blank" rel="noopener"><img src="ritehome-photos/enhanced/02-charcoal-shaker.jpg" alt="Charcoal shaker-front kitchen with a herringbone stone backsplash and a freestanding island." loading="lazy"><span class="cap">Charcoal Shaker<br>Single-wall run · Freestanding island</span></a>
+      <a href="ritehome-photos/enhanced/03-light-oak.jpg" target="_blank" rel="noopener"><img src="ritehome-photos/enhanced/03-light-oak.jpg" alt="L-shaped light oak woodgrain kitchen with glazed display uppers and a peninsula bar." loading="lazy"><span class="cap">Light Oak<br>L-shaped · Glazed display uppers</span></a>
+      <a href="ritehome-photos/enhanced/04-matte-white.jpg" target="_blank" rel="noopener"><img src="ritehome-photos/enhanced/04-matte-white.jpg" alt="Handleless matte white kitchen with a herringbone backsplash and a speckled quartz island." loading="lazy"><span class="cap">Matte White<br>Handleless · Herringbone splashback</span></a>
+      <a href="ritehome-photos/enhanced/05-grey-oak.jpg" target="_blank" rel="noopener"><img src="ritehome-photos/enhanced/05-grey-oak.jpg" alt="Two-tone grey and oak kitchen with a slatted timber peninsula and an open shelving column." loading="lazy"><span class="cap">Grey &amp; Oak<br>L-shaped · Slatted peninsula</span></a>
+      <a href="ritehome-photos/enhanced/06-white-gloss.jpg" target="_blank" rel="noopener"><img src="ritehome-photos/enhanced/06-white-gloss.jpg" alt="Large white gloss U-shaped kitchen with a central island and a stepped LED ceiling cove." loading="lazy"><span class="cap">White Gloss<br>U-shaped · Stepped ceiling cove</span></a>
+      <a href="ritehome-photos/gallery/gallery-kitchen-01.jpg" target="_blank" rel="noopener"><img src="ritehome-photos/gallery/gallery-kitchen-01.jpg" alt="L-shaped light grey gloss kitchen with a black tile splashback and a glazed corner display cabinet." loading="lazy"><span class="cap">Light Grey Gloss<br>L-shaped · Black tile splashback</span></a>
+      <a href="ritehome-photos/gallery/gallery-kitchen-02.jpg" target="_blank" rel="noopener"><img src="ritehome-photos/gallery/gallery-kitchen-02.jpg" alt="L-shaped walnut woodgrain kitchen under a double-height window, with an open shelving nook." loading="lazy"><span class="cap">Walnut Woodgrain<br>L-shaped · Open shelving nook</span></a>
+      <a href="ritehome-photos/gallery/gallery-kitchen-03.jpg" target="_blank" rel="noopener"><img src="ritehome-photos/gallery/gallery-kitchen-03.jpg" alt="Two-tone black gloss and walnut kitchen with a waterfall-edge gold-veined quartz island and a wine rack." loading="lazy"><span class="cap">Two-tone Gloss<br>U-shaped · Waterfall island</span></a>
+      <a href="ritehome-photos/gallery/gallery-kitchen-04.jpg" target="_blank" rel="noopener"><img src="ritehome-photos/gallery/gallery-kitchen-04.jpg" alt="All-white gloss U-shaped kitchen under a stepped ceiling lit with blue LED cove lighting." loading="lazy"><span class="cap">White Gloss<br>U-shaped · Blue LED ceiling cove</span></a>
+      <a href="ritehome-photos/gallery/gallery-kitchen-05.jpg" target="_blank" rel="noopener"><img src="ritehome-photos/gallery/gallery-kitchen-05.jpg" alt="Small kitchenette with a striped wood and white breakfast bar front, against exposed concrete walls." loading="lazy"><span class="cap">Striped Breakfast Bar<br>Kitchenette · Concrete walls</span></a>
+      <a href="ritehome-photos/gallery/gallery-kitchen-06.jpg" target="_blank" rel="noopener"><img src="ritehome-photos/gallery/gallery-kitchen-06.jpg" alt="White gloss kitchen with a dark timber cove ceiling, an olive fridge and a slatted peninsula front." loading="lazy"><span class="cap">White Gloss<br>Peninsula · Timber cove ceiling</span></a>
+      <a href="ritehome-photos/gallery/gallery-kitchen-07.jpg" target="_blank" rel="noopener"><img src="ritehome-photos/gallery/gallery-kitchen-07.jpg" alt="White gloss kitchen with a long island seating four, styled and in daily use." loading="lazy"><span class="cap">White Gloss<br>Long island · Family kitchen</span></a>
+      <a href="ritehome-photos/gallery/gallery-kitchen-08.jpg" target="_blank" rel="noopener"><img src="ritehome-photos/gallery/gallery-kitchen-08.jpg" alt="L-shaped charcoal kitchen with blue LED-lit open display shelving flanking the upper cabinets." loading="lazy"><span class="cap">Charcoal<br>L-shaped · LED display shelving</span></a>
+      <a href="ritehome-photos/gallery/gallery-kitchen-09.jpg" target="_blank" rel="noopener"><img src="ritehome-photos/gallery/gallery-kitchen-09.jpg" alt="Forest green U-shaped kitchen with an island and layered pendant lighting." loading="lazy"><span class="cap">Forest Green<br>U-shaped · Island</span></a>
+      <a href="ritehome-photos/gallery/gallery-kitchen-10.jpg" target="_blank" rel="noopener"><img src="ritehome-photos/gallery/gallery-kitchen-10.jpg" alt="Wide view of a forest green U-shaped kitchen with an island, under a vaulted ceiling." loading="lazy"><span class="cap">Forest Green<br>U-shaped · Wide angle</span></a>
+    </div>
+  </section>
+
+  <section class="docsec" id="gallery-storage">
+    <div class="gallery-head">
+      <div>
+        <p class="eyebrow">Storage systems — All work</p>
+        <h2>Every storage build on file.</h2>
+        <p class="lede" style="max-width:64ch">Wardrobes, feature walls and open shelving — the same
+        carcass specification, closed behind a door or left open on a shelf.</p>
+      </div>
+      <button class="togglebtn" type="button" data-back-slide="6">&larr; Back to the work</button>
+    </div>
+    <div class="photogrid">
+      <a href="ritehome-photos/enhanced/07-storage-feature-wall.jpg" target="_blank" rel="noopener"><img src="ritehome-photos/enhanced/07-storage-feature-wall.jpg" alt="Backlit onyx-marble feature wall with a television, a floating console and a wardrobe on either side." loading="lazy"><span class="cap">Onyx Feature Wall<br>Backlit stone · Wardrobe returns</span></a>
+      <a href="ritehome-photos/enhanced/08-storage-wardrobe.jpg" target="_blank" rel="noopener"><img src="ritehome-photos/enhanced/08-storage-wardrobe.jpg" alt="Full-height woodgrain wardrobe run turning through a corner." loading="lazy"><span class="cap">Walk-in Wardrobe<br>Woodgrain · Corner run</span></a>
+      <a href="ritehome-photos/enhanced/09-storage-shelving.jpg" target="_blank" rel="noopener"><img src="ritehome-photos/enhanced/09-storage-shelving.jpg" alt="Open pigeonhole shelving wall in light woodgrain, floor to ceiling." loading="lazy"><span class="cap">Open Storage Wall<br>Pigeonhole shelving</span></a>
+      <a href="ritehome-photos/gallery/gallery-storage-01.jpg" target="_blank" rel="noopener"><img src="ritehome-photos/gallery/gallery-storage-01.jpg" alt="Matte white walk-in wardrobe with rose-gold pulls, over a herringbone timber floor." loading="lazy"><span class="cap">Walk-in Wardrobe<br>Matte white · Herringbone floor</span></a>
+      <a href="ritehome-photos/gallery/gallery-storage-02.jpg" target="_blank" rel="noopener"><img src="ritehome-photos/gallery/gallery-storage-02.jpg" alt="Wall-mounted television panel beside an open woodgrain shelving tower lit with LED strips." loading="lazy"><span class="cap">TV Wall + Shelving Tower<br>LED-lit</span></a>
+    </div>
+  </section>
+
+  <section class="docsec" id="gallery-partition">
+    <div class="gallery-head">
+      <div>
+        <p class="eyebrow">Partition systems — All work</p>
+        <h2>Every partition build on file.</h2>
+        <p class="lede" style="max-width:64ch">Wet-area cubicles and desk-height dividers, drawn and
+        itemised the same way as a cabinet run.</p>
+      </div>
+      <button class="togglebtn" type="button" data-back-slide="9">&larr; Back to the work</button>
+    </div>
+    <div class="photogrid">
+      <a href="ritehome-photos/enhanced/10-partition-cr.jpg" target="_blank" rel="noopener"><img src="ritehome-photos/enhanced/10-partition-cr.jpg" alt="Toilet cubicle partitions in blue-grey phenolic board on a stainless top rail." loading="lazy"><span class="cap">CR Partition<br>Phenolic cubicles</span></a>
+      <a href="ritehome-photos/enhanced/11-partition-reception.jpg" target="_blank" rel="noopener"><img src="ritehome-photos/enhanced/11-partition-reception.jpg" alt="Row of laminate reception desk partitions dividing a service floor into individual windows." loading="lazy"><span class="cap">Reception Partition<br>Desk counters</span></a>
+    </div>
+  </section>
+
+  <section class="docsec" id="gallery-workspace">
+    <div class="gallery-head">
+      <div>
+        <p class="eyebrow">Workspace systems — All work</p>
+        <h2>Every workspace build on file.</h2>
+        <p class="lede" style="max-width:64ch">The same modular desk-and-divider system, from a single
+        office to a full corporate floor.</p>
+      </div>
+      <button class="togglebtn" type="button" data-back-slide="11">&larr; Back to the work</button>
+    </div>
+    <div class="photogrid">
+      <a href="ritehome-photos/enhanced/12-workspace-office.jpg" target="_blank" rel="noopener"><img src="ritehome-photos/enhanced/12-workspace-office.jpg" alt="Open-plan office with built-in shelving and a cubicle-style desk divider." loading="lazy"><span class="cap">Office Workstations<br>Cubicle desks</span></a>
+      <a href="ritehome-photos/enhanced/13-workspace-corporate-floor.jpg" target="_blank" rel="noopener"><img src="ritehome-photos/enhanced/13-workspace-corporate-floor.jpg" alt="Full floor of modular timber desk cubicles repeated in long rows." loading="lazy"><span class="cap">Corporate Floor<br>Full-floor fit-out</span></a>
     </div>
   </section>
 
