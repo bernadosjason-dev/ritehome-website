@@ -428,10 +428,13 @@ h3{
 .sw-face::before{
   content:"";position:absolute;inset:0;
   background-image:var(--face,none);background-repeat:no-repeat;
-  /* oversized on purpose: it leaves slack to move each sample to a different
-     part of the same scan, so three chips of one decor do not line up into
-     what looks like a single continuous board */
-  background-size:auto 128%;
+  /* cover, not a fixed oversize. The wall is four tall strips on a desktop
+     but a 2x2 of squat tiles under 820px, and a height-based size that
+     covers one shape leaves the drawn fallback showing down the sides of
+     the other. cover holds at every aspect; --face-pos still chooses which
+     part of the scan is in frame, since cover always leaves slack on one
+     axis. */
+  background-size:var(--face-size,cover);
   background-position:var(--face-pos,50% 50%);
 }
 .sw-edge{
@@ -482,11 +485,19 @@ h3{
    cabinet reads as a room, not a chip.
 
    03 Woodgrain and 04 High Gloss stay photographed, because grain and
-   reflection cannot be drawn honestly. ritehome-photos/finishes/SOURCE.txt
-   records what each file is and under what licence. Swap either for a
-   photograph of Ritehome's own sample chip and nothing else has to change. */
-.swatch.sw-wood {--face:url("ritehome-photos/finishes/wood-walnut-dark.jpg"); --face-pos:50% 50%;}
-.swatch.sw-gloss{--face:url("ritehome-photos/finishes/gloss-white.jpg");--face-pos:50% 50%;}
+   reflection cannot be drawn honestly. Both are flat sample faces shot
+   square on, replacing the blurry in-situ crops that used to sit here.
+   ritehome-photos/finishes/SOURCE.txt records what each file is.
+
+   The gloss file was cut down to the door face itself. Its source was a
+   whole door, and a door carries what a sample does not — a drawer seam
+   across the top, the grey studio floor at its edges — and both were
+   landing in frame. Cropping the file rather than zooming past them in CSS
+   keeps the face sharp and lets the plain cover rule above hold at every
+   width. It sits a little right of centre so the window reflection stays
+   in frame: that band IS the finish. */
+.swatch.sw-wood {--face:url("ritehome-photos/finishes/wood-walnut-panel.jpg");--face-pos:50% 50%;}
+.swatch.sw-gloss{--face:url("ritehome-photos/finishes/gloss-white-door.jpg");--face-pos:58% 50%;}
 
 /* the finish, laid over whichever base is in play. Solid, matte and woodgrain
    take nothing; high gloss takes the raking streak. */

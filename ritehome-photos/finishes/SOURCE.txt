@@ -4,34 +4,64 @@ Finish face scans - sheet 08, Material
 The wall was reduced from six samples (2 looks x 3 textures) to FOUR
 categories on 2026-09-10, at Jason's instruction.
 
-UPDATE 2026-09-14 (later) - 01 and 02 are now FLAT COLOUR, not photographs.
+UPDATE 2026-09-14 (later) - all four faces replaced. Sheet 15 is DONE.
 
-Jason supplied four faces: a white gloss door, a cream flat, a dark green
-flat, and a dark walnut grain. Two of them are uniform colour, so they are
-now CSS in index.html rather than files on disk - a JPEG of a flat colour
-is a worse copy of a colour:
+Jason supplied four faces. Two were uniform colour and two were flat sample
+photographs, so they are handled differently and on purpose.
+
+01 and 02 are CSS colour, not files
+-----------------------------------
+A JPEG of a flat colour is a worse copy of a colour, so these live in
+index.html:
 
     01 Solid Colours  #26452F -> #1E3727   (.f-solid)  dark forest green
     02 Matte          #FEFCF7 -> #F6F1E6   (.f-matte)  warm cream
 
-The --face url was removed for .swatch.sw-solid and .swatch.sw-matte, so
-the .f-solid / .f-matte base IS the face now. solid-green-kitchen.jpg and
-matte-white.jpg stay on disk, unwired.
+The --face url was dropped from .swatch.sw-solid and .swatch.sw-matte, so
+the .f-solid / .f-matte base IS the face now.
 
-STILL OUTSTANDING - 03 and 04 are the OLD in-situ crops.
-The white gloss door and the dark walnut grain Jason sent were attached to
-the chat as images only; they never reached this container's filesystem, so
-they could not be committed. Both are photographs and cannot be reproduced
-from CSS the way the two flat colours could.
+03 and 04 are photographs
+-------------------------
+Grain and reflection cannot be drawn honestly, so these stay as files:
 
-To finish the job, drop the two files in at exactly these paths and the
-page picks them up with no code change:
+    wood-walnut-panel.jpg  800x1600. Dark walnut veneer, flat and sharp,
+                           square on. Uploaded by Jason. Used as-is.
+    gloss-white-door.jpg   428x614. White high-gloss, with the soft window
+                           reflection that makes it read as gloss.
+                           Uploaded by Jason as a 459x800 shot of a WHOLE
+                           DOOR, then cut down here - see below.
 
-    ritehome-photos/finishes/gloss-white.jpg       the white gloss door
-    ritehome-photos/finishes/wood-walnut-dark.jpg  the dark walnut grain
+Why the gloss file was cropped
+------------------------------
+The upload was a whole door, and a door carries what a sample does not: a
+drawer seam at y=156 and the grey studio floor at all four edges. Both
+landed inside the swatch frame and read as artefacts next to three faces
+that are pure material. Cut to the door face itself, x 6..434, y 166..780,
+JPEG q94. The crop was done in a headless Chromium canvas - ffmpeg on this
+machine will not decode a progressive JPEG, and there is no ImageMagick or
+PIL. Cropping the file rather than zooming past the seam in CSS keeps the
+face sharp and lets one plain `cover` rule hold at every width.
 
-Portrait, roughly 760x1183 or larger, JPEG. The page oversizes each face
-(background-size:auto 128%) so exact dimensions do not matter.
+Also fixed: .sw-face::before was background-size:auto 128%
+---------------------------------------------------------
+That covered the four tall strips of the desktop wall but NOT the 2x2 of
+squat tiles the wall becomes under 820px - the photo sat short of the tile
+and the drawn .f-wood / .f-gloss fallback showed down both sides. It is
+`cover` now, which holds at any aspect; --face-pos still chooses what is in
+frame, since cover always leaves slack on one axis. Verified at 1440, 780
+and 400 px wide.
+
+Old faces, still on disk, no longer wired up
+--------------------------------------------
+solid-green-kitchen.jpg  in-situ crop of the green kitchen (01)
+matte-white.jpg          in-situ crop of a matte white door (02)
+wood-walnut-dark.jpg     in-situ crop of a walnut wardrobe (03)
+gloss-white.jpg          in-situ crop of the white gloss kitchen (04)
+                         All four were crops from room photographs. 03 and
+                         04 in particular were soft to the point of being
+                         unreadable as finishes - the region was small and
+                         out of focus in the source, so no re-crop would
+                         have saved them. That is what the new uploads fix.
 
 UPDATE 2026-09-14 - colours reassigned at Jason's instruction:
     01 Solid Colours   green        (was cream/greige)
