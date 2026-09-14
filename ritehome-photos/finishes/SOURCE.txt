@@ -14,14 +14,17 @@ The ask was to source these from Royale Touche / the open web, but this
 session's network egress is policy-blocked for royaletouche.com,
 royaletouche.net, materialdepot.com, and every general image host tried
 (unsplash, pexels, pinimg, wikimedia) - confirmed via the agent proxy
-status endpoint, not a one-off fetch failure. So the four files below are
-NOT fresh web sourcing:
+status endpoint, not a one-off fetch failure.
 
-    solid-green.jpg       Generated placeholder (PIL gradient + fleck
-                           noise), sage-to-forest green. Not a real board -
-                           swap for an actual green laminate photo
-                           (Royale Touche or otherwise) once one can be
-                           fetched or supplied.
+That turned out not to matter: all four faces are now cropped from
+Ritehome's OWN photographs, which is the "clean fix" this file has
+recommended since 2026-09-10. No supplier renders, no licence risk.
+
+    solid-green-kitchen.jpg  Cropped from the forest-green kitchen already
+                           in the gallery (gallery-kitchen-09.jpg) - the
+                           tall pantry face, with a brass pull at the foot.
+                           This is the green Jason meant by "the green
+                           kitchen".
     matte-white.jpg       Cropped from Ritehome's OWN photo,
                            ritehome-photos/enhanced/04-matte-white.jpg -
                            a real installed matte-white cabinet door.
@@ -84,14 +87,14 @@ Shoot the chip flat, filling the frame, light from one side. Then point
 the matching rule in index.html at the new file (currently, per the
 2026-09-14 update above):
 
-    .swatch.sw-solid{--face:url("ritehome-photos/finishes/solid-green.jpg");...}
+    .swatch.sw-solid{--face:url("ritehome-photos/finishes/solid-green-kitchen.jpg");...}
     .swatch.sw-matte{--face:url("ritehome-photos/finishes/matte-white.jpg");...}
     .swatch.sw-wood {--face:url("ritehome-photos/finishes/wood-walnut-dark.jpg"); ...}
     .swatch.sw-gloss{--face:url("ritehome-photos/finishes/gloss-white.jpg");...}
 
-solid-green.jpg is the one real gap: it's a generated placeholder, not a
-photograph of any board. Replace it first, once a real green sample can
-be photographed or fetched.
+All four are in-situ crops rather than flat sample chips. A chip shot
+flat, filling the frame, lit from one side would beat every one of them -
+that remains the upgrade path.
 
 Nothing else has to change - the finish overlay, the hover rake and the
 board-core edge all sit above the face and work over a photograph as they
