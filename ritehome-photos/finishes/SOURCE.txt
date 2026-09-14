@@ -2,23 +2,54 @@ Finish face scans - sheet 08, Material
 ======================================
 
 The wall was reduced from six samples (2 looks x 3 textures) to FOUR
-categories on 2026-09-10, at Jason's instruction:
+categories on 2026-09-10, at Jason's instruction.
 
-    01 Solid Colours   solid.jpg
-    02 Matte           matte.jpg
-    03 Woodgrain       wood.jpg
-    04 High Gloss      gloss.jpg
+UPDATE 2026-09-14 - colours reassigned at Jason's instruction:
+    01 Solid Colours   green        (was cream/greige)
+    02 Matte           white matte  (was peach)
+    03 Woodgrain       dark walnut  (was pale oak)
+    04 High Gloss      white        (was dark walnut-burl)
 
-In use
-------
+The ask was to source these from Royale Touche / the open web, but this
+session's network egress is policy-blocked for royaletouche.com,
+royaletouche.net, materialdepot.com, and every general image host tried
+(unsplash, pexels, pinimg, wikimedia) - confirmed via the agent proxy
+status endpoint, not a one-off fetch failure.
+
+That turned out not to matter: all four faces are now cropped from
+Ritehome's OWN photographs, which is the "clean fix" this file has
+recommended since 2026-09-10. No supplier renders, no licence risk.
+
+    solid-green-kitchen.jpg  Cropped from the forest-green kitchen already
+                           in the gallery (gallery-kitchen-09.jpg) - the
+                           tall pantry face, with a brass pull at the foot.
+                           This is the green Jason meant by "the green
+                           kitchen".
+    matte-white.jpg       Cropped from Ritehome's OWN photo,
+                           ritehome-photos/enhanced/04-matte-white.jpg -
+                           a real installed matte-white cabinet door.
+                           No licence risk, unlike the Royale Touche crops
+                           below.
+    wood-walnut-dark.jpg  Cropped from a newly-uploaded Drive photo of a
+                           Ritehome walnut-toned wardrobe
+                           (6ca1bd1f0d8b8d7f8df4963b81b34881.jpeg).
+                           Also Ritehome's own material, not a supplier
+                           render.
+    gloss-white.jpg       Cropped from Ritehome's OWN photo,
+                           ritehome-photos/enhanced/06-white-gloss.jpg -
+                           the same white gloss kitchen already used
+                           elsewhere on the site (project 06).
+
+Old assignment (still on disk, no longer wired up)
+---------------------------------------------------
 solid.jpg   Royale Touche "Crystal 1199"        https://royaletouche.com/product/crystal-1199/
-            Flat cream / greige. Stands in for the solid-colour range.
+            Flat cream / greige. Was the solid-colour range.
 matte.jpg   Royale Touche "Crystal Matty+ 1122" https://royaletouche.com/product/crystal-matty-1122/
             Saturated peach, matte surface.
 wood.jpg    Royale Touche "SK 679"              https://royaletouche.com/product/sk-679/
             Pale straight-grain oak. Keeps the .sw-band grain core edge.
 gloss.jpg   Royale Touche "PU 1810"             https://royaletouche.com/product/pu-1810/
-            Dark walnut-burl with metallic fleck. Carries the .sw-gloss
+            Dark walnut-burl with metallic fleck. Carried the .sw-gloss
             raking streak and the stronger hover light.
 
 Still on disk, no longer wired up
@@ -53,12 +84,17 @@ each a --face-pos, so nothing tiles obviously.
 Replacing any of these with Ritehome's own photographs
 ------------------------------------------------------
 Shoot the chip flat, filling the frame, light from one side. Then point
-the matching rule in ritehome-website.html at the new file:
+the matching rule in index.html at the new file (currently, per the
+2026-09-14 update above):
 
-    .swatch.sw-solid{--face:url("ritehome-photos/finishes/solid.jpg");...}
-    .swatch.sw-matte{--face:url("ritehome-photos/finishes/matte.jpg");...}
-    .swatch.sw-wood {--face:url("ritehome-photos/finishes/wood.jpg"); ...}
-    .swatch.sw-gloss{--face:url("ritehome-photos/finishes/gloss.jpg");...}
+    .swatch.sw-solid{--face:url("ritehome-photos/finishes/solid-green-kitchen.jpg");...}
+    .swatch.sw-matte{--face:url("ritehome-photos/finishes/matte-white.jpg");...}
+    .swatch.sw-wood {--face:url("ritehome-photos/finishes/wood-walnut-dark.jpg"); ...}
+    .swatch.sw-gloss{--face:url("ritehome-photos/finishes/gloss-white.jpg");...}
+
+All four are in-situ crops rather than flat sample chips. A chip shot
+flat, filling the frame, lit from one side would beat every one of them -
+that remains the upgrade path.
 
 Nothing else has to change - the finish overlay, the hover rake and the
 board-core edge all sit above the face and work over a photograph as they

@@ -379,9 +379,22 @@ h3{
     align-items:flex-start;
     padding:calc(var(--pad) + 74px) var(--pad) 0;
   }
-  .slide.offset .art svg{height:36vh;}
-  .slide.offset .copy{bottom:clamp(116px,17vh,170px);}
+  .slide.offset .art svg{height:min(28vh,220px);}
+  .slide.offset .copy{bottom:clamp(50px,6vh,90px);}
   .slide.offset .copy.plate{background:transparent;border:0;padding:0;}
+}
+/* a short phone still has to fit a drawing above the copy — give both less
+   room to ask for rather than let them collide */
+@media (max-width:1000px) and (max-height:760px){
+  .slide.offset .art{padding-top:calc(var(--pad) + 50px);}
+  .slide.offset .art svg{height:min(19vh,145px);}
+  .slide.offset .copy{bottom:clamp(24px,4vh,54px);}
+  .slide.offset .copy h2{font-size:clamp(24px,3.4vw,38px);margin-bottom:12px;}
+  .slide.offset .copy .eyebrow{margin-bottom:10px;}
+  .slide.offset .copy .lede{font-size:12.5px;line-height:1.5;margin-bottom:10px;}
+  .slide.offset .copy .note{font-size:10px;line-height:1.45;}
+  .slide.offset .copy .spec-list{margin-top:12px;}
+  .slide.offset .copy .spec-list li{padding:6px 0;}
 }
 
 .slide .draw{stroke-dasharray:var(--len,900);stroke-dashoffset:var(--len,900);}
@@ -455,21 +468,21 @@ h3{
 /* the drawn base — what a sample falls back to if its scan fails to load. The
    finish (matte / high gloss) is one layer up, so it reads the same over a
    scan and over the drawing. */
-.f-solid{background:linear-gradient(168deg,#EDE7DC,#D6CEC0);}
-.f-matte{background:linear-gradient(168deg,#E8A98C,#D98F6C);}
+.f-solid{background:linear-gradient(168deg,#4A664F,#263C29);}
+.f-matte{background:linear-gradient(168deg,#F2F0EA,#DCDAD3);}
 .f-wood{background:
-  repeating-linear-gradient(94deg, rgba(0,0,0,.05) 0 2px, rgba(255,255,255,.035) 2px 5px, rgba(0,0,0,0) 5px 11px),
-  linear-gradient(168deg,#D9BB90,#B68E62);}
-.f-gloss{background:linear-gradient(168deg,#5B3D2D,#331F14);}
+  repeating-linear-gradient(94deg, rgba(0,0,0,.08) 0 2px, rgba(255,255,255,.03) 2px 5px, rgba(0,0,0,0) 5px 11px),
+  linear-gradient(168deg,#6B5A48,#3E3226);}
+.f-gloss{background:linear-gradient(168deg,#F5F4F1,#E2E0DA);}
 
 /* the photographed face — one scan per category, the finish overlay laid on
    top. ritehome-photos/finishes/SOURCE.txt records what each file is and under
    what licence. Swap any of these for a photograph of Ritehome's own sample
    chip and nothing else has to change. */
-.swatch.sw-solid{--face:url("ritehome-photos/finishes/solid.jpg");--face-pos:50% 40%;}
-.swatch.sw-matte{--face:url("ritehome-photos/finishes/matte.jpg");--face-pos:50% 60%;}
-.swatch.sw-wood {--face:url("ritehome-photos/finishes/wood.jpg"); --face-pos:50% 50%;}
-.swatch.sw-gloss{--face:url("ritehome-photos/finishes/gloss.jpg");--face-pos:50% 50%;}
+.swatch.sw-solid{--face:url("ritehome-photos/finishes/solid-green-kitchen.jpg");--face-pos:50% 40%;}
+.swatch.sw-matte{--face:url("ritehome-photos/finishes/matte-white.jpg");--face-pos:50% 50%;}
+.swatch.sw-wood {--face:url("ritehome-photos/finishes/wood-walnut-dark.jpg"); --face-pos:50% 50%;}
+.swatch.sw-gloss{--face:url("ritehome-photos/finishes/gloss-white.jpg");--face-pos:50% 50%;}
 
 /* the finish, laid over whichever base is in play. Solid, matte and woodgrain
    take nothing; high gloss takes the raking streak. */
@@ -516,6 +529,9 @@ h3{
 }
 .pnl-top{fill:var(--panel);}
 .pnl-door{fill:color-mix(in srgb, var(--core) 14%, var(--panel-2));stroke:var(--core);}
+/* the cut edge of the board — same core colour introduced on the Material sheet,
+   the colour you only meet where 18 mm actually shows */
+.pnl-edge{fill:var(--edge-b);stroke:var(--edge-c);}
 .exploded .p-top{transform:translate(0,-58px);}
 .exploded .p-door{transform:translate(-72px,42px);}
 .exploded .p-shelf{transform:translate(0,-16px);}
@@ -968,23 +984,23 @@ body.reading .stagetab,body.reading .hint{display:none;}
   </section>
 
   <!-- ---------- 07 — storage systems begin ---------- -->
-  <section class="slide shot" data-name="Onyx Feature Wall" data-meta="Storage · Feature wall" data-shot="1">
+  <section class="slide shot" data-name="TV Console — Onyx" data-meta="Storage · TV console" data-shot="1">
     <div class="photo">
-      <img src="ritehome-photos/enhanced/07-storage-feature-wall.jpg" alt="Backlit onyx-marble feature wall with a wall-mounted television, ribbed timber pilasters, a floating console and a full-height wardrobe on either side." loading="lazy">
+      <img src="ritehome-photos/enhanced/07-storage-feature-wall.jpg" alt="Backlit onyx-marble TV console wall with a wall-mounted television, ribbed timber pilasters, a floating console cabinet and a full-height wardrobe on either side." loading="lazy">
     </div>
     <div class="copy">
       <p class="eyebrow rise">Project 07</p>
-      <h2 class="rise">Storage that reads<br>as a feature wall.</h2>
+      <h2 class="rise">A TV console drawn<br>as the whole wall.</h2>
       <p class="lede rise">A backlit onyx panel between ribbed timber returns, with a floating
-      console and a full-height wardrobe run either side — drawn as one wall, not a television
-      mounted after the fact.</p>
+      console cabinet under the screen and a full-height wardrobe run either side — the television
+      sits inside the cabinetry, not mounted onto it after the fact.</p>
       <div class="acts rise">
         <button class="togglebtn" type="button" data-doc="detail-07">View project details</button>
       </div>
     </div>
     <div class="shotmeta fadein">
       <span class="sm-k">Project 07</span>
-      <span class="sm-v">Onyx panel · LED edge<br>Wardrobe returns</span>
+      <span class="sm-v">TV console · Onyx panel<br>LED edge · Wardrobe returns</span>
     </div>
   </section>
 
@@ -1073,7 +1089,7 @@ body.reading .stagetab,body.reading .hint{display:none;}
   <!-- ---------- 12 — workspace systems begin ---------- -->
   <section class="slide shot" data-name="Office Workstations" data-meta="Workspace · Corporate fit-out" data-shot="1">
     <div class="photo">
-      <img src="ritehome-photos/enhanced/12-workspace-office.jpg" alt="Open-plan office with a wall of built-in wood shelving, a cubicle-style desk divider and a row of workstations beside an interior glass partition." loading="lazy">
+      <img src="ritehome-photos/enhanced/12-office-workstations.jpg" alt="Open-plan office with a wall of built-in wood shelving, a cubicle-style desk divider and a row of workstations beside an interior glass partition." loading="lazy">
     </div>
     <div class="copy">
       <p class="eyebrow rise">Project 12</p>
@@ -1110,8 +1126,8 @@ body.reading .stagetab,body.reading .hint{display:none;}
     </div>
   </section>
 
-  <!-- ---------- 14 DRAFTING — the method begins ---------- -->
-  <section class="slide offset" data-name="Drafting" data-meta="Sheet 14 · Section">
+  <!-- ---------- 14 DESIGN TEAM — the method begins ---------- -->
+  <section class="slide offset" data-name="Design Team" data-meta="Sheet 14 · Section">
     <div class="art">
       <svg viewBox="0 0 1200 470" role="img" aria-label="Horizontal section through a cabinet carcass showing the 18 mm side panels, back, shelf, edgebanding and a concealed hinge, dimensioned in millimetres.">
         <rect class="hatch draw" x="180" y="120" width="26" height="250" style="--len:552"></rect>
@@ -1141,21 +1157,21 @@ body.reading .stagetab,body.reading .hint{display:none;}
     </div>
     <div class="meta fadein">Sheet 14 / 17<br>Scale 1 : 5<br>Rev &nbsp;—</div>
     <div class="copy plate">
-      <p class="eyebrow rise">14 — Drafting</p>
-      <h2 class="rise">The drawing<br>is the product.</h2>
-      <p class="lede rise">Before material is discussed, your space is measured and drawn as a
-      dimensioned elevation. Every carcass, every door swing, every filler against an out-of-square
-      wall is resolved on the sheet, where a change costs a revision number rather than a panel.</p>
+      <p class="eyebrow rise">14 — Design Team</p>
+      <h2 class="rise">Approved by you.<br>Built as drawn.</h2>
+      <p class="lede rise">Our design team turns your walkthrough into a dimensioned elevation —
+      every cabinet, door swing and finish drawn exactly as you asked. Layout, hardware, colour and
+      counter stay open to change, and nothing is cut until you sign the sheet.</p>
       <ul class="spec-list rise">
         <li><span class="spec-k">Drawn to</span><span class="spec-v">1 mm</span></li>
-        <li><span class="spec-k">Carcass board</span><span class="spec-v">18 mm</span></li>
-        <li><span class="spec-k">Sheet size</span><span class="spec-v">1 219 × 2 438 mm</span></li>
+        <li><span class="spec-k">Customisation</span><span class="spec-v">Full — layout, finish, hardware</span></li>
+        <li><span class="spec-k">Approval</span><span class="spec-v">Required before fabrication</span></li>
         <li><span class="spec-k">Revision control</span><span class="spec-v">Per drawing, numbered</span></li>
       </ul>
     </div>
   </section>
 
-  <!-- ---------- 08 MATERIAL ---------- -->
+  <!-- ---------- 15 MATERIAL ---------- -->
   <section class="slide mat" data-name="Material" data-meta="Sheet 15 · Finishes">
     <div class="swatch-wall">
       <div class="swatch sw-solid" tabindex="0">
@@ -1191,17 +1207,36 @@ body.reading .stagetab,body.reading .hint{display:none;}
     </div>
   </section>
 
-  <!-- ---------- 09 MODULE ---------- -->
+  <!-- ---------- 16 MODULE ---------- -->
   <section class="slide offset" data-name="Module" data-meta="Sheet 16 · Axonometric">
     <div class="art">
-      <svg viewBox="0 0 1000 520" id="modStage" class="exploded" role="img" aria-label="Axonometric drawing of a single cabinet module, shown exploded into its side panels, back, base, shelf, top and door.">
+      <svg viewBox="0 0 1000 520" id="modStage" class="exploded" role="img" aria-label="Axonometric drawing of a single cabinet module, shown exploded into its side panels, back, base, shelf, top and door, each drawn at its true 18 millimetre thickness.">
         <polygon class="pnl p-base"  points="300,420 600,420 750,335 450,335"></polygon>
+        <polygon class="pnl pnl-edge p-base" points="300,420 600,420 600,440 300,440"></polygon>
+
         <polygon class="pnl p-back"  points="450,335 750,335 750,35 450,35"></polygon>
+        <polygon class="pnl pnl-edge p-back" points="450,335 450,35 433,45 433,345"></polygon>
+
         <polygon class="pnl p-left"  points="300,420 300,120 450,35 450,335"></polygon>
+        <polygon class="pnl pnl-edge p-left" points="300,420 300,120 320,120 320,420"></polygon>
+
         <polygon class="pnl p-right" points="600,420 600,120 750,35 750,335"></polygon>
+        <polygon class="pnl pnl-edge p-right" points="600,420 600,120 580,120 580,420"></polygon>
+
         <polygon class="pnl pnl-top p-top" points="300,120 600,120 750,35 450,35"></polygon>
+        <polygon class="pnl pnl-edge p-top" points="300,120 600,120 600,140 300,140"></polygon>
+        <g class="p-top">
+          <line class="ln-d" x1="277" y1="120" x2="293" y2="120"></line>
+          <line class="ln-d" x1="277" y1="140" x2="293" y2="140"></line>
+          <line class="ln-d" x1="285" y1="120" x2="285" y2="140"></line>
+          <text class="dimtxt" x="262" y="134" text-anchor="end">18</text>
+        </g>
+
         <polygon class="pnl p-shelf" points="300,278 600,278 750,193 450,193"></polygon>
+        <polygon class="pnl pnl-edge p-shelf" points="300,278 600,278 600,298 300,298"></polygon>
+
         <polygon class="pnl pnl-door p-door" points="300,420 600,420 600,120 300,120"></polygon>
+        <polygon class="pnl pnl-edge p-door" points="600,420 600,120 617,110 617,410"></polygon>
         <g class="p-door">
           <circle cx="330" cy="160" r="4" fill="none" stroke="var(--core)" stroke-width="1.1"></circle>
           <circle cx="330" cy="380" r="4" fill="none" stroke="var(--core)" stroke-width="1.1"></circle>
@@ -1219,17 +1254,23 @@ body.reading .stagetab,body.reading .hint{display:none;}
     <div class="copy">
       <p class="eyebrow rise">16 — Module</p>
       <h2 class="rise">Modular does not<br>mean less custom.</h2>
-      <p class="lede rise">It means the carcass is built to your dimensions in the shop, on a bench,
-      under controlled conditions — then carried in finished and set. Backs are the same 18 mm board
-      as the carcass, not a 3 mm skin. It costs more, and it is the reason a cabinet still sits
-      square after it has been loaded.</p>
+      <p class="lede rise">It means the carcass is built to your exact dimensions in the shop, on a
+      bench, under controlled conditions, every board still true to 18 mm — then carried in
+      finished and set. Width, height, depth, shelf count and door swing are all drawn to fit
+      before anything is cut.</p>
+      <ul class="spec-list rise">
+        <li><span class="spec-k">Panel thickness</span><span class="spec-v">18 mm, same board throughout</span></li>
+        <li><span class="spec-k">Hinge</span><span class="spec-v">Concealed, soft-close</span></li>
+        <li><span class="spec-k">Shelf</span><span class="spec-v">Adjustable, per module</span></li>
+        <li><span class="spec-k">Built</span><span class="spec-v">In-house shop, delivered finished</span></li>
+      </ul>
       <div class="acts rise">
         <button class="togglebtn" id="explodeBtn" type="button" aria-pressed="true">Assemble module</button>
       </div>
     </div>
   </section>
 
-  <!-- ---------- 10 SYSTEMS ---------- -->
+  <!-- ---------- 17 SYSTEMS ---------- -->
   <section class="slide" data-name="Systems" data-meta="Sheet 17 · Four systems">
     <div class="rangewrap">
       <div style="width:100%">
@@ -1243,31 +1284,31 @@ body.reading .stagetab,body.reading .hint{display:none;}
           <button type="button" class="range-row" data-back-slide="6" aria-label="View storage systems examples">
             <span class="range-n">01</span>
             <span class="range-name">Storage systems</span>
-            <span class="range-desc">Base cabinets · overhead cabinets · built-in storage · utility storage</span>
+            <span class="range-desc">TV consoles · wardrobes &amp; closets · file cabinets · built-in and utility storage</span>
             <span class="range-glyph"><svg width="56" height="34" viewBox="0 0 56 34"><rect class="gl" x="4" y="1" width="48" height="32"></rect><line class="gl" x1="4" y1="11" x2="52" y2="11"></line><line class="gl" x1="28" y1="11" x2="28" y2="33"></line></svg></span>
           </button>
-          <div class="range-more"><button type="button" data-doc="gallery-storage">See all 5 storage photos &rarr;</button></div>
+          <div class="range-more"><button type="button" data-doc="gallery-storage">See all 15 storage photos &rarr;</button></div>
           <button type="button" class="range-row" data-back-slide="0" aria-label="View kitchen systems examples">
             <span class="range-n">02</span>
             <span class="range-name">Kitchen systems</span>
             <span class="range-desc">Kitchen cabinetry · counter systems · work surfaces · storage solutions</span>
             <span class="range-glyph"><svg width="56" height="34" viewBox="0 0 56 34"><rect class="gl" x="1" y="14" width="24" height="19"></rect><rect class="gl" x="31" y="14" width="24" height="19"></rect><rect class="gl" x="1" y="1" width="18" height="9"></rect></svg></span>
           </button>
-          <div class="range-more"><button type="button" data-doc="gallery-kitchen">See all 16 kitchen photos &rarr;</button></div>
+          <div class="range-more"><button type="button" data-doc="gallery-kitchen">See all 35 kitchen photos &rarr;</button></div>
           <button type="button" class="range-row" data-back-slide="9" aria-label="View partition systems examples">
             <span class="range-n">03</span>
             <span class="range-name">Partition systems</span>
             <span class="range-desc">Toilet partitions · office partitions · desk partitions · workspace dividers</span>
             <span class="range-glyph"><svg width="56" height="34" viewBox="0 0 56 34"><line class="gl" x1="2" y1="4" x2="54" y2="4"></line><line class="gl" x1="14" y1="4" x2="14" y2="30"></line><line class="gl" x1="34" y1="4" x2="34" y2="30"></line><line class="gl" x1="2" y1="30" x2="54" y2="30"></line></svg></span>
           </button>
-          <div class="range-more"><button type="button" data-doc="gallery-partition">See all 2 partition photos &rarr;</button></div>
+          <div class="range-more"><button type="button" data-doc="gallery-partition">See all 5 partition photos &rarr;</button></div>
           <button type="button" class="range-row" data-back-slide="11" aria-label="View workspace systems examples">
             <span class="range-n">04</span>
             <span class="range-name">Workspace systems</span>
             <span class="range-desc">Corporate setups · office storage · desk systems · workplace configurations</span>
             <span class="range-glyph"><svg width="56" height="34" viewBox="0 0 56 34"><line class="gl" x1="28" y1="1" x2="28" y2="33"></line><line class="gl" x1="2" y1="12" x2="54" y2="12"></line><line class="gl" x1="2" y1="12" x2="2" y2="33"></line><line class="gl" x1="54" y1="12" x2="54" y2="33"></line></svg></span>
           </button>
-          <div class="range-more"><button type="button" data-doc="gallery-workspace">See all 2 workspace photos &rarr;</button></div>
+          <div class="range-more"><button type="button" data-doc="gallery-workspace">See all 7 workspace photos &rarr;</button></div>
         </div>
       </div>
     </div>
@@ -1464,7 +1505,7 @@ body.reading .stagetab,body.reading .hint{display:none;}
         <div class="acts" style="margin-top:26px">
           <button class="cta" type="button" data-doc="enquiry">Request a quotation</button>
           <button class="togglebtn" type="button" data-back-slide="0">&larr; Back to the work</button>
-          <button class="togglebtn" type="button" data-doc="gallery-kitchen">See all 16 kitchen photos</button>
+          <button class="togglebtn" type="button" data-doc="gallery-kitchen">See all 35 kitchen photos</button>
         </div>
       </div>
       <div>
@@ -1490,7 +1531,7 @@ body.reading .stagetab,body.reading .hint{display:none;}
         <div class="acts" style="margin-top:26px">
           <button class="cta" type="button" data-doc="enquiry">Request a quotation</button>
           <button class="togglebtn" type="button" data-back-slide="1">&larr; Back to the work</button>
-          <button class="togglebtn" type="button" data-doc="gallery-kitchen">See all 16 kitchen photos</button>
+          <button class="togglebtn" type="button" data-doc="gallery-kitchen">See all 35 kitchen photos</button>
         </div>
       </div>
       <div>
@@ -1515,7 +1556,7 @@ body.reading .stagetab,body.reading .hint{display:none;}
         <div class="acts" style="margin-top:26px">
           <button class="cta" type="button" data-doc="enquiry">Request a quotation</button>
           <button class="togglebtn" type="button" data-back-slide="2">&larr; Back to the work</button>
-          <button class="togglebtn" type="button" data-doc="gallery-kitchen">See all 16 kitchen photos</button>
+          <button class="togglebtn" type="button" data-doc="gallery-kitchen">See all 35 kitchen photos</button>
         </div>
       </div>
       <div>
@@ -1541,7 +1582,7 @@ body.reading .stagetab,body.reading .hint{display:none;}
         <div class="acts" style="margin-top:26px">
           <button class="cta" type="button" data-doc="enquiry">Request a quotation</button>
           <button class="togglebtn" type="button" data-back-slide="3">&larr; Back to the work</button>
-          <button class="togglebtn" type="button" data-doc="gallery-kitchen">See all 16 kitchen photos</button>
+          <button class="togglebtn" type="button" data-doc="gallery-kitchen">See all 35 kitchen photos</button>
         </div>
       </div>
       <div>
@@ -1566,7 +1607,7 @@ body.reading .stagetab,body.reading .hint{display:none;}
         <div class="acts" style="margin-top:26px">
           <button class="cta" type="button" data-doc="enquiry">Request a quotation</button>
           <button class="togglebtn" type="button" data-back-slide="4">&larr; Back to the work</button>
-          <button class="togglebtn" type="button" data-doc="gallery-kitchen">See all 16 kitchen photos</button>
+          <button class="togglebtn" type="button" data-doc="gallery-kitchen">See all 35 kitchen photos</button>
         </div>
       </div>
       <div>
@@ -1592,7 +1633,7 @@ body.reading .stagetab,body.reading .hint{display:none;}
         <div class="acts" style="margin-top:26px">
           <button class="cta" type="button" data-doc="enquiry">Request a quotation</button>
           <button class="togglebtn" type="button" data-back-slide="5">&larr; Back to the work</button>
-          <button class="togglebtn" type="button" data-doc="gallery-kitchen">See all 16 kitchen photos</button>
+          <button class="togglebtn" type="button" data-doc="gallery-kitchen">See all 35 kitchen photos</button>
         </div>
       </div>
       <div>
@@ -1611,21 +1652,22 @@ body.reading .stagetab,body.reading .hint{display:none;}
     <div class="split">
       <div>
         <p class="eyebrow">Storage systems — Project 07</p>
-        <h2>Onyx Feature Wall</h2>
+        <h2>TV Console — Onyx Wall</h2>
         <p class="lede">A backlit onyx panel between ribbed timber returns, with a floating
-        console and a full-height wardrobe run either side — drawn as one wall, not a
-        television mounted after the fact.</p>
+        console cabinet under the screen and a full-height wardrobe run either side — the
+        television sits inside the cabinetry, not mounted onto it after the fact.</p>
         <div class="acts" style="margin-top:26px">
           <button class="cta" type="button" data-doc="enquiry">Request a quotation</button>
           <button class="togglebtn" type="button" data-back-slide="6">&larr; Back to the work</button>
-          <button class="togglebtn" type="button" data-doc="gallery-storage">See all 5 storage photos</button>
+          <button class="togglebtn" type="button" data-doc="gallery-storage">See all 15 storage photos</button>
         </div>
       </div>
       <div>
-        <img src="ritehome-photos/enhanced/07-storage-feature-wall.jpg" alt="Backlit onyx-marble feature wall with a wall-mounted television, ribbed timber pilasters, a floating console and a full-height wardrobe on either side." style="width:100%;display:block;object-fit:cover;max-height:520px;border:1px solid var(--rule-soft)">
+        <img src="ritehome-photos/enhanced/07-storage-feature-wall.jpg" alt="Backlit onyx-marble TV console wall with a wall-mounted television, ribbed timber pilasters, a floating console cabinet and a full-height wardrobe on either side." style="width:100%;display:block;object-fit:cover;max-height:520px;border:1px solid var(--rule-soft)">
         <ul class="spec-list">
           <li><span class="spec-k">Carcass core</span><span class="spec-v">18 mm Marine Plywood, waterproof PVC on wet walls</span></li>
-          <li><span class="spec-k">Door options</span><span class="spec-v">Swing · sliding track · aluminium-framed glass</span></li>
+          <li><span class="spec-k">Screen wall</span><span class="spec-v">Backlit onyx panel, ribbed timber pilasters either side</span></li>
+          <li><span class="spec-k">Console</span><span class="spec-v">Floating, cable routing drawn in before fabrication</span></li>
           <li><span class="spec-k">Hardware</span><span class="spec-v">H&auml;fele soft-close hinges, adjustable shelving</span></li>
         </ul>
       </div>
@@ -1643,7 +1685,7 @@ body.reading .stagetab,body.reading .hint{display:none;}
         <div class="acts" style="margin-top:26px">
           <button class="cta" type="button" data-doc="enquiry">Request a quotation</button>
           <button class="togglebtn" type="button" data-back-slide="7">&larr; Back to the work</button>
-          <button class="togglebtn" type="button" data-doc="gallery-storage">See all 5 storage photos</button>
+          <button class="togglebtn" type="button" data-doc="gallery-storage">See all 15 storage photos</button>
         </div>
       </div>
       <div>
@@ -1667,7 +1709,7 @@ body.reading .stagetab,body.reading .hint{display:none;}
         <div class="acts" style="margin-top:26px">
           <button class="cta" type="button" data-doc="enquiry">Request a quotation</button>
           <button class="togglebtn" type="button" data-back-slide="8">&larr; Back to the work</button>
-          <button class="togglebtn" type="button" data-doc="gallery-storage">See all 5 storage photos</button>
+          <button class="togglebtn" type="button" data-doc="gallery-storage">See all 15 storage photos</button>
         </div>
       </div>
       <div>
@@ -1692,7 +1734,7 @@ body.reading .stagetab,body.reading .hint{display:none;}
         <div class="acts" style="margin-top:26px">
           <button class="cta" type="button" data-doc="enquiry">Request a quotation</button>
           <button class="togglebtn" type="button" data-back-slide="9">&larr; Back to the work</button>
-          <button class="togglebtn" type="button" data-doc="gallery-partition">See all 2 partition photos</button>
+          <button class="togglebtn" type="button" data-doc="gallery-partition">See all 5 partition photos</button>
         </div>
       </div>
       <div>
@@ -1716,7 +1758,7 @@ body.reading .stagetab,body.reading .hint{display:none;}
         <div class="acts" style="margin-top:26px">
           <button class="cta" type="button" data-doc="enquiry">Request a quotation</button>
           <button class="togglebtn" type="button" data-back-slide="10">&larr; Back to the work</button>
-          <button class="togglebtn" type="button" data-doc="gallery-partition">See all 2 partition photos</button>
+          <button class="togglebtn" type="button" data-doc="gallery-partition">See all 5 partition photos</button>
         </div>
       </div>
       <div>
@@ -1740,11 +1782,11 @@ body.reading .stagetab,body.reading .hint{display:none;}
         <div class="acts" style="margin-top:26px">
           <button class="cta" type="button" data-doc="enquiry">Request a quotation</button>
           <button class="togglebtn" type="button" data-back-slide="11">&larr; Back to the work</button>
-          <button class="togglebtn" type="button" data-doc="gallery-workspace">See all 2 workspace photos</button>
+          <button class="togglebtn" type="button" data-doc="gallery-workspace">See all 7 workspace photos</button>
         </div>
       </div>
       <div>
-        <img src="ritehome-photos/enhanced/12-workspace-office.jpg" alt="Open-plan office with a wall of built-in wood shelving, a cubicle-style desk divider and a row of workstations beside an interior glass partition." style="width:100%;display:block;object-fit:cover;max-height:520px;border:1px solid var(--rule-soft)">
+        <img src="ritehome-photos/enhanced/12-office-workstations.jpg" alt="Open-plan office with a wall of built-in wood shelving, a cubicle-style desk divider and a row of workstations beside an interior glass partition." style="width:100%;display:block;object-fit:cover;max-height:520px;border:1px solid var(--rule-soft)">
         <ul class="spec-list">
           <li><span class="spec-k">Panel</span><span class="spec-v">MFC, fabric or glass insert in aluminium frame</span></li>
           <li><span class="spec-k">Standard height</span><span class="spec-v">1,200 &ndash; 1,500 mm, seated privacy</span></li>
@@ -1765,7 +1807,7 @@ body.reading .stagetab,body.reading .hint{display:none;}
         <div class="acts" style="margin-top:26px">
           <button class="cta" type="button" data-doc="enquiry">Request a quotation</button>
           <button class="togglebtn" type="button" data-back-slide="12">&larr; Back to the work</button>
-          <button class="togglebtn" type="button" data-doc="gallery-workspace">See all 2 workspace photos</button>
+          <button class="togglebtn" type="button" data-doc="gallery-workspace">See all 7 workspace photos</button>
         </div>
       </div>
       <div>
@@ -1785,7 +1827,7 @@ body.reading .stagetab,body.reading .hint{display:none;}
       <div>
         <p class="eyebrow">Kitchen systems — All work</p>
         <h2>Every kitchen on file.</h2>
-        <p class="lede" style="max-width:64ch">Sixteen kitchens, u-shaped and l-shaped runs, gloss and
+        <p class="lede" style="max-width:64ch">Thirty-five kitchens, u-shaped and l-shaped runs, gloss and
         woodgrain and matte, islands and peninsulas — every finish and layout we have actually built,
         not a rendering of what we could.</p>
       </div>
@@ -1808,6 +1850,25 @@ body.reading .stagetab,body.reading .hint{display:none;}
       <a href="ritehome-photos/gallery/gallery-kitchen-08.jpg" target="_blank" rel="noopener"><img src="ritehome-photos/gallery/gallery-kitchen-08.jpg" alt="L-shaped charcoal kitchen with blue LED-lit open display shelving flanking the upper cabinets." loading="lazy"><span class="cap">Charcoal<br>L-shaped · LED display shelving</span></a>
       <a href="ritehome-photos/gallery/gallery-kitchen-09.jpg" target="_blank" rel="noopener"><img src="ritehome-photos/gallery/gallery-kitchen-09.jpg" alt="Forest green U-shaped kitchen with an island and layered pendant lighting." loading="lazy"><span class="cap">Forest Green<br>U-shaped · Island</span></a>
       <a href="ritehome-photos/gallery/gallery-kitchen-10.jpg" target="_blank" rel="noopener"><img src="ritehome-photos/gallery/gallery-kitchen-10.jpg" alt="Wide view of a forest green U-shaped kitchen with an island, under a vaulted ceiling." loading="lazy"><span class="cap">Forest Green<br>U-shaped · Wide angle</span></a>
+      <a href="ritehome-photos/gallery/gallery-kitchen-11.jpg" target="_blank" rel="noopener"><img src="ritehome-photos/gallery/gallery-kitchen-11.jpg" alt="L-shaped kitchen with grey woodgrain wall units over walnut base cabinets and a mosaic splashback." loading="lazy"><span class="cap">Grey &amp; Walnut<br>L-shaped · Mosaic splashback</span></a>
+      <a href="ritehome-photos/gallery/gallery-kitchen-12.jpg" target="_blank" rel="noopener"><img src="ritehome-photos/gallery/gallery-kitchen-12.jpg" alt="Handleless white kitchen with a fluted timber island front under a dark timber dropped ceiling." loading="lazy"><span class="cap">White &amp; Fluted Timber<br>Island · Dropped timber ceiling</span></a>
+      <a href="ritehome-photos/gallery/gallery-kitchen-13.jpg" target="_blank" rel="noopener"><img src="ritehome-photos/gallery/gallery-kitchen-13.jpg" alt="Single-wall kitchen with white wall units, beige base cabinets and a four-door fridge alongside." loading="lazy"><span class="cap">White &amp; Beige<br>Single-wall run</span></a>
+      <a href="ritehome-photos/gallery/gallery-kitchen-14.jpg" target="_blank" rel="noopener"><img src="ritehome-photos/gallery/gallery-kitchen-14.jpg" alt="Galley kitchen in white gloss and light oak, screened by a full-height fluted timber partition." loading="lazy"><span class="cap">White Gloss &amp; Light Oak<br>Galley · Fluted screen</span></a>
+      <a href="ritehome-photos/gallery/gallery-kitchen-15.jpg" target="_blank" rel="noopener"><img src="ritehome-photos/gallery/gallery-kitchen-15.jpg" alt="White gloss kitchen with black granite worktops and an LED-lit island." loading="lazy"><span class="cap">White Gloss &amp; Granite<br>LED-lit island</span></a>
+      <a href="ritehome-photos/gallery/gallery-kitchen-16.jpg" target="_blank" rel="noopener"><img src="ritehome-photos/gallery/gallery-kitchen-16.jpg" alt="Exhibition kitchen display with walnut base cabinets, a breakfast bar and a wall-mounted screen." loading="lazy"><span class="cap">Showroom Build<br>Walnut · Breakfast bar</span></a>
+      <a href="ritehome-photos/gallery/gallery-kitchen-17.jpg" target="_blank" rel="noopener"><img src="ritehome-photos/gallery/gallery-kitchen-17.jpg" alt="Compact white condominium kitchen with a black worktop and open display shelving." loading="lazy"><span class="cap">Condo Compact<br>White · Black worktop</span></a>
+      <a href="ritehome-photos/gallery/gallery-kitchen-18.jpg" target="_blank" rel="noopener"><img src="ritehome-photos/gallery/gallery-kitchen-18.jpg" alt="All-white L-shaped kitchen with a ribbed tile splashback and a bar-height return." loading="lazy"><span class="cap">All White<br>L-shaped · Ribbed splashback</span></a>
+      <a href="ritehome-photos/gallery/gallery-kitchen-19.jpg" target="_blank" rel="noopener"><img src="ritehome-photos/gallery/gallery-kitchen-19.jpg" alt="Cream kitchen with a navy island and a speckled terrazzo worktop." loading="lazy"><span class="cap">Cream &amp; Navy<br>Terrazzo worktop</span></a>
+      <a href="ritehome-photos/gallery/gallery-kitchen-20.jpg" target="_blank" rel="noopener"><img src="ritehome-photos/gallery/gallery-kitchen-20.jpg" alt="White and oak kitchen with a large black granite waterfall island." loading="lazy"><span class="cap">White &amp; Oak<br>Waterfall island</span></a>
+      <a href="ritehome-photos/gallery/gallery-kitchen-21.jpg" target="_blank" rel="noopener"><img src="ritehome-photos/gallery/gallery-kitchen-21.jpg" alt="Open-plan white and oak kitchen with a slatted breakfast bar under pendant lighting." loading="lazy"><span class="cap">White &amp; Oak<br>Slatted bar · Pendants</span></a>
+      <a href="ritehome-photos/gallery/gallery-kitchen-22.jpg" target="_blank" rel="noopener"><img src="ritehome-photos/gallery/gallery-kitchen-22.jpg" alt="White gloss kitchen under a floating staircase with a live-edge timber counter." loading="lazy"><span class="cap">Under-stair Kitchen<br>Live-edge counter</span></a>
+      <a href="ritehome-photos/gallery/gallery-kitchen-23.jpg" target="_blank" rel="noopener"><img src="ritehome-photos/gallery/gallery-kitchen-23.jpg" alt="Handleless white kitchen with black-framed glass wall units and integrated ovens." loading="lazy"><span class="cap">Handleless White<br>Glass uppers · Integrated ovens</span></a>
+      <a href="ritehome-photos/gallery/gallery-kitchen-24.jpg" target="_blank" rel="noopener"><img src="ritehome-photos/gallery/gallery-kitchen-24.jpg" alt="Single-wall utility kitchen in beech woodgrain with a black granite worktop." loading="lazy"><span class="cap">Beech Woodgrain<br>Single-wall · Granite top</span></a>
+      <a href="ritehome-photos/gallery/gallery-kitchen-25.jpg" target="_blank" rel="noopener"><img src="ritehome-photos/gallery/gallery-kitchen-25.jpg" alt="White L-shaped condominium kitchen with a black marble worktop and a tall appliance column." loading="lazy"><span class="cap">Condo L-shape<br>Black marble worktop</span></a>
+      <a href="ritehome-photos/gallery/gallery-kitchen-26.jpg" target="_blank" rel="noopener"><img src="ritehome-photos/gallery/gallery-kitchen-26.jpg" alt="Light oak wall units over white shaker base cabinets with cup pulls and a glossy tile splashback." loading="lazy"><span class="cap">Oak &amp; Shaker White<br>Cup pulls</span></a>
+      <a href="ritehome-photos/gallery/gallery-kitchen-27.jpg" target="_blank" rel="noopener"><img src="ritehome-photos/gallery/gallery-kitchen-27.jpg" alt="Close view of a speckled terrazzo worktop with an undermount sink and grey base cabinets." loading="lazy"><span class="cap">Terrazzo Worktop<br>Undermount sink</span></a>
+      <a href="ritehome-photos/gallery/gallery-kitchen-28.jpg" target="_blank" rel="noopener"><img src="ritehome-photos/gallery/gallery-kitchen-28.jpg" alt="Handleless mocha kitchen with a black apron sink and an integrated dishwasher." loading="lazy"><span class="cap">Mocha Handleless<br>Apron sink · Integrated dishwasher</span></a>
+      <a href="ritehome-photos/gallery/gallery-kitchen-29.jpg" target="_blank" rel="noopener"><img src="ritehome-photos/gallery/gallery-kitchen-29.jpg" alt="Cream kitchen with a marble-look worktop and a blue LED strip under the wall units." loading="lazy"><span class="cap">Cream &amp; Marble<br>LED under-unit strip</span></a>
     </div>
   </section>
 
@@ -1816,17 +1877,27 @@ body.reading .stagetab,body.reading .hint{display:none;}
       <div>
         <p class="eyebrow">Storage systems — All work</p>
         <h2>Every storage build on file.</h2>
-        <p class="lede" style="max-width:64ch">Wardrobes, feature walls and open shelving — the same
-        carcass specification, closed behind a door or left open on a shelf.</p>
+        <p class="lede" style="max-width:64ch">TV consoles, wardrobes and closets, file cabinets and open
+        shelving — the same carcass specification, closed behind a door or left open on a shelf.</p>
       </div>
       <button class="togglebtn" type="button" data-back-slide="6">&larr; Back to the work</button>
     </div>
     <div class="photogrid">
-      <a href="ritehome-photos/enhanced/07-storage-feature-wall.jpg" target="_blank" rel="noopener"><img src="ritehome-photos/enhanced/07-storage-feature-wall.jpg" alt="Backlit onyx-marble feature wall with a television, a floating console and a wardrobe on either side." loading="lazy"><span class="cap">Onyx Feature Wall<br>Backlit stone · Wardrobe returns</span></a>
+      <a href="ritehome-photos/enhanced/07-storage-feature-wall.jpg" target="_blank" rel="noopener"><img src="ritehome-photos/enhanced/07-storage-feature-wall.jpg" alt="Backlit onyx-marble TV console wall with a television, a floating console cabinet and a wardrobe on either side." loading="lazy"><span class="cap">TV Console — Onyx Wall<br>Backlit stone · Wardrobe returns</span></a>
       <a href="ritehome-photos/enhanced/08-storage-wardrobe.jpg" target="_blank" rel="noopener"><img src="ritehome-photos/enhanced/08-storage-wardrobe.jpg" alt="Full-height woodgrain wardrobe run turning through a corner." loading="lazy"><span class="cap">Walk-in Wardrobe<br>Woodgrain · Corner run</span></a>
       <a href="ritehome-photos/enhanced/09-storage-shelving.jpg" target="_blank" rel="noopener"><img src="ritehome-photos/enhanced/09-storage-shelving.jpg" alt="Open pigeonhole shelving wall in light woodgrain, floor to ceiling." loading="lazy"><span class="cap">Open Storage Wall<br>Pigeonhole shelving</span></a>
       <a href="ritehome-photos/gallery/gallery-storage-01.jpg" target="_blank" rel="noopener"><img src="ritehome-photos/gallery/gallery-storage-01.jpg" alt="Matte white walk-in wardrobe with rose-gold pulls, over a herringbone timber floor." loading="lazy"><span class="cap">Walk-in Wardrobe<br>Matte white · Herringbone floor</span></a>
-      <a href="ritehome-photos/gallery/gallery-storage-02.jpg" target="_blank" rel="noopener"><img src="ritehome-photos/gallery/gallery-storage-02.jpg" alt="Wall-mounted television panel beside an open woodgrain shelving tower lit with LED strips." loading="lazy"><span class="cap">TV Wall + Shelving Tower<br>LED-lit</span></a>
+      <a href="ritehome-photos/gallery/gallery-storage-02.jpg" target="_blank" rel="noopener"><img src="ritehome-photos/gallery/gallery-storage-02.jpg" alt="Wall-mounted television panel beside an open woodgrain shelving tower lit with LED strips." loading="lazy"><span class="cap">TV Console — Shelving Tower<br>LED-lit · Open shelving</span></a>
+      <a href="ritehome-photos/gallery/gallery-storage-03.jpg" target="_blank" rel="noopener"><img src="ritehome-photos/gallery/gallery-storage-03.jpg" alt="Fluted timber TV console wall in a warm red-brown, with white low cabinets and LED strips above and below." loading="lazy"><span class="cap">TV Console — Fluted Timber<br>Low cabinets · LED cove</span></a>
+      <a href="ritehome-photos/gallery/gallery-storage-04.jpg" target="_blank" rel="noopener"><img src="ritehome-photos/gallery/gallery-storage-04.jpg" alt="Walk-in wardrobe in walnut woodgrain with aluminium pull profiles and a built-in dressing desk." loading="lazy"><span class="cap">Walk-in Wardrobe<br>Walnut · Dressing desk</span></a>
+      <a href="ritehome-photos/gallery/gallery-storage-05.jpg" target="_blank" rel="noopener"><img src="ritehome-photos/gallery/gallery-storage-05.jpg" alt="Open white walk-in closet with hanging rails, adjustable shelves and a bank of drawers." loading="lazy"><span class="cap">Walk-in Closet<br>White · Open rails &amp; drawers</span></a>
+      <a href="ritehome-photos/gallery/gallery-storage-06.jpg" target="_blank" rel="noopener"><img src="ritehome-photos/gallery/gallery-storage-06.jpg" alt="Light oak wardrobe run beside a dressing table with an LED-backlit mirror panel." loading="lazy"><span class="cap">Wardrobe &amp; Vanity<br>Light oak · Backlit mirror</span></a>
+      <a href="ritehome-photos/gallery/gallery-storage-07.jpg" target="_blank" rel="noopener"><img src="ritehome-photos/gallery/gallery-storage-07.jpg" alt="White wardrobe with overhead lockers beside a mirrored dressing table with drawers." loading="lazy"><span class="cap">Wardrobe &amp; Dresser<br>White · Overhead lockers</span></a>
+      <a href="ritehome-photos/gallery/gallery-storage-08.jpg" target="_blank" rel="noopener"><img src="ritehome-photos/gallery/gallery-storage-08.jpg" alt="Compact walk-in closet in light woodgrain with corner shelving and drawer stacks." loading="lazy"><span class="cap">Walk-in Closet<br>Light woodgrain · Corner shelves</span></a>
+      <a href="ritehome-photos/gallery/gallery-storage-09.jpg" target="_blank" rel="noopener"><img src="ritehome-photos/gallery/gallery-storage-09.jpg" alt="Open pigeonhole shelving unit in light woodgrain next to a two-door wardrobe." loading="lazy"><span class="cap">Shelving &amp; Wardrobe<br>Pigeonhole unit</span></a>
+      <a href="ritehome-photos/gallery/gallery-storage-10.jpg" target="_blank" rel="noopener"><img src="ritehome-photos/gallery/gallery-storage-10.jpg" alt="Grey four-door office credenza cabinet standing against a white wall." loading="lazy"><span class="cap">File Cabinet<br>Grey · Four-door credenza</span></a>
+      <a href="ritehome-photos/gallery/gallery-storage-11.jpg" target="_blank" rel="noopener"><img src="ritehome-photos/gallery/gallery-storage-11.jpg" alt="Stockroom shelving bays in white board on a light steel frame, running wall to wall." loading="lazy"><span class="cap">Stockroom Shelving<br>Steel frame · White board</span></a>
+      <a href="ritehome-photos/gallery/gallery-storage-12.jpg" target="_blank" rel="noopener"><img src="ritehome-photos/gallery/gallery-storage-12.jpg" alt="Built-in white storage wall with long open shelves over a run of pull-out trays." loading="lazy"><span class="cap">Built-in Storage Wall<br>Open shelves · Pull-out trays</span></a>
     </div>
   </section>
 
@@ -1835,14 +1906,17 @@ body.reading .stagetab,body.reading .hint{display:none;}
       <div>
         <p class="eyebrow">Partition systems — All work</p>
         <h2>Every partition build on file.</h2>
-        <p class="lede" style="max-width:64ch">Wet-area cubicles and desk-height dividers, drawn and
-        itemised the same way as a cabinet run.</p>
+        <p class="lede" style="max-width:64ch">Toilet cubicles, washroom vanities and desk-height
+        dividers, drawn and itemised the same way as a cabinet run.</p>
       </div>
       <button class="togglebtn" type="button" data-back-slide="9">&larr; Back to the work</button>
     </div>
     <div class="photogrid">
       <a href="ritehome-photos/enhanced/10-partition-cr.jpg" target="_blank" rel="noopener"><img src="ritehome-photos/enhanced/10-partition-cr.jpg" alt="Toilet cubicle partitions in blue-grey phenolic board on a stainless top rail." loading="lazy"><span class="cap">CR Partition<br>Phenolic cubicles</span></a>
       <a href="ritehome-photos/enhanced/11-partition-reception.jpg" target="_blank" rel="noopener"><img src="ritehome-photos/enhanced/11-partition-reception.jpg" alt="Row of laminate reception desk partitions dividing a service floor into individual windows." loading="lazy"><span class="cap">Reception Partition<br>Desk counters</span></a>
+      <a href="ritehome-photos/gallery/gallery-partition-01.jpg" target="_blank" rel="noopener"><img src="ritehome-photos/gallery/gallery-partition-01.jpg" alt="Toilet cubicle partitions in light walnut laminate with black hardware, set on pedestal feet over tiled floor." loading="lazy"><span class="cap">Toilet Partition<br>Light walnut · Black hardware</span></a>
+      <a href="ritehome-photos/gallery/gallery-partition-02.jpg" target="_blank" rel="noopener"><img src="ritehome-photos/gallery/gallery-partition-02.jpg" alt="Row of toilet cubicles in dark wenge laminate with a continuous head rail and indicator bolts." loading="lazy"><span class="cap">Toilet Partition<br>Dark wenge · Head rail</span></a>
+      <a href="ritehome-photos/gallery/gallery-partition-03.jpg" target="_blank" rel="noopener"><img src="ritehome-photos/gallery/gallery-partition-03.jpg" alt="Washroom vanity counter in solid surface with twin basins, open shelving below and a mirrored splashback." loading="lazy"><span class="cap">Washroom Vanity<br>Twin basins · Open shelving</span></a>
     </div>
   </section>
 
@@ -1857,8 +1931,13 @@ body.reading .stagetab,body.reading .hint{display:none;}
       <button class="togglebtn" type="button" data-back-slide="11">&larr; Back to the work</button>
     </div>
     <div class="photogrid">
-      <a href="ritehome-photos/enhanced/12-workspace-office.jpg" target="_blank" rel="noopener"><img src="ritehome-photos/enhanced/12-workspace-office.jpg" alt="Open-plan office with built-in shelving and a cubicle-style desk divider." loading="lazy"><span class="cap">Office Workstations<br>Cubicle desks</span></a>
+      <a href="ritehome-photos/enhanced/12-office-workstations.jpg" target="_blank" rel="noopener"><img src="ritehome-photos/enhanced/12-office-workstations.jpg" alt="Open-plan office with built-in shelving and a cubicle-style desk divider." loading="lazy"><span class="cap">Office Workstations<br>Cubicle desks</span></a>
       <a href="ritehome-photos/enhanced/13-workspace-corporate-floor.jpg" target="_blank" rel="noopener"><img src="ritehome-photos/enhanced/13-workspace-corporate-floor.jpg" alt="Full floor of modular timber desk cubicles repeated in long rows." loading="lazy"><span class="cap">Corporate Floor<br>Full-floor fit-out</span></a>
+      <a href="ritehome-photos/gallery/gallery-workspace-01.jpg" target="_blank" rel="noopener"><img src="ritehome-photos/gallery/gallery-workspace-01.jpg" alt="Office floor of light oak workstation pods with black frames and glazed upper screens." loading="lazy"><span class="cap">Workstation Pods<br>Light oak · Glazed screens</span></a>
+      <a href="ritehome-photos/gallery/gallery-workspace-02.jpg" target="_blank" rel="noopener"><img src="ritehome-photos/gallery/gallery-workspace-02.jpg" alt="Corner office with oak desk returns and fabric-faced screen dividers along a window wall." loading="lazy"><span class="cap">Desk Returns<br>Oak · Screen dividers</span></a>
+      <a href="ritehome-photos/gallery/gallery-workspace-03.jpg" target="_blank" rel="noopener"><img src="ritehome-photos/gallery/gallery-workspace-03.jpg" alt="Narrow office run with blue and grey cubicle screens, oak desktops and an overhead storage cabinet." loading="lazy"><span class="cap">Cubicle Run<br>Overhead storage</span></a>
+      <a href="ritehome-photos/gallery/gallery-workspace-04.jpg" target="_blank" rel="noopener"><img src="ritehome-photos/gallery/gallery-workspace-04.jpg" alt="Bench desks in beech laminate on black steel frames with clear acrylic divider screens." loading="lazy"><span class="cap">Bench Desks<br>Acrylic dividers</span></a>
+      <a href="ritehome-photos/gallery/gallery-workspace-05.jpg" target="_blank" rel="noopener"><img src="ritehome-photos/gallery/gallery-workspace-05.jpg" alt="Built-in white office desk running the length of a wall with an overhead open shelving box." loading="lazy"><span class="cap">Built-in Office Desk<br>Overhead shelving</span></a>
     </div>
   </section>
 
