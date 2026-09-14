@@ -379,9 +379,22 @@ h3{
     align-items:flex-start;
     padding:calc(var(--pad) + 74px) var(--pad) 0;
   }
-  .slide.offset .art svg{height:36vh;}
-  .slide.offset .copy{bottom:clamp(116px,17vh,170px);}
+  .slide.offset .art svg{height:min(28vh,220px);}
+  .slide.offset .copy{bottom:clamp(50px,6vh,90px);}
   .slide.offset .copy.plate{background:transparent;border:0;padding:0;}
+}
+/* a short phone still has to fit a drawing above the copy — give both less
+   room to ask for rather than let them collide */
+@media (max-width:1000px) and (max-height:760px){
+  .slide.offset .art{padding-top:calc(var(--pad) + 50px);}
+  .slide.offset .art svg{height:min(19vh,145px);}
+  .slide.offset .copy{bottom:clamp(24px,4vh,54px);}
+  .slide.offset .copy h2{font-size:clamp(24px,3.4vw,38px);margin-bottom:12px;}
+  .slide.offset .copy .eyebrow{margin-bottom:10px;}
+  .slide.offset .copy .lede{font-size:12.5px;line-height:1.5;margin-bottom:10px;}
+  .slide.offset .copy .note{font-size:10px;line-height:1.45;}
+  .slide.offset .copy .spec-list{margin-top:12px;}
+  .slide.offset .copy .spec-list li{padding:6px 0;}
 }
 
 .slide .draw{stroke-dasharray:var(--len,900);stroke-dashoffset:var(--len,900);}
@@ -516,6 +529,9 @@ h3{
 }
 .pnl-top{fill:var(--panel);}
 .pnl-door{fill:color-mix(in srgb, var(--core) 14%, var(--panel-2));stroke:var(--core);}
+/* the cut edge of the board — same core colour introduced on the Material sheet,
+   the colour you only meet where 18 mm actually shows */
+.pnl-edge{fill:var(--edge-b);stroke:var(--edge-c);}
 .exploded .p-top{transform:translate(0,-58px);}
 .exploded .p-door{transform:translate(-72px,42px);}
 .exploded .p-shelf{transform:translate(0,-16px);}
@@ -1073,7 +1089,7 @@ body.reading .stagetab,body.reading .hint{display:none;}
   <!-- ---------- 12 — workspace systems begin ---------- -->
   <section class="slide shot" data-name="Office Workstations" data-meta="Workspace · Corporate fit-out" data-shot="1">
     <div class="photo">
-      <img src="ritehome-photos/enhanced/12-workspace-office.jpg" alt="Open-plan office with a wall of built-in wood shelving, a cubicle-style desk divider and a row of workstations beside an interior glass partition." loading="lazy">
+      <img src="ritehome-photos/enhanced/12-office-workstations.jpg" alt="Open-plan office with a wall of built-in wood shelving, a cubicle-style desk divider and a row of workstations beside an interior glass partition." loading="lazy">
     </div>
     <div class="copy">
       <p class="eyebrow rise">Project 12</p>
@@ -1194,14 +1210,33 @@ body.reading .stagetab,body.reading .hint{display:none;}
   <!-- ---------- 16 MODULE ---------- -->
   <section class="slide offset" data-name="Module" data-meta="Sheet 16 · Axonometric">
     <div class="art">
-      <svg viewBox="0 0 1000 520" id="modStage" class="exploded" role="img" aria-label="Axonometric drawing of a single cabinet module, shown exploded into its side panels, back, base, shelf, top and door.">
+      <svg viewBox="0 0 1000 520" id="modStage" class="exploded" role="img" aria-label="Axonometric drawing of a single cabinet module, shown exploded into its side panels, back, base, shelf, top and door, each drawn at its true 18 millimetre thickness.">
         <polygon class="pnl p-base"  points="300,420 600,420 750,335 450,335"></polygon>
+        <polygon class="pnl pnl-edge p-base" points="300,420 600,420 600,440 300,440"></polygon>
+
         <polygon class="pnl p-back"  points="450,335 750,335 750,35 450,35"></polygon>
+        <polygon class="pnl pnl-edge p-back" points="450,335 450,35 433,45 433,345"></polygon>
+
         <polygon class="pnl p-left"  points="300,420 300,120 450,35 450,335"></polygon>
+        <polygon class="pnl pnl-edge p-left" points="300,420 300,120 320,120 320,420"></polygon>
+
         <polygon class="pnl p-right" points="600,420 600,120 750,35 750,335"></polygon>
+        <polygon class="pnl pnl-edge p-right" points="600,420 600,120 580,120 580,420"></polygon>
+
         <polygon class="pnl pnl-top p-top" points="300,120 600,120 750,35 450,35"></polygon>
+        <polygon class="pnl pnl-edge p-top" points="300,120 600,120 600,140 300,140"></polygon>
+        <g class="p-top">
+          <line class="ln-d" x1="277" y1="120" x2="293" y2="120"></line>
+          <line class="ln-d" x1="277" y1="140" x2="293" y2="140"></line>
+          <line class="ln-d" x1="285" y1="120" x2="285" y2="140"></line>
+          <text class="dimtxt" x="262" y="134" text-anchor="end">18</text>
+        </g>
+
         <polygon class="pnl p-shelf" points="300,278 600,278 750,193 450,193"></polygon>
+        <polygon class="pnl pnl-edge p-shelf" points="300,278 600,278 600,298 300,298"></polygon>
+
         <polygon class="pnl pnl-door p-door" points="300,420 600,420 600,120 300,120"></polygon>
+        <polygon class="pnl pnl-edge p-door" points="600,420 600,120 617,110 617,410"></polygon>
         <g class="p-door">
           <circle cx="330" cy="160" r="4" fill="none" stroke="var(--core)" stroke-width="1.1"></circle>
           <circle cx="330" cy="380" r="4" fill="none" stroke="var(--core)" stroke-width="1.1"></circle>
@@ -1220,12 +1255,9 @@ body.reading .stagetab,body.reading .hint{display:none;}
       <p class="eyebrow rise">16 — Module</p>
       <h2 class="rise">Modular does not<br>mean less custom.</h2>
       <p class="lede rise">It means the carcass is built to your exact dimensions in the shop, on a
-      bench, under controlled conditions — then carried in finished and set. Backs are the same
-      18 mm board as the carcass, not a 3 mm skin. It costs more, and it is the reason a cabinet
-      still sits square after it has been loaded.</p>
-      <p class="note rise">Every dimension on this module is set to your room, not the other way
-      round — width, height, depth, shelf count and door swing are all drawn to fit before anything
-      is cut.</p>
+      bench, under controlled conditions, every board still true to 18 mm — then carried in
+      finished and set. Width, height, depth, shelf count and door swing are all drawn to fit
+      before anything is cut.</p>
       <ul class="spec-list rise">
         <li><span class="spec-k">Panel thickness</span><span class="spec-v">18 mm, same board throughout</span></li>
         <li><span class="spec-k">Hinge</span><span class="spec-v">Concealed, soft-close</span></li>
@@ -1753,7 +1785,7 @@ body.reading .stagetab,body.reading .hint{display:none;}
         </div>
       </div>
       <div>
-        <img src="ritehome-photos/enhanced/12-workspace-office.jpg" alt="Open-plan office with a wall of built-in wood shelving, a cubicle-style desk divider and a row of workstations beside an interior glass partition." style="width:100%;display:block;object-fit:cover;max-height:520px;border:1px solid var(--rule-soft)">
+        <img src="ritehome-photos/enhanced/12-office-workstations.jpg" alt="Open-plan office with a wall of built-in wood shelving, a cubicle-style desk divider and a row of workstations beside an interior glass partition." style="width:100%;display:block;object-fit:cover;max-height:520px;border:1px solid var(--rule-soft)">
         <ul class="spec-list">
           <li><span class="spec-k">Panel</span><span class="spec-v">MFC, fabric or glass insert in aluminium frame</span></li>
           <li><span class="spec-k">Standard height</span><span class="spec-v">1,200 &ndash; 1,500 mm, seated privacy</span></li>
@@ -1866,7 +1898,7 @@ body.reading .stagetab,body.reading .hint{display:none;}
       <button class="togglebtn" type="button" data-back-slide="11">&larr; Back to the work</button>
     </div>
     <div class="photogrid">
-      <a href="ritehome-photos/enhanced/12-workspace-office.jpg" target="_blank" rel="noopener"><img src="ritehome-photos/enhanced/12-workspace-office.jpg" alt="Open-plan office with built-in shelving and a cubicle-style desk divider." loading="lazy"><span class="cap">Office Workstations<br>Cubicle desks</span></a>
+      <a href="ritehome-photos/enhanced/12-office-workstations.jpg" target="_blank" rel="noopener"><img src="ritehome-photos/enhanced/12-office-workstations.jpg" alt="Open-plan office with built-in shelving and a cubicle-style desk divider." loading="lazy"><span class="cap">Office Workstations<br>Cubicle desks</span></a>
       <a href="ritehome-photos/enhanced/13-workspace-corporate-floor.jpg" target="_blank" rel="noopener"><img src="ritehome-photos/enhanced/13-workspace-corporate-floor.jpg" alt="Full floor of modular timber desk cubicles repeated in long rows." loading="lazy"><span class="cap">Corporate Floor<br>Full-floor fit-out</span></a>
     </div>
   </section>
