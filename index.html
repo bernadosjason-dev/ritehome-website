@@ -468,19 +468,23 @@ h3{
 /* the drawn base — what a sample falls back to if its scan fails to load. The
    finish (matte / high gloss) is one layer up, so it reads the same over a
    scan and over the drawing. */
-.f-solid{background:linear-gradient(168deg,#4A664F,#263C29);}
-.f-matte{background:linear-gradient(168deg,#F2F0EA,#DCDAD3);}
+.f-solid{background:linear-gradient(168deg,#26452F,#1E3727);}
+.f-matte{background:linear-gradient(168deg,#FEFCF7,#F6F1E6);}
 .f-wood{background:
   repeating-linear-gradient(94deg, rgba(0,0,0,.08) 0 2px, rgba(255,255,255,.03) 2px 5px, rgba(0,0,0,0) 5px 11px),
   linear-gradient(168deg,#6B5A48,#3E3226);}
 .f-gloss{background:linear-gradient(168deg,#F5F4F1,#E2E0DA);}
 
-/* the photographed face — one scan per category, the finish overlay laid on
-   top. ritehome-photos/finishes/SOURCE.txt records what each file is and under
-   what licence. Swap any of these for a photograph of Ritehome's own sample
-   chip and nothing else has to change. */
-.swatch.sw-solid{--face:url("ritehome-photos/finishes/solid-green-kitchen.jpg");--face-pos:50% 40%;}
-.swatch.sw-matte{--face:url("ritehome-photos/finishes/matte-white.jpg");--face-pos:50% 50%;}
+/* 01 Solid and 02 Matte are flat painted chips, so they are colour, not
+   photograph — no --face, the .f-solid / .f-matte base above IS the face.
+   The in-situ crops that used to sit here (solid-green-kitchen.jpg,
+   matte-white.jpg) are still on disk but unwired: a room photo of a green
+   cabinet reads as a room, not a chip.
+
+   03 Woodgrain and 04 High Gloss stay photographed, because grain and
+   reflection cannot be drawn honestly. ritehome-photos/finishes/SOURCE.txt
+   records what each file is and under what licence. Swap either for a
+   photograph of Ritehome's own sample chip and nothing else has to change. */
 .swatch.sw-wood {--face:url("ritehome-photos/finishes/wood-walnut-dark.jpg"); --face-pos:50% 50%;}
 .swatch.sw-gloss{--face:url("ritehome-photos/finishes/gloss-white.jpg");--face-pos:50% 50%;}
 

@@ -4,6 +4,35 @@ Finish face scans - sheet 08, Material
 The wall was reduced from six samples (2 looks x 3 textures) to FOUR
 categories on 2026-09-10, at Jason's instruction.
 
+UPDATE 2026-09-14 (later) - 01 and 02 are now FLAT COLOUR, not photographs.
+
+Jason supplied four faces: a white gloss door, a cream flat, a dark green
+flat, and a dark walnut grain. Two of them are uniform colour, so they are
+now CSS in index.html rather than files on disk - a JPEG of a flat colour
+is a worse copy of a colour:
+
+    01 Solid Colours  #26452F -> #1E3727   (.f-solid)  dark forest green
+    02 Matte          #FEFCF7 -> #F6F1E6   (.f-matte)  warm cream
+
+The --face url was removed for .swatch.sw-solid and .swatch.sw-matte, so
+the .f-solid / .f-matte base IS the face now. solid-green-kitchen.jpg and
+matte-white.jpg stay on disk, unwired.
+
+STILL OUTSTANDING - 03 and 04 are the OLD in-situ crops.
+The white gloss door and the dark walnut grain Jason sent were attached to
+the chat as images only; they never reached this container's filesystem, so
+they could not be committed. Both are photographs and cannot be reproduced
+from CSS the way the two flat colours could.
+
+To finish the job, drop the two files in at exactly these paths and the
+page picks them up with no code change:
+
+    ritehome-photos/finishes/gloss-white.jpg       the white gloss door
+    ritehome-photos/finishes/wood-walnut-dark.jpg  the dark walnut grain
+
+Portrait, roughly 760x1183 or larger, JPEG. The page oversizes each face
+(background-size:auto 128%) so exact dimensions do not matter.
+
 UPDATE 2026-09-14 - colours reassigned at Jason's instruction:
     01 Solid Colours   green        (was cream/greige)
     02 Matte           white matte  (was peach)
