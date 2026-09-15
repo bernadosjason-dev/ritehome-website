@@ -181,3 +181,28 @@ Her facts live in `FACTS` in `src/index.js`. If a price, a service, or
 a policy changes on the real site, update it there too — she only
 knows what's written in that prompt, on purpose, so she can't invent
 something that isn't true.
+
+## Troubleshooting: Hannah always gives canned answers, no Telegram alerts ever fire
+
+Symptoms: `curl` against the worker directly works fine, `assets/hannah.js`
+on the live site clearly has the right `HANNAH_ENDPOINT`, but every reply
+in the chat widget matches her offline fallback text word-for-word, and
+`wrangler tail` shows zero incoming requests no matter what you ask.
+
+Cause: **ritehomemodular.com has its own Content-Security-Policy response
+header, set on the Cloudflare zone itself** (Rules → Transform Rules →
+Modify Response Header), not in this repo. Its `connect-src` was `'self'`
+only — meaning the browser silently blocks the page from ever calling out
+to the worker's `*.workers.dev` address, with no error shown to the
+visitor. Confirm this is happening via the browser's own DevTools Console
+(F12) while sending a message — the CSP violation shows up in red there,
+even though nothing about it appears in this codebase.
+
+Fix: in that same Transform Rule, add the worker's origin to `connect-src`:
+```
+connect-src 'self' https://ritehome-hannah.ritehome.workers.dev;
+```
+If the worker is ever renamed or redeployed under a different `wrangler.toml`
+`name` or a different `workers.dev` subdomain, **that CSP rule needs the new
+URL added too** — this repo has no way to know that rule exists, so nothing
+here will remind you.
