@@ -156,6 +156,7 @@
   var root, panel, thread, input, sendBtn, toggleBtn, typingEl;
   var conversation = []; // {role:"user"|"bot", text} — session-only, sent as context to HANNAH_ENDPOINT
   var HISTORY_LIMIT = 10;
+  var hasEscalated = false; // true once this visitor's session has already paged Telegram once
 
   function remember(role, text) {
     conversation.push({ role: role, text: text });
@@ -280,11 +281,17 @@
       fetch(HANNAH_ENDPOINT, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ message: text, history: historyForRequest, page: window.location.href })
+        body: JSON.stringify({
+          message: text,
+          history: historyForRequest,
+          page: window.location.href,
+          already_escalated: hasEscalated // tells the worker whether it already paged Telegram this session
+        })
       }).then(function (r) { return r.json(); })
         .then(function (data) {
           hideTyping();
           sendBtn.disabled = false;
+          if (data && data.needs_human) hasEscalated = true;
           if (data && data.reply) addBotMessage(data.reply);
           else respondLocally(text);
         }).catch(function () {

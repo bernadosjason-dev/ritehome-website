@@ -175,6 +175,13 @@ Two layers, both in `src/index.js`:
    "refund", "manager"). Add or remove phrases as you learn what
    actually needs a human versus what Hannah handles fine.
 
+She only pages you **once per visitor's chat session**, not once per
+message — `assets/hannah.js` remembers locally that a session already
+escalated and tells the worker (`already_escalated` in the request),
+which skips the repeat Telegram send but still answers normally. A
+new page load (visitor closes the tab and comes back, or a different
+visitor entirely) starts a fresh session and can alert again.
+
 ## Updating what Hannah knows
 
 Her facts live in `FACTS` in `src/index.js`. If a price, a service, or

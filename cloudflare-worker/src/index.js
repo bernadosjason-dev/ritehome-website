@@ -126,6 +126,7 @@ export default {
     const message = String(body && body.message ? body.message : "").trim().slice(0, MAX_MESSAGE_LENGTH);
     const history = Array.isArray(body && body.history) ? body.history.slice(-MAX_HISTORY_TURNS) : [];
     const page = String(body && body.page ? body.page : "").slice(0, 300);
+    const alreadyEscalated = !!(body && body.already_escalated);
 
     if (!message) {
       return json({ error: "Empty message" }, 400, headers);
@@ -160,7 +161,11 @@ export default {
       reason = reason || "Message matched a human-escalation phrase";
     }
 
-    if (needsHuman && env.TELEGRAM_BOT_TOKEN && env.TELEGRAM_CHAT_ID) {
+    // Page Telegram once per visitor session, not once per message. hannah.js
+    // tracks whether a prior message in this same chat already escalated and
+    // sends that back as already_escalated -- she still answers every message
+    // normally either way, this only throttles the notification itself.
+    if (needsHuman && !alreadyEscalated && env.TELEGRAM_BOT_TOKEN && env.TELEGRAM_CHAT_ID) {
       ctx.waitUntil(
         notifyTelegram(env, { message, reply, reason, page, backendFailed }).catch(() => {})
       );
