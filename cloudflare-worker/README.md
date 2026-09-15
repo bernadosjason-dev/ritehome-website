@@ -54,15 +54,33 @@ wrangler secret put GEMINI_API_KEY
 ```
 Paste the key when prompted.
 
-By default the worker calls the `gemini-3.1-pro-preview` model. Google
-retires/renames model IDs over time (this default has already been
-updated once, from `gemini-2.5-pro`, after Google stopped serving it
-to new callers) — if Hannah ever starts answering with "I'm having
-trouble reaching my answer service," check the Telegram alert it
-sends for the exact error; a "model ... is no longer available"
-message means the fix is here. To use a specific model instead of
-whatever the default currently is (e.g. a faster/cheaper Flash
-variant):
+The worker doesn't hardcode a single model and hope — Google both
+retires model IDs over time and gives "Pro"-tier models zero free
+quota unless the underlying Cloud project has billing enabled (a
+different thing from a Gemini app subscription; hitting this looks
+like a 429 "quota exceeded ... limit: 0" error). So it tries a short
+list automatically, in order, and uses whichever one actually works
+for your account:
+
+1. `GEMINI_MODEL`, if you've set one — your explicit choice always
+   goes first.
+2. `gemini-3.5-flash-lite`, `gemini-3.6-flash`, `gemini-3.1-flash` —
+   free-tier-friendly fallbacks.
+3. `gemini-3.1-pro-preview` — tried last, since it's the one most
+   likely to need billing enabled to work at all.
+
+It only moves to the next candidate on a 404 (model retired/renamed)
+or 429 (quota exhausted for that model) — any other error (a bad API
+key, a malformed request) fails immediately instead of burning
+through the whole list pointlessly. If every candidate fails, Hannah
+still answers the visitor with her "having trouble reaching my
+answer service" line and pages Telegram with the *real* underlying
+error from whichever model failed last — that error message is the
+fastest way to know what actually broke, without needing to redeploy
+just to see a different failure.
+
+To pin a specific model instead of the automatic list (e.g. once
+you've enabled billing and specifically want Pro-tier quality):
 ```
 wrangler secret put GEMINI_MODEL
 ```

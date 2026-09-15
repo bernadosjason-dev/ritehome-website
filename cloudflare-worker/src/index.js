@@ -231,8 +231,42 @@ function toChatMessages(history, message) {
 }
 
 /* ---------------- Gemini (Google AI Studio) ---------------- */
+/* Google renames and retires model IDs, and "Pro"-tier models often carry
+   zero free quota unless the underlying Cloud project has billing enabled
+   (a different thing from a Gemini app subscription). Rather than hardcode
+   one model and need a redeploy every time Google changes something, try
+   a short list and use whichever one actually works for this account --
+   cheap/high-quota Flash models first, the configured/Pro model last since
+   it may need billing this account doesn't have. */
+function geminiModelCandidates(env) {
+  const candidates = ["gemini-3.5-flash-lite", "gemini-3.6-flash", "gemini-3.1-flash"];
+  if (env.GEMINI_MODEL) candidates.unshift(env.GEMINI_MODEL); // explicit choice tried first
+  candidates.push("gemini-3.1-pro-preview"); // last resort; needs billing for free-tier accounts
+  return [...new Set(candidates)];
+}
+
+function isModelUnavailableError(err) {
+  return /\b(404|429)\b/.test(String(err && err.message));
+}
+
 async function askGemini(env, message, history) {
-  const model = env.GEMINI_MODEL || "gemini-3.1-pro-preview";
+  const candidates = geminiModelCandidates(env);
+  let lastErr;
+  for (const model of candidates) {
+    try {
+      return await callGeminiModel(env, model, message, history);
+    } catch (err) {
+      lastErr = err;
+      // A wrong/retired model name or an exhausted quota for this model —
+      // worth trying the next candidate. Anything else (bad key, malformed
+      // request) means every candidate would fail the same way, so stop.
+      if (!isModelUnavailableError(err)) throw err;
+    }
+  }
+  throw lastErr;
+}
+
+async function callGeminiModel(env, model, message, history) {
   const url =
     "https://generativelanguage.googleapis.com/v1beta/models/" + model +
     ":generateContent?key=" + encodeURIComponent(env.GEMINI_API_KEY);
@@ -267,14 +301,14 @@ async function askGemini(env, message, history) {
     })
   });
   if (!res.ok) {
-    throw new Error("Gemini API error: " + res.status + " " + (await res.text()));
+    throw new Error("Gemini API error (" + model + "): " + res.status + " " + (await res.text()));
   }
   const data = await res.json();
   const part = data && data.candidates && data.candidates[0] &&
     data.candidates[0].content && data.candidates[0].content.parts &&
     data.candidates[0].content.parts[0];
   if (!part || typeof part.text !== "string") {
-    throw new Error("Gemini API returned no text (possibly blocked by safety filters)");
+    throw new Error("Gemini API (" + model + ") returned no text (possibly blocked by safety filters)");
   }
   return part.text;
 }
