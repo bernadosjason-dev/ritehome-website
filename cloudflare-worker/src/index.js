@@ -232,7 +232,7 @@ function toChatMessages(history, message) {
 
 /* ---------------- Gemini (Google AI Studio) ---------------- */
 async function askGemini(env, message, history) {
-  const model = env.GEMINI_MODEL || "gemini-2.5-pro";
+  const model = env.GEMINI_MODEL || "gemini-3.1-pro-preview";
   const url =
     "https://generativelanguage.googleapis.com/v1beta/models/" + model +
     ":generateContent?key=" + encodeURIComponent(env.GEMINI_API_KEY);

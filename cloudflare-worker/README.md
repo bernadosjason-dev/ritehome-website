@@ -54,8 +54,15 @@ wrangler secret put GEMINI_API_KEY
 ```
 Paste the key when prompted.
 
-By default the worker calls the `gemini-2.5-pro` model. To use a
-different one (e.g. the faster/cheaper `gemini-2.5-flash`):
+By default the worker calls the `gemini-3.1-pro-preview` model. Google
+retires/renames model IDs over time (this default has already been
+updated once, from `gemini-2.5-pro`, after Google stopped serving it
+to new callers) — if Hannah ever starts answering with "I'm having
+trouble reaching my answer service," check the Telegram alert it
+sends for the exact error; a "model ... is no longer available"
+message means the fix is here. To use a specific model instead of
+whatever the default currently is (e.g. a faster/cheaper Flash
+variant):
 ```
 wrangler secret put GEMINI_MODEL
 ```
