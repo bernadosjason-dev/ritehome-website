@@ -31,6 +31,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Sora:wght@200;300;400;500;600&family=IBM+Plex+Mono:wght@300;400;500&family=Inter:wght@300;400;500&display=swap">
+<link rel="stylesheet" href="assets/hannah.css">
 
 <style>
 /* ============================================================
@@ -281,6 +282,10 @@ body.on-photo .hint{color:rgba(244,243,241,.5);}
    ============================================================ */
 .stage{position:fixed;inset:0;z-index:10;overflow:hidden;}
 body.reading .stage{display:none;}
+/* Hannah (assets/hannah.js) sits at a plain 16px from the corner by default —
+   fine in the reading view, but the stage view has its own thumbnail strip
+   and scroll hint pinned to that same corner, so lift her clear of it there. */
+body:not(.reading) .hn-root{bottom:calc(var(--pad) + 74px);}
 .track{
   display:flex;height:100%;width:100%;
   transition:transform .95s var(--swing);will-change:transform;
@@ -2291,6 +2296,11 @@ body.reading .stagetab,body.reading .hint{display:none;}
     window.scrollTo(0, 0);
     render();
   }
+  /* exposed so Hannah (assets/hannah.js) can open a reading-view section
+     from a chat answer without reaching into this closure */
+  window.RitehomeApp = window.RitehomeApp || {};
+  window.RitehomeApp.showDoc = showDoc;
+  window.RitehomeApp.showStage = showStage;
   Array.prototype.forEach.call(document.querySelectorAll("[data-doc]"), function(b){
     b.addEventListener("click", function(){ showDoc(b.getAttribute("data-doc")); });
   });
@@ -2408,5 +2418,6 @@ body.reading .stagetab,body.reading .hint{display:none;}
   });
 })();
 </script>
+<script src="assets/hannah.js" defer></script>
 </body>
 </html>

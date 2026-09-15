@@ -1,0 +1,148 @@
+/* ============================================================
+   HANNAH — chat widget styles
+   Deliberately self-contained: same look wherever it's dropped in
+   (the light homepage, the light service pages), so it never needs
+   to know the host page's theme system. Dark panel, one red accent,
+   the site's own three fonts (Sora / Inter / IBM Plex Mono).
+   ============================================================ */
+
+.hn-root{
+  --hn-ink: #0A0A0B;
+  --hn-panel: #17171A;
+  --hn-panel-2: #1F1F23;
+  --hn-chalk: #F4F3F1;
+  --hn-dim: #9A9A9E;
+  --hn-rule: #2B2B30;
+  --hn-core: #D81E24;
+  --hn-core-lift: #A8151A;
+  --hn-user: #2A2A2E;
+
+  position: fixed;
+  right: max(16px, env(safe-area-inset-right, 0px));
+  bottom: max(16px, env(safe-area-inset-bottom, 0px));
+  z-index: 2147483000;
+  font-family: "Inter", "Helvetica Neue", Arial, sans-serif;
+}
+
+.hn-toggle{
+  display: flex; align-items: center; gap: 9px;
+  background: var(--hn-core); color: #fff; border: 0; border-radius: 999px;
+  padding: 12px 18px 12px 12px; cursor: pointer;
+  box-shadow: 0 8px 24px rgba(0,0,0,.28);
+  font-family: "IBM Plex Mono", ui-monospace, monospace;
+  font-size: 12px; letter-spacing: .04em; text-transform: uppercase;
+  transition: background .2s, transform .2s;
+}
+.hn-toggle:hover{ background: var(--hn-core-lift); }
+.hn-toggle:active{ transform: scale(.97); }
+.hn-toggle-icon{
+  width: 26px; height: 26px; border-radius: 50%; background: rgba(255,255,255,.18);
+  display: flex; align-items: center; justify-content: center;
+  font-family: "Sora", sans-serif; font-weight: 600; font-size: 13px; flex-shrink: 0;
+}
+.hn-root.hn-open .hn-toggle{ display: none; }
+
+.hn-panel{
+  position: absolute; right: 0; bottom: 0;
+  width: min(360px, calc(100vw - 32px));
+  height: min(520px, calc(100vh - 100px));
+  background: var(--hn-panel); color: var(--hn-chalk);
+  border-radius: 14px; overflow: hidden;
+  box-shadow: 0 24px 60px rgba(0,0,0,.4);
+  display: flex; flex-direction: column;
+  opacity: 0; transform: translateY(12px) scale(.98);
+  pointer-events: none; transition: opacity .18s ease, transform .18s ease;
+}
+.hn-root.hn-open .hn-panel{
+  opacity: 1; transform: translateY(0) scale(1); pointer-events: auto;
+}
+
+.hn-header{
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 14px 16px; background: var(--hn-panel-2); border-bottom: 1px solid var(--hn-rule);
+  flex-shrink: 0;
+}
+.hn-header-id{ display: flex; align-items: center; gap: 10px; }
+.hn-header-avatar{
+  width: 32px; height: 32px; border-radius: 50%; background: var(--hn-core);
+  display: flex; align-items: center; justify-content: center;
+  font-family: "Sora", sans-serif; font-weight: 600; font-size: 14px; flex-shrink: 0;
+}
+.hn-header-id div{ display: flex; flex-direction: column; line-height: 1.3; }
+.hn-header-name{ font-family: "Sora", sans-serif; font-weight: 600; font-size: 14px; }
+.hn-header-sub{ font-family: "IBM Plex Mono", monospace; font-size: 10px; color: var(--hn-dim); letter-spacing: .03em; }
+.hn-close{
+  background: none; border: 0; color: var(--hn-dim); font-size: 22px; line-height: 1;
+  cursor: pointer; padding: 4px 6px; border-radius: 6px; transition: color .2s, background .2s;
+}
+.hn-close:hover{ color: var(--hn-chalk); background: rgba(255,255,255,.06); }
+
+.hn-thread{
+  flex: 1; overflow-y: auto; padding: 14px 14px 6px;
+  display: flex; flex-direction: column; gap: 10px;
+}
+.hn-row{ display: flex; align-items: flex-end; gap: 8px; max-width: 100%; }
+.hn-row-user{ justify-content: flex-end; }
+.hn-avatar{
+  width: 22px; height: 22px; border-radius: 50%; background: var(--hn-core);
+  display: flex; align-items: center; justify-content: center; flex-shrink: 0;
+  font-family: "Sora", sans-serif; font-weight: 600; font-size: 10.5px;
+}
+.hn-bubble{
+  font-size: 13.5px; line-height: 1.55; padding: 9px 12px; border-radius: 12px;
+  max-width: 78%; word-wrap: break-word;
+}
+.hn-bubble-bot{ background: var(--hn-panel-2); border-bottom-left-radius: 4px; }
+.hn-bubble-user{ background: var(--hn-user); border-bottom-right-radius: 4px; }
+.hn-bubble a{ color: #FF8A80; text-decoration: underline; }
+.hn-bubble b{ color: #fff; }
+
+.hn-chips{ display: flex; flex-wrap: wrap; gap: 6px; padding-left: 30px; margin-top: -2px; }
+.hn-chip{
+  background: transparent; border: 1px solid var(--hn-rule); color: var(--hn-dim);
+  font-size: 11.5px; padding: 6px 10px; border-radius: 999px; cursor: pointer;
+  transition: border-color .2s, color .2s;
+}
+.hn-chip:hover{ border-color: var(--hn-core); color: var(--hn-chalk); }
+
+.hn-typing .hn-bubble, .hn-bubble.hn-typing{ display: flex; gap: 4px; align-items: center; padding: 11px 14px; }
+.hn-bubble.hn-typing span{
+  width: 5px; height: 5px; border-radius: 50%; background: var(--hn-dim);
+  animation: hn-bounce 1.1s infinite ease-in-out;
+}
+.hn-bubble.hn-typing span:nth-child(2){ animation-delay: .15s; }
+.hn-bubble.hn-typing span:nth-child(3){ animation-delay: .3s; }
+@keyframes hn-bounce{ 0%, 60%, 100% { transform: translateY(0); opacity: .5; } 30% { transform: translateY(-3px); opacity: 1; } }
+@media (prefers-reduced-motion: reduce){
+  .hn-bubble.hn-typing span{ animation: none; opacity: .8; }
+  .hn-panel, .hn-toggle{ transition: none; }
+}
+
+.hn-form{
+  display: flex; gap: 8px; padding: 12px; border-top: 1px solid var(--hn-rule);
+  background: var(--hn-panel-2); flex-shrink: 0;
+}
+.hn-input{
+  flex: 1; background: var(--hn-ink); border: 1px solid var(--hn-rule); color: var(--hn-chalk);
+  border-radius: 8px; padding: 9px 11px; font-size: 13.5px; font-family: inherit;
+}
+.hn-input::placeholder{ color: var(--hn-dim); }
+.hn-input:focus{ outline: none; border-color: var(--hn-core); }
+.hn-send{
+  background: var(--hn-core); color: #fff; border: 0; border-radius: 8px; padding: 0 14px;
+  font-family: "IBM Plex Mono", monospace; font-size: 11.5px; letter-spacing: .04em; text-transform: uppercase;
+  cursor: pointer; transition: background .2s, opacity .2s;
+}
+.hn-send:hover{ background: var(--hn-core-lift); }
+.hn-send:disabled{ opacity: .5; cursor: default; }
+
+@media (max-width: 480px){
+  .hn-root{ right: 12px; bottom: 12px; }
+  .hn-toggle-label{ display: none; }
+  .hn-toggle{ padding: 12px; }
+  .hn-panel{
+    width: calc(100vw - 24px);
+    height: calc(100vh - 96px);
+    height: calc(100dvh - 96px);
+  }
+}
