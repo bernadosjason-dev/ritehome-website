@@ -11,7 +11,7 @@
    {message: "...", history: [{role:"user"|"bot", text:"..."}, ...]}
    as JSON and expects {reply: "..."} back. Left empty, she answers
    from KB below instead of failing silently — same fallback pattern
-   as the enquiry form's ENQ_ENDPOINT. A ready-made Cloudflare Worker
+   as the inquiry form's INQ_ENDPOINT. A ready-made Cloudflare Worker
    for HANNAH_ENDPOINT lives in /cloudflare-worker — see its README.
    ============================================================ */
 (function () {
@@ -94,7 +94,7 @@
     { q: "Where is Ritehome located?", kw: ["located", "location", "address", "showroom", "where are you"],
       a: "Our showroom is at " + CONTACT.address + "." },
     { q: "How do I contact Ritehome?", kw: ["contact", "phone", "call", "email", "reach", "number"],
-      a: "Call or text " + CONTACT.phone + ", or email " + CONTACT.email + ". You can also use the enquiry form on this site to request a site visit." },
+      a: "Call or text " + CONTACT.phone + ", or email " + CONTACT.email + ". You can also use the inquiry form on this site to request a site visit." },
     { q: "Which areas do you serve?", kw: ["area", "areas", "serve", "cagayan de oro", "cdo", "mindanao", "misamis"],
       a: "Cagayan de Oro City and the surrounding Misamis Oriental / Northern Mindanao area." }
   ];
@@ -232,19 +232,19 @@
       "so I only know what's on this site. For anything past that, call or text " +
       '<a href="tel:' + CONTACT.tel + '">' + CONTACT.phone + "</a> or email " +
       '<a href="mailto:' + CONTACT.email + '">' + CONTACT.email + "</a>, or " +
-      '<a href="' + enquiryHref() + '" data-hn-enquiry>use the enquiry form</a> to request a site visit.',
+      '<a href="' + inquiryHref() + '" data-hn-inquiry>use the inquiry form</a> to request a site visit.',
       { chips: FALLBACK_CHIPS }
     );
   }
 
-  function enquiryHref() {
+  function inquiryHref() {
     // On a service page this is a real cross-page link — the homepage's own
     // hash-router opens the reading view once that page loads. On the
     // homepage itself the click is intercepted (see the thread listener in
     // buildWidget) and calls window.RitehomeApp.showDoc directly instead,
-    // since a bare "#enquiry" jump does nothing while .doc is display:none.
+    // since a bare "#inquiry" jump does nothing while .doc is display:none.
     var isService = document.body.getAttribute("data-hannah-page") === "service";
-    return isService ? "../index.html#enquiry" : "#enquiry";
+    return isService ? "../index.html#inquiry" : "#inquiry";
   }
 
   function respondLocally(rawQuery) {
@@ -383,16 +383,16 @@
       if (e.key === "Escape" && panelOpen) closePanel();
     });
 
-    // Answers link to the enquiry form, which lives on the homepage. On a
+    // Answers link to the inquiry form, which lives on the homepage. On a
     // service page that's a real navigation. On the homepage itself the
     // section is display:none until the app's own JS reveals it, so a bare
     // hash jump does nothing — call the app directly when it's on this page.
     thread.addEventListener("click", function (e) {
-      var a = e.target.closest && e.target.closest("[data-hn-enquiry]");
+      var a = e.target.closest && e.target.closest("[data-hn-inquiry]");
       if (!a) return;
       if (window.RitehomeApp && typeof window.RitehomeApp.showDoc === "function") {
         e.preventDefault();
-        window.RitehomeApp.showDoc("enquiry");
+        window.RitehomeApp.showDoc("inquiry");
         closePanel();
       }
     });

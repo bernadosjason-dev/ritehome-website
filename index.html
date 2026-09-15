@@ -41,7 +41,7 @@
    the wheel drives sideways, the chrome whispers. Six real
    projects carry the front of the run; four drawing sheets
    behind them carry the method. The substance — studio, terms,
-   enquiry — sits behind the menu as a reading view.
+   inquiry — sits behind the menu as a reading view.
 
    Colour: RED ON BLACK, taken from the Ritehome mark itself.
    Red is never a wash. It marks the active project in the index,
@@ -788,7 +788,7 @@ body.reading .stagetab,body.reading .hint{display:none;}
 .tier p:last-child{font-size:12px;line-height:1.6;color:var(--draft);margin:0;}
 .sub{font-family:var(--f-display);font-weight:400;font-size:17px;letter-spacing:-.012em;margin:44px 0 10px;}
 
-.enq{display:grid;grid-template-columns:minmax(0,.9fr) minmax(0,1.1fr);gap:clamp(28px,5vw,72px);}
+.inq{display:grid;grid-template-columns:minmax(0,.9fr) minmax(0,1.1fr);gap:clamp(28px,5vw,72px);}
 .contactcard{border:1px solid var(--rule-soft);padding:20px;margin-top:30px;}
 .contactcard-h{font-family:var(--f-mono);font-size:10px;letter-spacing:.2em;text-transform:uppercase;color:var(--core);margin-bottom:14px;}
 .cfield{display:flex;justify-content:space-between;gap:16px;padding:9px 0;border-top:1px solid var(--rule-soft);}
@@ -809,11 +809,11 @@ body.reading .stagetab,body.reading .hint{display:none;}
 .field textarea{min-height:96px;resize:vertical;line-height:1.6;}
 .field select option{background:var(--panel);color:var(--chalk);}
 .field input:focus,.field select:focus,.field textarea:focus{border-bottom-color:var(--core);outline:0;}
-.enq-status{
+.inq-status{
   font-family:var(--f-mono);font-size:11.5px;line-height:1.65;color:var(--core);
   border-left:2px solid var(--core);padding:9px 0 9px 13px;margin-top:18px;
 }
-.enq-status:empty{display:none;}
+.inq-status:empty{display:none;}
 
 .footlinks{
   display:flex;flex-wrap:wrap;gap:10px 22px;padding-top:clamp(32px,6vh,64px);
@@ -835,7 +835,7 @@ body.reading .stagetab,body.reading .hint{display:none;}
    RESPONSIVE
    ============================================================ */
 @media (max-width:1000px){
-  .split,.enq,.menu-in{grid-template-columns:1fr;}
+  .split,.inq,.menu-in{grid-template-columns:1fr;}
   .seq,.terms{grid-template-columns:repeat(2,1fr);}
   .tiers{grid-template-columns:1fr;}
   .copy,.copy.plate{max-width:min(52ch,86vw);}
@@ -1038,7 +1038,7 @@ body.reading .stagetab,body.reading .hint{display:none;}
     <span class="bars" aria-hidden="true"></span><span class="lbl">Menu</span>
   </button>
   <div class="topright">
-    <button class="cta" type="button" data-doc="enquiry">Request<span> a quotation</span></button>
+    <button class="cta" type="button" data-doc="inquiry">Request<span> a quotation</span></button>
   </div>
 </header>
 <a class="wordmark" href="#" id="wordmark">
@@ -1076,7 +1076,7 @@ body.reading .stagetab,body.reading .hint{display:none;}
       built off site by our own crew. You approve the drawing and the quantities before a single
       sheet goes on the saw.</p>
       <div class="acts rise">
-        <button class="cta" type="button" data-doc="enquiry">Request a quotation</button>
+        <button class="cta" type="button" data-doc="inquiry">Request a quotation</button>
         <button class="togglebtn" type="button" data-doc="detail-01">View project details</button>
       </div>
     </div>
@@ -1498,7 +1498,7 @@ body.reading .stagetab,body.reading .hint{display:none;}
       <li><button type="button" data-doc="sequence">Process</button></li>
       <li><button type="button" data-doc="engagement">Terms</button></li>
       <li><button type="button" data-doc="faq">FAQ</button></li>
-      <li><button type="button" data-doc="enquiry">Contact</button></li>
+      <li><button type="button" data-doc="inquiry">Contact</button></li>
     </ul>
   </div>
 
@@ -1630,10 +1630,10 @@ body.reading .stagetab,body.reading .hint{display:none;}
     </div>
   </section>
 
-  <section class="docsec" id="enquiry">
-    <div class="enq">
+  <section class="docsec" id="inquiry">
+    <div class="inq">
       <div>
-        <p class="eyebrow">21 — Enquiry</p>
+        <p class="eyebrow">21 — Inquiry</p>
         <h2>Start with the measurement.</h2>
         <p class="lede">Tell us the room and where you are. A site visit is arranged from there, and
         the drawing follows the visit.</p>
@@ -1649,7 +1649,7 @@ body.reading .stagetab,body.reading .hint{display:none;}
         </div>
       </div>
       <div>
-        <form id="enqForm" novalidate>
+        <form id="inqForm" novalidate>
           <div class="form-row">
             <div class="field">
               <label for="f-name">Name</label>
@@ -1686,7 +1686,7 @@ body.reading .stagetab,body.reading .hint{display:none;}
             <input id="f-company" name="company" type="text" tabindex="-1" autocomplete="off">
           </div>
           <button class="cta" type="submit" style="margin-top:6px">Request a site visit</button>
-          <div class="enq-status" id="enqStatus" role="status"></div>
+          <div class="inq-status" id="inqStatus" role="status"></div>
         </form>
       </div>
     </div>
@@ -1741,7 +1741,7 @@ body.reading .stagetab,body.reading .hint{display:none;}
         quartz-topped island and a marble-tiled floor. The darkest kitchen we run, held to the
         same tolerance as the lightest.</p>
         <div class="acts" style="margin-top:26px">
-          <button class="cta" type="button" data-doc="enquiry">Request a quotation</button>
+          <button class="cta" type="button" data-doc="inquiry">Request a quotation</button>
           <button class="togglebtn" type="button" data-back-slide="0">&larr; Back to the work</button>
           <button class="togglebtn" type="button" data-doc="gallery-kitchen">See all 35 kitchen photos</button>
         </div>
@@ -1767,7 +1767,7 @@ body.reading .stagetab,body.reading .hint{display:none;}
         extractor hood and a stepped ceiling detail — delivered finished and levelled, not
         built on site.</p>
         <div class="acts" style="margin-top:26px">
-          <button class="cta" type="button" data-doc="enquiry">Request a quotation</button>
+          <button class="cta" type="button" data-doc="inquiry">Request a quotation</button>
           <button class="togglebtn" type="button" data-back-slide="1">&larr; Back to the work</button>
           <button class="togglebtn" type="button" data-doc="gallery-kitchen">See all 35 kitchen photos</button>
         </div>
@@ -1793,7 +1793,7 @@ body.reading .stagetab,body.reading .hint{display:none;}
         console cabinet under the screen and a full-height wardrobe run either side — the
         television sits inside the cabinetry, not mounted onto it after the fact.</p>
         <div class="acts" style="margin-top:26px">
-          <button class="cta" type="button" data-doc="enquiry">Request a quotation</button>
+          <button class="cta" type="button" data-doc="inquiry">Request a quotation</button>
           <button class="togglebtn" type="button" data-back-slide="2">&larr; Back to the work</button>
           <button class="togglebtn" type="button" data-doc="gallery-storage">See all 15 storage photos</button>
         </div>
@@ -1819,7 +1819,7 @@ body.reading .stagetab,body.reading .hint{display:none;}
         doors meeting without a filler strip because the room was measured before anything
         was cut.</p>
         <div class="acts" style="margin-top:26px">
-          <button class="cta" type="button" data-doc="enquiry">Request a quotation</button>
+          <button class="cta" type="button" data-doc="inquiry">Request a quotation</button>
           <button class="togglebtn" type="button" data-back-slide="3">&larr; Back to the work</button>
           <button class="togglebtn" type="button" data-doc="gallery-storage">See all 15 storage photos</button>
         </div>
@@ -1843,7 +1843,7 @@ body.reading .stagetab,body.reading .hint{display:none;}
         <p class="lede">No doors to hide behind: an open cubby wall holds its line because
         every division was set out on the drawing before the first board went on the saw.</p>
         <div class="acts" style="margin-top:26px">
-          <button class="cta" type="button" data-doc="enquiry">Request a quotation</button>
+          <button class="cta" type="button" data-doc="inquiry">Request a quotation</button>
           <button class="togglebtn" type="button" data-back-slide="4">&larr; Back to the work</button>
           <button class="togglebtn" type="button" data-doc="gallery-storage">See all 15 storage photos</button>
         </div>
@@ -1868,7 +1868,7 @@ body.reading .stagetab,body.reading .hint{display:none;}
         indicator locks — waterproof and fire-retardant, to the same specification at three
         cubicles or thirty.</p>
         <div class="acts" style="margin-top:26px">
-          <button class="cta" type="button" data-doc="enquiry">Request a quotation</button>
+          <button class="cta" type="button" data-doc="inquiry">Request a quotation</button>
           <button class="togglebtn" type="button" data-back-slide="5">&larr; Back to the work</button>
           <button class="togglebtn" type="button" data-doc="gallery-partition">See all 5 partition photos</button>
         </div>
@@ -1892,7 +1892,7 @@ body.reading .stagetab,body.reading .hint{display:none;}
         <p class="lede">Laminate desk partitions dividing a reception floor into individual
         windows, each panel and counter run itemised the same way a kitchen carcass is.</p>
         <div class="acts" style="margin-top:26px">
-          <button class="cta" type="button" data-doc="enquiry">Request a quotation</button>
+          <button class="cta" type="button" data-doc="inquiry">Request a quotation</button>
           <button class="togglebtn" type="button" data-back-slide="6">&larr; Back to the work</button>
           <button class="togglebtn" type="button" data-doc="gallery-partition">See all 5 partition photos</button>
         </div>
@@ -1916,7 +1916,7 @@ body.reading .stagetab,body.reading .hint{display:none;}
         <p class="lede">Shelving, low dividers and a run of desks fitted to one office floor
         — the same drawing-first process, sized for a workplace instead of a home.</p>
         <div class="acts" style="margin-top:26px">
-          <button class="cta" type="button" data-doc="enquiry">Request a quotation</button>
+          <button class="cta" type="button" data-doc="inquiry">Request a quotation</button>
           <button class="togglebtn" type="button" data-back-slide="7">&larr; Back to the work</button>
           <button class="togglebtn" type="button" data-doc="gallery-workspace">See all 7 workspace photos</button>
         </div>
@@ -1941,7 +1941,7 @@ body.reading .stagetab,body.reading .hint{display:none;}
         <p class="lede">The same modular desk-and-divider system, repeated across a full
         floor. What holds one office square holds a hundred stations the same way.</p>
         <div class="acts" style="margin-top:26px">
-          <button class="cta" type="button" data-doc="enquiry">Request a quotation</button>
+          <button class="cta" type="button" data-doc="inquiry">Request a quotation</button>
           <button class="togglebtn" type="button" data-back-slide="8">&larr; Back to the work</button>
           <button class="togglebtn" type="button" data-doc="gallery-workspace">See all 7 workspace photos</button>
         </div>
@@ -2331,7 +2331,7 @@ body.reading .stagetab,body.reading .hint{display:none;}
 
   /* ---------------- deep link: open a reading-view section from the URL ----------------
      Lets the service pages (kitchen-cabinets-cdo/, partitions-cdo/, etc.) link straight
-     into a section here, e.g. "../index.html#enquiry" or "../index.html#gallery-kitchen". */
+     into a section here, e.g. "../index.html#inquiry" or "../index.html#gallery-kitchen". */
   (function(){
     var target = window.location.hash.slice(1);
     if (!target) return;
@@ -2357,16 +2357,16 @@ body.reading .stagetab,body.reading .hint{display:none;}
     });
   });
 
-  /* ---------------- enquiry form ---------------- */
-  var form = document.getElementById("enqForm");
-  var status = document.getElementById("enqStatus");
-  var ENQ_TO = "ritehomemodularsystems@gmail.com";
+  /* ---------------- inquiry form ---------------- */
+  var form = document.getElementById("inqForm");
+  var status = document.getElementById("inqStatus");
+  var INQ_TO = "ritehomemodularsystems@gmail.com";
 
-  /* Paste the Google Apps Script web-app URL here to log enquiries to the
+  /* Paste the Google Apps Script web-app URL here to log inquiries to the
      spreadsheet, deduplicated by name/phone/email. Left empty, the form
      falls back to opening the sender's mail app, so the site is never
      broken mid-setup. Setup: google-apps-script/README.md in this repo. */
-  var ENQ_ENDPOINT = "";
+  var INQ_ENDPOINT = "";
 
   form.addEventListener("submit", function(e){
     e.preventDefault();
@@ -2375,7 +2375,7 @@ body.reading .stagetab,body.reading .hint{display:none;}
     if (val("f-company")){
       /* honeypot tripped: a real visitor never sees or fills this field */
       form.reset();
-      status.textContent = "Thank you — your enquiry is with us. We will be in touch to arrange the site visit.";
+      status.textContent = "Thank you — your inquiry is with us. We will be in touch to arrange the site visit.";
       return;
     }
 
@@ -2395,28 +2395,28 @@ body.reading .stagetab,body.reading .hint{display:none;}
 
     var btn = form.querySelector('button[type="submit"]');
 
-    if (ENQ_ENDPOINT){
+    if (INQ_ENDPOINT){
       if (btn) btn.disabled = true;
       status.textContent = "Sending…";
       /* form-encoded keeps this a simple request, so the browser sends it
          without a preflight the Apps Script endpoint cannot answer */
-      fetch(ENQ_ENDPOINT, {
+      fetch(INQ_ENDPOINT, {
         method: "POST",
         mode: "no-cors",
         body: new URLSearchParams(data)
       }).then(function(){
         form.reset();
         if (btn) btn.disabled = false;
-        status.textContent = "Thank you — your enquiry is with us. We will be in touch to arrange the site visit.";
+        status.textContent = "Thank you — your inquiry is with us. We will be in touch to arrange the site visit.";
       })["catch"](function(){
         if (btn) btn.disabled = false;
-        status.innerHTML = "That did not send. Please email <a href=\"mailto:" + ENQ_TO + "\">" +
-          ENQ_TO + "</a> or call <a href=\"tel:+639177010109\">+63 917 701 0109</a>.";
+        status.innerHTML = "That did not send. Please email <a href=\"mailto:" + INQ_TO + "\">" +
+          INQ_TO + "</a> or call <a href=\"tel:+639177010109\">+63 917 701 0109</a>.";
       });
       return;
     }
 
-    /* no endpoint configured: hand the enquiry to the reader's mail app */
+    /* no endpoint configured: hand the inquiry to the reader's mail app */
     var body = [
       "Name: " + data.name,
       "Phone: " + (data.phone || "—"),
@@ -2428,11 +2428,11 @@ body.reading .stagetab,body.reading .hint{display:none;}
       data.notes || "—"
     ].join(String.fromCharCode(10));
 
-    status.innerHTML = "Opening your mail app with this enquiry ready to send. " +
-      "If nothing happens, email <a href=\"mailto:" + ENQ_TO + "\">" + ENQ_TO +
+    status.innerHTML = "Opening your mail app with this inquiry ready to send. " +
+      "If nothing happens, email <a href=\"mailto:" + INQ_TO + "\">" + INQ_TO +
       "</a> or call <a href=\"tel:+639177010109\">+63 917 701 0109</a>.";
 
-    window.location.href = "mailto:" + ENQ_TO +
+    window.location.href = "mailto:" + INQ_TO +
       "?subject=" + encodeURIComponent("Site visit request — " + data.name) +
       "&body=" + encodeURIComponent(body);
   });

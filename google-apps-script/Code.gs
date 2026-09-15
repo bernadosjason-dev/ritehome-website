@@ -1,7 +1,7 @@
 /**
- * Ritehome enquiry logger — Google Apps Script web app.
+ * Ritehome inquiry logger — Google Apps Script web app.
  *
- * Receives the enquiry form's POST (name, phone, email, line, location,
+ * Receives the inquiry form's POST (name, phone, email, line, location,
  * notes as application/x-www-form-urlencoded) and logs it to the sheet
  * this script is bound to. A submission that matches an existing row on
  * name, phone, or email (any one is enough) updates that row instead of
@@ -118,5 +118,5 @@ function respond(obj) {
 /* Open the deployed web app URL directly in a browser to sanity-check the
    deployment (should show { ok: true, ... }) without touching the sheet. */
 function doGet(e) {
-  return respond({ ok: true, message: "Ritehome enquiry logger is running." });
+  return respond({ ok: true, message: "Ritehome inquiry logger is running." });
 }

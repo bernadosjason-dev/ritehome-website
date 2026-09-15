@@ -1,15 +1,15 @@
-# Enquiry logger (Google Apps Script)
+# Inquiry logger (Google Apps Script)
 
-Logs every submission of the site's enquiry form (`#enquiry` on the
+Logs every submission of the site's inquiry form (`#inquiry` on the
 homepage) to a Google Sheet — name, phone, email, product line, site
 location, notes. A submission that matches an existing row on **name,
 phone, or email** (any one is enough) updates that row instead of adding
-a new one, so the sheet never carries duplicate people. Repeat enquiries
+a new one, so the sheet never carries duplicate people. Repeat inquiries
 still count: the matched row's "Times Inquired" goes up and the new notes
 are appended, dated, under the old ones.
 
 The sheet already exists, headers and all:
-**[Ritehome Website Enquiries](https://docs.google.com/spreadsheets/d/1e_E9_2VbYB0wSu70OwcyDwYmzsPUpisgrb8WrP4ZeZs/edit)**
+**[Ritehome Website Inquiries](https://docs.google.com/spreadsheets/d/1e_E9_2VbYB0wSu70OwcyDwYmzsPUpisgrb8WrP4ZeZs/edit)**
 — it's in the same Google account as this repo's Drive/Gmail connectors.
 All that's left is attaching the script below to it and deploying it as a
 web app.
@@ -26,19 +26,19 @@ then **Extensions → Apps Script**. A new tab opens with a blank
 
 Delete the placeholder `myFunction() {}` and paste in the full contents
 of [`Code.gs`](./Code.gs) from this folder. Save (Ctrl/Cmd+S). Name the
-project something like "Ritehome Enquiry Logger" when prompted.
+project something like "Ritehome Inquiry Logger" when prompted.
 
 ## 3. Deploy as a web app
 
 1. **Deploy → New deployment**.
 2. Click the gear icon next to "Select type" → **Web app**.
-3. Description: anything (e.g. "enquiry logger").
+3. Description: anything (e.g. "inquiry logger").
 4. **Execute as:** Me (your account).
 5. **Who has access:** Anyone.
 6. Click **Deploy**.
 7. Google will ask you to authorize the script (it's unverified because
    it's your own project, not a published one) — click **Authorize
-   access**, pick your account, then **Advanced → Go to Ritehome Enquiry
+   access**, pick your account, then **Advanced → Go to Ritehome Inquiry
    Logger (unsafe) → Allow**. This is expected and safe; it's you
    authorizing your own script to edit your own sheet.
 8. Copy the **Web app URL** shown (ends in `/exec`).
@@ -47,7 +47,7 @@ project something like "Ritehome Enquiry Logger" when prompted.
 
 Open `index.html` at the repo root, find:
 ```js
-var ENQ_ENDPOINT = "";
+var INQ_ENDPOINT = "";
 ```
 Paste the URL from step 3 between the quotes, commit, push. The form now
 posts straight to the sheet — and if the endpoint is ever empty or
@@ -57,8 +57,8 @@ failing silently.
 ## 5. Test it
 
 1. Open the deployed URL directly in a browser — it should show
-   `{"ok":true,"message":"Ritehome enquiry logger is running."}`.
-2. Submit the enquiry form on the live site with a test name/phone/email.
+   `{"ok":true,"message":"Ritehome inquiry logger is running."}`.
+2. Submit the inquiry form on the live site with a test name/phone/email.
    A new row should appear in the sheet within a couple of seconds.
 3. Submit it again with the same email (or phone, or name) but different
    notes. Confirm it updates that same row — "Times Inquired" becomes 2,
@@ -70,7 +70,7 @@ failing silently.
 If you edit `Code.gs` again, use **Deploy → Manage deployments → the
 pencil (Edit) icon → Version: New version → Deploy**. This keeps the same
 `/exec` URL. Using **New deployment** instead issues a *different* URL,
-which means editing `ENQ_ENDPOINT` in `index.html` again — only do that on
+which means editing `INQ_ENDPOINT` in `index.html` again — only do that on
 purpose.
 
 ## Security and spam notes
@@ -86,7 +86,7 @@ purpose.
   is ever exported to CSV and opened in Excel.
 - The site has a Content-Security-Policy rule on its Cloudflare zone
   (separate from this repo — see `../cloudflare-worker/README.md`'s
-  troubleshooting section for where). If enquiries silently stop logging
+  troubleshooting section for where). If inquiries silently stop logging
   after this is wired up, check that CSP's `connect-src` allows
   `https://script.google.com`, the same way it needed to allow the
   Hannah worker's origin.
