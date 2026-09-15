@@ -7,15 +7,17 @@
 
    Wiring a real LLM in later: set HANNAH_ENDPOINT to a serverless
    proxy that holds the API key server-side (never put an API key
-   in this file — it ships to every visitor's browser). Hannah will
-   POST {message, history} as JSON and expects {reply: "..."} back.
-   Left empty, she answers from KB below instead of failing silently
-   — same fallback pattern as the enquiry form's ENQ_ENDPOINT.
+   in this file — it ships to every visitor's browser). Hannah POSTs
+   {message: "...", history: [{role:"user"|"bot", text:"..."}, ...]}
+   as JSON and expects {reply: "..."} back. Left empty, she answers
+   from KB below instead of failing silently — same fallback pattern
+   as the enquiry form's ENQ_ENDPOINT. A ready-made Cloudflare Worker
+   for HANNAH_ENDPOINT lives in /cloudflare-worker — see its README.
    ============================================================ */
 (function () {
   "use strict";
 
-  var HANNAH_ENDPOINT = ""; // e.g. "https://your-worker.example.workers.dev/hannah"
+  var HANNAH_ENDPOINT = ""; // set after deploying /cloudflare-worker, e.g. "https://ritehome-hannah.<you>.workers.dev"
 
   var CONTACT = {
     phone: "+63 917 701 0109",
@@ -152,6 +154,13 @@
   var panelOpen = false;
   var everOpened = false;
   var root, panel, thread, input, sendBtn, toggleBtn, typingEl;
+  var conversation = []; // {role:"user"|"bot", text} — session-only, sent as context to HANNAH_ENDPOINT
+  var HISTORY_LIMIT = 10;
+
+  function remember(role, text) {
+    conversation.push({ role: role, text: text });
+    if (conversation.length > HISTORY_LIMIT) conversation = conversation.slice(-HISTORY_LIMIT);
+  }
 
   function el(tag, cls, html) {
     var e = document.createElement(tag);
@@ -164,6 +173,10 @@
     thread.scrollTop = thread.scrollHeight;
   }
 
+  function stripHtml(html) {
+    return html.replace(/<[^>]+>/g, "").replace(/\s+/g, " ").trim();
+  }
+
   function addBotMessage(html, opts) {
     var row = el("div", "hn-row hn-row-bot");
     var avatar = el("div", "hn-avatar", "H");
@@ -171,6 +184,7 @@
     row.appendChild(avatar);
     row.appendChild(bubble);
     thread.appendChild(row);
+    if (!opts || opts.remember !== false) remember("bot", stripHtml(html));
     if (opts && opts.chips) {
       var chipWrap = el("div", "hn-chips");
       opts.chips.forEach(function (label) {
@@ -190,6 +204,7 @@
     bubble.textContent = text;
     row.appendChild(bubble);
     thread.appendChild(row);
+    remember("user", text);
     scrollToEnd();
   }
 
@@ -255,6 +270,7 @@
   function handleSend(text) {
     text = (text || "").trim();
     if (!text) return;
+    var historyForRequest = conversation.slice(); // before this turn's user message
     addUserMessage(text);
     input.value = "";
     sendBtn.disabled = true;
@@ -264,7 +280,7 @@
       fetch(HANNAH_ENDPOINT, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ message: text })
+        body: JSON.stringify({ message: text, history: historyForRequest })
       }).then(function (r) { return r.json(); })
         .then(function (data) {
           hideTyping();

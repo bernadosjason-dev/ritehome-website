@@ -1,0 +1,15 @@
+name = "ritehome-hannah"
+main = "src/index.js"
+compatibility_date = "2024-11-01"
+
+# Cloudflare Workers AI binding — free tier, no external API key needed.
+# This is the default backend (see src/index.js). Enabled automatically
+# on deploy; no dashboard setup required.
+[ai]
+binding = "AI"
+
+# To use Claude instead of Workers AI, run from this directory:
+#   wrangler secret put ANTHROPIC_API_KEY
+# and optionally:
+#   wrangler secret put ANTHROPIC_MODEL   (defaults to claude-haiku-4-5-20251001)
+# Secrets are never written to this file or to git.
