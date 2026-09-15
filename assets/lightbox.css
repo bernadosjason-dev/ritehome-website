@@ -1,0 +1,96 @@
+/* ============================================================
+   RITEHOME — PHOTO LIGHTBOX
+   Shared skeleton-loading lightbox for project galleries.
+   Included on the homepage and every service page.
+   ============================================================ */
+
+.lb-overlay{
+  position:fixed; inset:0; z-index:9999;
+  display:flex; align-items:center; justify-content:center;
+  background:rgba(8,8,9,.92);
+  opacity:0; visibility:hidden;
+  transition:opacity .22s ease;
+  padding:56px 16px;
+}
+.lb-overlay.is-open{opacity:1; visibility:visible;}
+body.lb-locked{overflow:hidden;}
+
+.lb-stage{
+  position:relative;
+  width:min(92vw,1100px);
+  height:min(76vh,760px);
+  display:flex; align-items:center; justify-content:center;
+  transform:scale(.97);
+  transition:transform .22s ease;
+}
+.lb-overlay.is-open .lb-stage{transform:scale(1);}
+
+.lb-skeleton{
+  position:absolute; inset:0;
+  border-radius:4px;
+  background:linear-gradient(100deg,#1c1c1f 28%,#2f2f33 45%,#1c1c1f 62%);
+  background-size:220% 100%;
+  animation:lb-shimmer 1.3s ease-in-out infinite;
+}
+.lb-skeleton[hidden]{display:none;}
+@keyframes lb-shimmer{
+  0%{background-position:160% 0;}
+  100%{background-position:-60% 0;}
+}
+@media (prefers-reduced-motion:reduce){
+  .lb-skeleton{animation:none;}
+}
+
+.lb-img{
+  position:relative;
+  max-width:100%; max-height:100%;
+  object-fit:contain;
+  opacity:0;
+  transition:opacity .25s ease;
+  border-radius:2px;
+}
+.lb-img.is-loaded{opacity:1;}
+
+.lb-cap{
+  position:absolute; left:0; right:0; bottom:-40px;
+  margin:0; text-align:center;
+  color:#F4F4F2; font:400 13px/1.5 "Inter","Helvetica Neue",Arial,sans-serif;
+  opacity:.85;
+}
+.lb-counter{
+  position:absolute; top:16px; left:50%; transform:translateX(-50%);
+  color:#F4F4F2; font:500 11px/1 "IBM Plex Mono",ui-monospace,monospace;
+  letter-spacing:.08em; opacity:.7;
+}
+
+.lb-close,.lb-nav{
+  position:absolute;
+  display:flex; align-items:center; justify-content:center;
+  width:44px; height:44px;
+  border-radius:50%;
+  border:1px solid rgba(255,255,255,.28);
+  background:rgba(20,20,22,.55);
+  color:#F4F4F2;
+  font-size:20px; line-height:1;
+  cursor:pointer;
+  transition:background .15s ease,border-color .15s ease,transform .15s ease;
+}
+.lb-close:hover,.lb-nav:hover{background:#D81E24; border-color:#D81E24;}
+.lb-close:active,.lb-nav:active{transform:scale(.94);}
+.lb-close:focus-visible,.lb-nav:focus-visible{outline:2px solid #D81E24; outline-offset:2px;}
+
+.lb-close{top:16px; right:16px;}
+.lb-nav{top:50%; transform:translateY(-50%);}
+.lb-nav:active{transform:translateY(-50%) scale(.94);}
+.lb-prev{left:8px;}
+.lb-next{right:8px;}
+.lb-nav[hidden]{display:none;}
+
+@media (max-width:640px){
+  .lb-overlay{padding:44px 8px;}
+  .lb-stage{width:96vw; height:64vh;}
+  .lb-close,.lb-nav{width:38px; height:38px; font-size:17px;}
+  .lb-prev{left:2px;}
+  .lb-next{right:2px;}
+  .lb-cap{bottom:-34px; font-size:12px;}
+}
