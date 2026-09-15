@@ -745,12 +745,13 @@ body.reading .stagetab,body.reading .hint{display:none;}
   color:#F4F3F1;font-family:var(--f-mono);font-size:10px;letter-spacing:.05em;line-height:1.5;
 }
 .range-more{padding:9px 0 20px;text-align:right;}
-.range-more button{
-  background:none;border:0;padding:0;cursor:pointer;
+.range-more button,.range-more a{
+  background:none;border:0;padding:0;cursor:pointer;text-decoration:none;
   font-family:var(--f-mono);font-size:10.5px;letter-spacing:.1em;text-transform:uppercase;
   color:var(--draft);transition:color .3s;
 }
-.range-more button:hover{color:var(--core);}
+.range-more button:hover,.range-more a:hover{color:var(--core);}
+.range-more .sep{color:var(--rule);margin:0 8px;}
 @media (max-width:720px){
   .photogrid{grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:10px;}
 }
@@ -803,9 +804,19 @@ body.reading .stagetab,body.reading .hint{display:none;}
 }
 .enq-status:empty{display:none;}
 
+.footlinks{
+  display:flex;flex-wrap:wrap;gap:10px 22px;padding-top:clamp(32px,6vh,64px);
+  border-top:1px solid var(--rule-soft);
+}
+.footlinks a{
+  font-family:var(--f-mono);font-size:10.5px;letter-spacing:.08em;text-transform:uppercase;
+  color:var(--draft);text-decoration:none;transition:color .3s;
+}
+.footlinks a:hover{color:var(--core);}
+
 .foot{
   display:flex;justify-content:space-between;gap:24px;flex-wrap:wrap;
-  padding:clamp(40px,7vh,80px) 0 var(--pad);border-top:1px solid var(--rule-soft);
+  padding:clamp(24px,5vh,48px) 0 var(--pad);
 }
 .foot-note{font-family:var(--f-mono);font-size:10.5px;line-height:1.9;letter-spacing:.06em;color:var(--draft);}
 
@@ -891,29 +902,64 @@ body.reading .stagetab,body.reading .hint{display:none;}
   ],
   "hasOfferCatalog": {
     "@type": "OfferCatalog",
-    "name": "Cabinetry &amp; Renovation Services",
+    "name": "Cabinetry & Renovation Services",
     "itemListElement": [
       {
         "@type": "Offer",
+        "url": "https://ritehomemodular.com/kitchen-cabinets-cdo/",
         "itemOffered": {
           "@type": "Service",
-          "name": "Kitchen Cabinet Installation in CDO",
+          "name": "Kitchen Cabinets & Kitchen Cabinetry in CDO",
+          "description": "Kitchen cabinet installation, kitchen renovation and modular kitchen cabinetry in Cagayan de Oro.",
           "areaServed": "Cagayan de Oro"
         }
       },
       {
         "@type": "Offer",
+        "url": "https://ritehomemodular.com/kitchen-cabinets-cdo/",
         "itemOffered": {
           "@type": "Service",
-          "name": "Kitchen Renovation in CDO",
+          "name": "Kitchen Renovation & Kitchen Installer in CDO",
           "areaServed": "Cagayan de Oro"
         }
       },
       {
         "@type": "Offer",
+        "url": "https://ritehomemodular.com/storage-wardrobes-cdo/",
         "itemOffered": {
           "@type": "Service",
-          "name": "Custom Cabinetry in CDO",
+          "name": "CDO Cabinets, Storage & Wardrobe Design",
+          "description": "Built-in wardrobes, walk-in closets, TV consoles and storage-wall cabinets in Cagayan de Oro.",
+          "areaServed": "Cagayan de Oro"
+        }
+      },
+      {
+        "@type": "Offer",
+        "url": "https://ritehomemodular.com/partitions-cdo/",
+        "itemOffered": {
+          "@type": "Service",
+          "name": "CDO Partitions",
+          "description": "Toilet, office and reception partitions in Cagayan de Oro.",
+          "areaServed": "Cagayan de Oro"
+        }
+      },
+      {
+        "@type": "Offer",
+        "url": "https://ritehomemodular.com/workstations-cdo/",
+        "itemOffered": {
+          "@type": "Service",
+          "name": "CDO Workstation Design & Workstation Installer",
+          "description": "Office workstation and corporate desk fit-out design and installation in Cagayan de Oro.",
+          "areaServed": "Cagayan de Oro"
+        }
+      },
+      {
+        "@type": "Offer",
+        "url": "https://ritehomemodular.com/interior-design-cdo/",
+        "itemOffered": {
+          "@type": "Service",
+          "name": "Interior Design & Interior Fit-out in CDO",
+          "description": "Cabinetry-led interior fit-out covering kitchens, storage, partitions and workstations in Cagayan de Oro.",
           "areaServed": "Cagayan de Oro"
         }
       }
@@ -1344,28 +1390,28 @@ body.reading .stagetab,body.reading .hint{display:none;}
             <span class="range-desc">TV consoles · wardrobes &amp; closets · file cabinets · built-in and utility storage</span>
             <span class="range-glyph"><svg width="56" height="34" viewBox="0 0 56 34"><rect class="gl" x="4" y="1" width="48" height="32"></rect><line class="gl" x1="4" y1="11" x2="52" y2="11"></line><line class="gl" x1="28" y1="11" x2="28" y2="33"></line></svg></span>
           </button>
-          <div class="range-more"><button type="button" data-doc="gallery-storage">See all 15 storage photos &rarr;</button></div>
+          <div class="range-more"><button type="button" data-doc="gallery-storage">See all 15 storage photos &rarr;</button><span class="sep">·</span><a href="storage-wardrobes-cdo/">Storage &amp; wardrobe service page &rarr;</a></div>
           <button type="button" class="range-row" data-back-slide="0" aria-label="View kitchen systems examples">
             <span class="range-n">02</span>
             <span class="range-name">Kitchen systems</span>
             <span class="range-desc">Kitchen cabinetry · counter systems · work surfaces · storage solutions</span>
             <span class="range-glyph"><svg width="56" height="34" viewBox="0 0 56 34"><rect class="gl" x="1" y="14" width="24" height="19"></rect><rect class="gl" x="31" y="14" width="24" height="19"></rect><rect class="gl" x="1" y="1" width="18" height="9"></rect></svg></span>
           </button>
-          <div class="range-more"><button type="button" data-doc="gallery-kitchen">See all 35 kitchen photos &rarr;</button></div>
+          <div class="range-more"><button type="button" data-doc="gallery-kitchen">See all 35 kitchen photos &rarr;</button><span class="sep">·</span><a href="kitchen-cabinets-cdo/">Kitchen cabinets &amp; renovation service page &rarr;</a></div>
           <button type="button" class="range-row" data-back-slide="5" aria-label="View partition systems examples">
             <span class="range-n">03</span>
             <span class="range-name">Partition systems</span>
             <span class="range-desc">Toilet partitions · office partitions · desk partitions · workspace dividers</span>
             <span class="range-glyph"><svg width="56" height="34" viewBox="0 0 56 34"><line class="gl" x1="2" y1="4" x2="54" y2="4"></line><line class="gl" x1="14" y1="4" x2="14" y2="30"></line><line class="gl" x1="34" y1="4" x2="34" y2="30"></line><line class="gl" x1="2" y1="30" x2="54" y2="30"></line></svg></span>
           </button>
-          <div class="range-more"><button type="button" data-doc="gallery-partition">See all 5 partition photos &rarr;</button></div>
+          <div class="range-more"><button type="button" data-doc="gallery-partition">See all 5 partition photos &rarr;</button><span class="sep">·</span><a href="partitions-cdo/">Partitions service page &rarr;</a></div>
           <button type="button" class="range-row" data-back-slide="7" aria-label="View workspace systems examples">
             <span class="range-n">04</span>
             <span class="range-name">Workspace systems</span>
             <span class="range-desc">Corporate setups · office storage · desk systems · workplace configurations</span>
             <span class="range-glyph"><svg width="56" height="34" viewBox="0 0 56 34"><line class="gl" x1="28" y1="1" x2="28" y2="33"></line><line class="gl" x1="2" y1="12" x2="54" y2="12"></line><line class="gl" x1="2" y1="12" x2="2" y2="33"></line><line class="gl" x1="54" y1="12" x2="54" y2="33"></line></svg></span>
           </button>
-          <div class="range-more"><button type="button" data-doc="gallery-workspace">See all 7 workspace photos &rarr;</button></div>
+          <div class="range-more"><button type="button" data-doc="gallery-workspace">See all 7 workspace photos &rarr;</button><span class="sep">·</span><a href="workstations-cdo/">Workstations &amp; office fit-out service page &rarr;</a></div>
         </div>
       </div>
     </div>
@@ -1931,6 +1977,14 @@ body.reading .stagetab,body.reading .hint{display:none;}
     </div>
   </section>
 
+  <nav class="footlinks" aria-label="Services by system">
+    <a href="interior-design-cdo/">Interior fit-out in CDO</a>
+    <a href="kitchen-cabinets-cdo/">Kitchen cabinets &amp; renovation</a>
+    <a href="storage-wardrobes-cdo/">Storage &amp; wardrobes</a>
+    <a href="partitions-cdo/">Partitions</a>
+    <a href="workstations-cdo/">Workstations &amp; office fit-out</a>
+  </nav>
+
   <footer class="foot">
     <div class="foot-note">
       Ritehome Modular Systems<br>E &amp; J Building, Apovel<br>Cagayan de Oro City · Misamis
@@ -2169,6 +2223,16 @@ body.reading .stagetab,body.reading .hint{display:none;}
   document.getElementById("wordmark").addEventListener("click", function(e){
     e.preventDefault(); closeMenu(); showStage(); go(0);
   });
+
+  /* ---------------- deep link: open a reading-view section from the URL ----------------
+     Lets the service pages (kitchen-cabinets-cdo/, partitions-cdo/, etc.) link straight
+     into a section here, e.g. "../index.html#enquiry" or "../index.html#gallery-kitchen". */
+  (function(){
+    var target = window.location.hash.slice(1);
+    if (!target) return;
+    var el = document.getElementById(target);
+    if (el && el.closest(".doc")) showDoc(target);
+  })();
 
   /* ---------------- module: exploded / assembled ---------------- */
   var modStage = document.getElementById("modStage");
