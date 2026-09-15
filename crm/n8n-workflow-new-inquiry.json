@@ -1,0 +1,333 @@
+{
+  "name": "RiteHome CRM — New Inquiry from Messenger",
+  "nodes": [
+    {
+      "id": "webhook1",
+      "name": "Messenger Webhook",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2.1,
+      "position": [-1120, 300],
+      "parameters": {
+        "httpMethod": ["GET", "POST"],
+        "path": "ritehome-messenger",
+        "responseMode": "responseNode",
+        "options": {}
+      }
+    },
+    {
+      "id": "config1",
+      "name": "Config",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [-880, 300],
+      "notes": "Fill in verifyToken and pageAccessToken before activating. verifyToken is any string you invent — you also type it into the Meta App dashboard. pageAccessToken comes from Meta App > Messenger > Access Tokens for your Page.",
+      "parameters": {
+        "mode": "manual",
+        "assignments": {
+          "assignments": [
+            {
+              "id": "a1",
+              "name": "verifyToken",
+              "type": "string",
+              "value": "REPLACE_WITH_YOUR_VERIFY_TOKEN"
+            },
+            {
+              "id": "a2",
+              "name": "pageAccessToken",
+              "type": "string",
+              "value": "REPLACE_WITH_YOUR_PAGE_ACCESS_TOKEN"
+            },
+            {
+              "id": "a3",
+              "name": "spreadsheetId",
+              "type": "string",
+              "value": "1U6c41O-qspgtQrSWLghRyt6ijfEo-gSIPs8-_e5oE_c"
+            },
+            {
+              "id": "a4",
+              "name": "sheetName",
+              "type": "string",
+              "value": "Sheet1"
+            }
+          ]
+        },
+        "includeOtherFields": true
+      }
+    },
+    {
+      "id": "if_verify",
+      "name": "Is Verification Request?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [-640, 300],
+      "notes": "Meta calls this URL with GET once, when you save the webhook in the App dashboard, to prove you control it. Every real message arrives as POST and goes down the false branch.",
+      "parameters": {
+        "conditions": {
+          "options": { "caseSensitive": true, "leftValue": "", "typeValidation": "loose" },
+          "combinator": "and",
+          "conditions": [
+            {
+              "id": "c1",
+              "leftValue": "={{ $json.query[\"hub.mode\"] }}",
+              "rightValue": "subscribe",
+              "operator": { "type": "string", "operation": "equals" }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "id": "if_token",
+      "name": "Verify Token Matches?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [-400, 180],
+      "parameters": {
+        "conditions": {
+          "options": { "caseSensitive": true, "leftValue": "", "typeValidation": "loose" },
+          "combinator": "and",
+          "conditions": [
+            {
+              "id": "c1",
+              "leftValue": "={{ $json.query[\"hub.verify_token\"] }}",
+              "rightValue": "={{ $json.verifyToken }}",
+              "operator": { "type": "string", "operation": "equals" }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "id": "respond_challenge",
+      "name": "Respond With Challenge",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.1,
+      "position": [-160, 80],
+      "parameters": {
+        "respondWith": "text",
+        "responseBody": "={{ $json.query[\"hub.challenge\"] }}",
+        "options": { "responseCode": 200 }
+      }
+    },
+    {
+      "id": "respond_forbidden",
+      "name": "Respond Forbidden",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.1,
+      "position": [-160, 280],
+      "parameters": {
+        "respondWith": "text",
+        "responseBody": "Verification token mismatch",
+        "options": { "responseCode": 403 }
+      }
+    },
+    {
+      "id": "respond_ack",
+      "name": "Ack Event",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.1,
+      "position": [-400, 460],
+      "notes": "Meta expects a fast 200 on every POST regardless of what we do with the message. Respond first, keep processing after.",
+      "parameters": {
+        "respondWith": "text",
+        "responseBody": "EVENT_RECEIVED",
+        "options": { "responseCode": 200 }
+      }
+    },
+    {
+      "id": "code_extract",
+      "name": "Extract Messages",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [-160, 460],
+      "notes": "One incoming POST can bundle several messaging events. Splits them into one item per event, drops echoes (the page's own sent messages) and anything without real text (delivery/read receipts, postbacks).",
+      "parameters": {
+        "jsCode": "const config = $('Config').first().json;\nconst body = $input.first().json.body || {};\nconst out = [];\n\nfor (const entry of body.entry || []) {\n  for (const evt of entry.messaging || []) {\n    if (!evt.message || evt.message.is_echo) continue;\n    const text = evt.message.text;\n    if (!text) continue;\n    out.push({\n      json: {\n        senderId: evt.sender && evt.sender.id,\n        messageText: text,\n        timestamp: evt.timestamp,\n        pageAccessToken: config.pageAccessToken,\n        spreadsheetId: config.spreadsheetId,\n        sheetName: config.sheetName\n      }\n    });\n  }\n}\n\nreturn out;"
+      }
+    },
+    {
+      "id": "http_profile",
+      "name": "Get Sender Profile",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [80, 460],
+      "notes": "Requires the Page's pages_messaging permission (already needed to receive messages at all). Returns first_name/last_name for the PSID that just messaged.",
+      "parameters": {
+        "method": "GET",
+        "url": "=https://graph.facebook.com/v21.0/{{ $json.senderId }}",
+        "sendQuery": true,
+        "queryParameters": {
+          "parameters": [
+            { "name": "fields", "value": "first_name,last_name" },
+            { "name": "access_token", "value": "={{ $json.pageAccessToken }}" }
+          ]
+        },
+        "options": {}
+      }
+    },
+    {
+      "id": "sheets_lookup",
+      "name": "Check Existing Lead",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.5,
+      "position": [320, 460],
+      "notes": "One record per lead — a returning sender should not spawn a second row. Looks up the Contact column for this PSID.",
+      "parameters": {
+        "resource": "sheet",
+        "operation": "read",
+        "documentId": {
+          "__rl": true,
+          "mode": "id",
+          "value": "={{ $('Extract Messages').item.json.spreadsheetId }}"
+        },
+        "sheetName": {
+          "__rl": true,
+          "mode": "name",
+          "value": "={{ $('Extract Messages').item.json.sheetName }}"
+        },
+        "filtersUI": {
+          "values": [
+            {
+              "lookupColumn": "Contact",
+              "lookupValue": "={{ $('Extract Messages').item.json.senderId }}"
+            }
+          ]
+        },
+        "options": { "returnAllMatches": "returnFirstMatch" }
+      },
+      "credentials": {
+        "googleSheetsOAuth2Api": { "id": "REPLACE_ME", "name": "RiteHome Google Sheets" }
+      }
+    },
+    {
+      "id": "if_exists",
+      "name": "Already a Lead?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [560, 460],
+      "parameters": {
+        "conditions": {
+          "options": { "caseSensitive": true, "leftValue": "", "typeValidation": "loose" },
+          "combinator": "and",
+          "conditions": [
+            {
+              "id": "c1",
+              "leftValue": "={{ $json.Contact }}",
+              "rightValue": "",
+              "operator": { "type": "string", "operation": "notEmpty", "singleValue": true }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "id": "noop_skip",
+      "name": "Skip — Already a Lead",
+      "type": "n8n-nodes-base.noOp",
+      "typeVersion": 1,
+      "position": [800, 380],
+      "notes": "Stage moves are manual (Build 1). A repeat message from an existing lead does not touch their row."
+    },
+    {
+      "id": "set_row",
+      "name": "Build New Row",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [800, 560],
+      "parameters": {
+        "mode": "manual",
+        "assignments": {
+          "assignments": [
+            {
+              "id": "r1",
+              "name": "Client Name",
+              "type": "string",
+              "value": "={{ $('Get Sender Profile').item.json.first_name + ' ' + $('Get Sender Profile').item.json.last_name }}"
+            },
+            {
+              "id": "r2",
+              "name": "Contact",
+              "type": "string",
+              "value": "={{ $('Extract Messages').item.json.senderId }}"
+            },
+            { "id": "r3", "name": "Project Type", "type": "string", "value": "" },
+            { "id": "r4", "name": "Stage", "type": "string", "value": "New Inquiry" },
+            { "id": "r5", "name": "Quote Amount", "type": "string", "value": "" },
+            { "id": "r6", "name": "Sales In-Charge", "type": "string", "value": "" },
+            {
+              "id": "r7",
+              "name": "Date",
+              "type": "string",
+              "value": "={{ $now.format('yyyy-MM-dd') }}"
+            },
+            {
+              "id": "r8",
+              "name": "Notes",
+              "type": "string",
+              "value": "=First Messenger message: \"{{ $('Extract Messages').item.json.messageText }}\""
+            }
+          ]
+        }
+      }
+    },
+    {
+      "id": "sheets_append",
+      "name": "Create Row in Leads Sheet",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.5,
+      "position": [1040, 560],
+      "parameters": {
+        "resource": "sheet",
+        "operation": "append",
+        "documentId": {
+          "__rl": true,
+          "mode": "id",
+          "value": "={{ $('Extract Messages').item.json.spreadsheetId }}"
+        },
+        "sheetName": {
+          "__rl": true,
+          "mode": "name",
+          "value": "={{ $('Extract Messages').item.json.sheetName }}"
+        },
+        "columns": {
+          "mappingMode": "autoMapInputData",
+          "value": {}
+        },
+        "options": {}
+      },
+      "credentials": {
+        "googleSheetsOAuth2Api": { "id": "REPLACE_ME", "name": "RiteHome Google Sheets" }
+      }
+    }
+  ],
+  "connections": {
+    "Messenger Webhook": { "main": [[{ "node": "Config", "type": "main", "index": 0 }]] },
+    "Config": { "main": [[{ "node": "Is Verification Request?", "type": "main", "index": 0 }]] },
+    "Is Verification Request?": {
+      "main": [
+        [{ "node": "Verify Token Matches?", "type": "main", "index": 0 }],
+        [{ "node": "Ack Event", "type": "main", "index": 0 }]
+      ]
+    },
+    "Verify Token Matches?": {
+      "main": [
+        [{ "node": "Respond With Challenge", "type": "main", "index": 0 }],
+        [{ "node": "Respond Forbidden", "type": "main", "index": 0 }]
+      ]
+    },
+    "Ack Event": { "main": [[{ "node": "Extract Messages", "type": "main", "index": 0 }]] },
+    "Extract Messages": { "main": [[{ "node": "Get Sender Profile", "type": "main", "index": 0 }]] },
+    "Get Sender Profile": { "main": [[{ "node": "Check Existing Lead", "type": "main", "index": 0 }]] },
+    "Check Existing Lead": { "main": [[{ "node": "Already a Lead?", "type": "main", "index": 0 }]] },
+    "Already a Lead?": {
+      "main": [
+        [{ "node": "Skip — Already a Lead", "type": "main", "index": 0 }],
+        [{ "node": "Build New Row", "type": "main", "index": 0 }]
+      ]
+    },
+    "Build New Row": { "main": [[{ "node": "Create Row in Leads Sheet", "type": "main", "index": 0 }]] }
+  },
+  "active": false,
+  "settings": { "executionOrder": "v1" },
+  "pinData": {}
+}
