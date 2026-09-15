@@ -2,14 +2,19 @@ name = "ritehome-hannah"
 main = "src/index.js"
 compatibility_date = "2024-11-01"
 
-# Cloudflare Workers AI binding — free tier, no external API key needed.
-# This is the default backend (see src/index.js). Enabled automatically
-# on deploy; no dashboard setup required.
+# Cloudflare Workers AI binding — free fallback backend, used only if
+# neither GEMINI_API_KEY nor ANTHROPIC_API_KEY is set. No setup needed.
 [ai]
 binding = "AI"
 
-# To use Claude instead of Workers AI, run from this directory:
-#   wrangler secret put ANTHROPIC_API_KEY
-# and optionally:
-#   wrangler secret put ANTHROPIC_MODEL   (defaults to claude-haiku-4-5-20251001)
-# Secrets are never written to this file or to git.
+# ---- Secrets (set these, never edited into this file) ----
+# See README.md for where each of these comes from.
+#
+#   wrangler secret put GEMINI_API_KEY        # primary AI backend
+#   wrangler secret put GEMINI_MODEL          # optional, defaults to gemini-2.5-pro
+#
+#   wrangler secret put ANTHROPIC_API_KEY     # optional alternative to Gemini
+#   wrangler secret put ANTHROPIC_MODEL       # optional, defaults to claude-haiku-4-5-20251001
+#
+#   wrangler secret put TELEGRAM_BOT_TOKEN    # for "notify a real person" alerts
+#   wrangler secret put TELEGRAM_CHAT_ID

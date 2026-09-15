@@ -5,14 +5,23 @@
  * main site). Point HANNAH_ENDPOINT at this worker's URL and she
  * calls here instead of her built-in keyword matcher.
  *
- * Two backends, picked automatically:
- *   - No secret set  -> Cloudflare Workers AI (env.AI). Free tier,
- *     no external account, good enough for a FAQ bot. Default.
- *   - ANTHROPIC_API_KEY secret set -> Claude (better answers, small
- *     per-message cost). See ../README.md to switch.
+ * Three backends, picked automatically by which secret is set:
+ *   1. GEMINI_API_KEY set      -> Google Gemini (the default once set)
+ *   2. ANTHROPIC_API_KEY set   -> Claude
+ *   3. neither set             -> Cloudflare Workers AI (free, no key)
  *
- * Never put an API key in this file. Set it with:
- *   wrangler secret put ANTHROPIC_API_KEY
+ * The model is asked to answer AND judge, in one structured response,
+ * whether a real person should follow up — a question outside what
+ * Hannah knows, a complaint, someone explicitly asking for a human,
+ * or (as a hard safety net below) the AI backend itself being down.
+ * When that's true, this worker pings a Telegram chat so a real
+ * person actually sees it, in addition to whatever Hannah told the
+ * visitor. See ../README.md for how to set up Gemini and Telegram.
+ *
+ * Never put an API key or bot token in this file. Set them with:
+ *   wrangler secret put GEMINI_API_KEY
+ *   wrangler secret put TELEGRAM_BOT_TOKEN
+ *   wrangler secret put TELEGRAM_CHAT_ID
  * ============================================================
  */
 
@@ -31,18 +40,25 @@ const FALLBACK_REPLY =
   "I'm having trouble reaching my answer service right now — call or text " +
   "+63 917 701 0109, or email ritehomemodularsystems@gmail.com and the team will help directly.";
 
+/* Phrases that always page a human, whatever the model itself decides —
+   belt and suspenders. A missed complaint costs more than an extra ping. */
+const HUMAN_TRIGGER_PHRASES = [
+  "real person", "a human", "talk to someone", "speak to someone", "live agent",
+  "real agent", "manager", "complaint", "refund", "cancel my", "not happy",
+  "unhappy", "disappointed", "urgent", "emergency", "reklamo", "sira", "problema"
+];
+
 /* Every fact here is real, pulled from the live site (index.html and the
    five service pages). Keep this in sync if those change — Hannah should
    never be given room to invent a number or a service that doesn't exist. */
-const SYSTEM_PROMPT = `You are Hannah, the automated FAQ assistant for Ritehome Modular Systems, a modular cabinetry and interior fit-out company in Cagayan de Oro (CDO), Philippines.
+const FACTS = `You are Hannah, the automated FAQ assistant for Ritehome Modular Systems, a modular cabinetry and interior fit-out company in Cagayan de Oro (CDO), Philippines.
 
 Voice: plain, direct, warm but not chatty. Two to four sentences per answer. No emoji, no exclamation points, no sales pressure.
 
 Ground rules, non-negotiable:
 - You are an automated assistant, not a human. If asked whether you're real, a bot, or an AI, say so plainly and briefly.
 - Only state facts given below. Never invent a price, a timeline, a warranty length, or a service Ritehome doesn't offer.
-- If a question falls outside what you know, say you don't have that answered and point to phone, email, or the site's enquiry form. Do not guess.
-- Never claim to be able to book a site visit, place an order, or check on a specific customer's project — direct those to the real contact channels.
+- Never claim to be able to book a site visit, place an order, or check on a specific customer's project — direct those to the real contact channels or say a team member will follow up.
 - Keep quoted figures exact (₱5,000, 50%, 40%, 10%, 50 km, ₱10,000 per 100 km). Do not round or approximate them.
 
 Mission: "We build kitchens and cabinets that last — sealed, edge-bonded, and termite-treated, so what you invest in today still holds up years from now."
@@ -70,11 +86,26 @@ Commercial terms:
 Contact:
 - Phone/text: +63 917 701 0109
 - Email: ritehomemodularsystems@gmail.com
-- Showroom: E & J Building, Apovel, Cagayan de Oro City, Misamis Oriental
-- For anything you can't answer, or to actually start a project: point to a call/text/email, or the enquiry form on the site.`;
+- Showroom: E & J Building, Apovel, Cagayan de Oro City, Misamis Oriental`;
+
+const RESPONSE_FORMAT = `Respond to the customer's latest message. Decide, on every turn, whether a real
+person from Ritehome should follow up instead of you — set needs_human true when:
+the answer isn't in the facts above and you'd otherwise be guessing or repeating
+"I don't know", the customer explicitly asks for a human/agent/manager, they sound
+upset, frustrated, or are complaining, or they're asking about their own specific
+order/project (which you have no record of). Otherwise set it false.
+
+When needs_human is true, still write a normal, helpful "reply" to the customer —
+acknowledge you're flagging it for the team and that they'll follow up, and give
+the phone number and email as a faster option if they don't want to wait.
+
+Output ONLY a JSON object, no other text, in exactly this shape:
+{"reply": "<your answer to the customer>", "needs_human": true or false, "reason": "<one short phrase for an internal note, empty string if needs_human is false>"}`;
+
+const SYSTEM_PROMPT = FACTS + "\n\n" + RESPONSE_FORMAT;
 
 export default {
-  async fetch(request, env) {
+  async fetch(request, env, ctx) {
     const origin = request.headers.get("Origin") || "";
     const headers = corsHeaders(origin);
 
@@ -94,21 +125,48 @@ export default {
 
     const message = String(body && body.message ? body.message : "").trim().slice(0, MAX_MESSAGE_LENGTH);
     const history = Array.isArray(body && body.history) ? body.history.slice(-MAX_HISTORY_TURNS) : [];
+    const page = String(body && body.page ? body.page : "").slice(0, 300);
 
     if (!message) {
       return json({ error: "Empty message" }, 400, headers);
     }
 
+    let reply = FALLBACK_REPLY;
+    let needsHuman = false;
+    let reason = "";
+    let backendFailed = false;
+
     try {
-      const reply = env.ANTHROPIC_API_KEY
+      const raw = env.GEMINI_API_KEY
+        ? await askGemini(env, message, history)
+        : env.ANTHROPIC_API_KEY
         ? await askAnthropic(env, message, history)
         : await askWorkersAI(env, message, history);
-      return json({ reply: reply || FALLBACK_REPLY }, 200, headers);
+      const parsed = parseModelJSON(raw);
+      reply = parsed.reply || FALLBACK_REPLY;
+      needsHuman = !!parsed.needs_human;
+      reason = parsed.reason || "";
     } catch (err) {
-      // Fail soft: the widget itself also falls back to its local FAQ list
-      // if this endpoint errors, so this is a second, server-side safety net.
-      return json({ reply: FALLBACK_REPLY }, 200, headers);
+      // Fail soft to the visitor (the widget itself also has its own local
+      // fallback if this endpoint errors outright) — but the AI being down
+      // is exactly the kind of thing a real person should know about.
+      backendFailed = true;
+      needsHuman = true;
+      reason = "AI backend error: " + (err && err.message ? err.message : String(err));
     }
+
+    if (!needsHuman && matchesHumanTrigger(message)) {
+      needsHuman = true;
+      reason = reason || "Message matched a human-escalation phrase";
+    }
+
+    if (needsHuman && env.TELEGRAM_BOT_TOKEN && env.TELEGRAM_CHAT_ID) {
+      ctx.waitUntil(
+        notifyTelegram(env, { message, reply, reason, page, backendFailed }).catch(() => {})
+      );
+    }
+
+    return json({ reply, needs_human: needsHuman }, 200, headers);
   }
 };
 
@@ -130,6 +188,32 @@ function json(obj, status, headers) {
   });
 }
 
+function matchesHumanTrigger(message) {
+  const m = message.toLowerCase();
+  return HUMAN_TRIGGER_PHRASES.some((p) => m.indexOf(p) !== -1);
+}
+
+/* Models occasionally wrap JSON in prose or a code fence despite
+   instructions — parse defensively rather than trust it verbatim. */
+function parseModelJSON(text) {
+  if (typeof text !== "string") return { reply: FALLBACK_REPLY, needs_human: false, reason: "" };
+  var candidate = text.trim();
+  try {
+    return JSON.parse(candidate);
+  } catch (e) {
+    var match = candidate.match(/\{[\s\S]*\}/);
+    if (match) {
+      try {
+        return JSON.parse(match[0]);
+      } catch (e2) { /* fall through */ }
+    }
+  }
+  // Couldn't parse structured output — treat the raw text as the reply
+  // itself so the visitor still gets an answer; the keyword safety net
+  // still catches an explicit escalation ask on top of this.
+  return { reply: candidate, needs_human: false, reason: "" };
+}
+
 function toChatMessages(history, message) {
   const msgs = history
     .filter((h) => h && h.text)
@@ -141,16 +225,56 @@ function toChatMessages(history, message) {
   return msgs;
 }
 
-async function askWorkersAI(env, message, history) {
-  const messages = [{ role: "system", content: SYSTEM_PROMPT }].concat(toChatMessages(history, message));
-  const result = await env.AI.run("@cf/meta/llama-3.1-8b-instruct", {
-    messages,
-    max_tokens: 300
+/* ---------------- Gemini (Google AI Studio) ---------------- */
+async function askGemini(env, message, history) {
+  const model = env.GEMINI_MODEL || "gemini-2.5-pro";
+  const url =
+    "https://generativelanguage.googleapis.com/v1beta/models/" + model +
+    ":generateContent?key=" + encodeURIComponent(env.GEMINI_API_KEY);
+
+  const contents = history
+    .filter((h) => h && h.text)
+    .map((h) => ({
+      role: h.role === "user" ? "user" : "model",
+      parts: [{ text: String(h.text).slice(0, MAX_MESSAGE_LENGTH) }]
+    }));
+  contents.push({ role: "user", parts: [{ text: message }] });
+
+  const res = await fetch(url, {
+    method: "POST",
+    headers: { "content-type": "application/json" },
+    body: JSON.stringify({
+      system_instruction: { parts: [{ text: SYSTEM_PROMPT }] },
+      contents: contents,
+      generationConfig: {
+        maxOutputTokens: 400,
+        responseMimeType: "application/json",
+        responseSchema: {
+          type: "OBJECT",
+          properties: {
+            reply: { type: "STRING" },
+            needs_human: { type: "BOOLEAN" },
+            reason: { type: "STRING" }
+          },
+          required: ["reply", "needs_human"]
+        }
+      }
+    })
   });
-  const text = result && (result.response || result.result);
-  return typeof text === "string" ? text.trim() : FALLBACK_REPLY;
+  if (!res.ok) {
+    throw new Error("Gemini API error: " + res.status + " " + (await res.text()));
+  }
+  const data = await res.json();
+  const part = data && data.candidates && data.candidates[0] &&
+    data.candidates[0].content && data.candidates[0].content.parts &&
+    data.candidates[0].content.parts[0];
+  if (!part || typeof part.text !== "string") {
+    throw new Error("Gemini API returned no text (possibly blocked by safety filters)");
+  }
+  return part.text;
 }
 
+/* ---------------- Claude (Anthropic) ---------------- */
 async function askAnthropic(env, message, history) {
   const res = await fetch("https://api.anthropic.com/v1/messages", {
     method: "POST",
@@ -161,7 +285,7 @@ async function askAnthropic(env, message, history) {
     },
     body: JSON.stringify({
       model: env.ANTHROPIC_MODEL || "claude-haiku-4-5-20251001",
-      max_tokens: 300,
+      max_tokens: 400,
       system: SYSTEM_PROMPT,
       messages: toChatMessages(history, message)
     })
@@ -171,5 +295,50 @@ async function askAnthropic(env, message, history) {
   }
   const data = await res.json();
   const block = data && data.content && data.content[0];
-  return block && block.text ? block.text.trim() : FALLBACK_REPLY;
+  if (!block || typeof block.text !== "string") {
+    throw new Error("Anthropic API returned no text");
+  }
+  return block.text;
+}
+
+/* ---------------- Cloudflare Workers AI (free default) ---------------- */
+async function askWorkersAI(env, message, history) {
+  const messages = [{ role: "system", content: SYSTEM_PROMPT }].concat(toChatMessages(history, message));
+  const result = await env.AI.run("@cf/meta/llama-3.1-8b-instruct", {
+    messages,
+    max_tokens: 400
+  });
+  const text = result && (result.response || result.result);
+  if (typeof text !== "string") {
+    throw new Error("Workers AI returned no text");
+  }
+  return text;
+}
+
+/* ---------------- Telegram notification ---------------- */
+async function notifyTelegram(env, info) {
+  const lines = [
+    info.backendFailed ? "🔴 Hannah's AI backend is down" : "🔔 Hannah flagged a conversation for you",
+    "",
+    "Visitor: " + info.message,
+    "Hannah replied: " + info.reply,
+    info.reason ? "Why: " + info.reason : null,
+    info.page ? "Page: " + info.page : null,
+    "Time: " + new Date().toISOString()
+  ].filter(Boolean);
+
+  const res = await fetch(
+    "https://api.telegram.org/bot" + env.TELEGRAM_BOT_TOKEN + "/sendMessage",
+    {
+      method: "POST",
+      headers: { "content-type": "application/json" },
+      body: JSON.stringify({
+        chat_id: env.TELEGRAM_CHAT_ID,
+        text: lines.join("\n")
+      })
+    }
+  );
+  if (!res.ok) {
+    throw new Error("Telegram API error: " + res.status + " " + (await res.text()));
+  }
 }

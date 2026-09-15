@@ -280,7 +280,7 @@
       fetch(HANNAH_ENDPOINT, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ message: text, history: historyForRequest })
+        body: JSON.stringify({ message: text, history: historyForRequest, page: window.location.href })
       }).then(function (r) { return r.json(); })
         .then(function (data) {
           hideTyping();
