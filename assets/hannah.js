@@ -17,7 +17,7 @@
 (function () {
   "use strict";
 
-  var HANNAH_ENDPOINT = ""; // set after deploying /cloudflare-worker, e.g. "https://ritehome-hannah.<you>.workers.dev"
+  var HANNAH_ENDPOINT = "https://ritehome-hannah.ritehome.workers.dev";
 
   var CONTACT = {
     phone: "+63 917 701 0109",
