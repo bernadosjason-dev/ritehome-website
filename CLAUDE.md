@@ -19,12 +19,9 @@ python3 -m http.server 8000
 ```
 (`http://localhost:8000` and `http://127.0.0.1:8000` are already in the Worker's CORS allowlist for this reason.)
 
-Deploy Hannah's backend after editing `cloudflare-worker/src/index.js`:
-```
-cd cloudflare-worker
-wrangler deploy
-```
-A `.claude/hooks/session-start.sh` SessionStart hook installs `wrangler` automatically at the start of every Claude Code on the web session (these run in disposable containers, so nothing installed by hand survives to the next session). It cannot set up Cloudflare auth — `wrangler deploy` still needs either an interactive `wrangler login` or a `CLOUDFLARE_API_TOKEN` set as a persistent secret on the environment.
+Deploying Hannah's backend after editing `cloudflare-worker/src/index.js` **is automatic**: `.github/workflows/deploy-hannah.yml` runs `wrangler deploy` on every push to `main` that touches `cloudflare-worker/`, authenticated with a `CLOUDFLARE_API_TOKEN` GitHub Actions secret. Merge to `main` and it ships — check the repo's **Actions** tab if it doesn't.
+
+**Do not try to `wrangler deploy` from inside a Claude Code session.** This environment's own sandbox network policy blocks outbound connections to `api.cloudflare.com` (confirmed via `curl -sS "$HTTPS_PROXY/__agentproxy/status"` — a `connect_rejected` / 403 policy denial, not a token or auth problem). No token, secret, or wrangler config fixes that; the GitHub Actions workflow above is the only path that actually reaches Cloudflare. A `.claude/hooks/session-start.sh` SessionStart hook still installs `wrangler` locally each session for manual/local testing outside of `main`, but it cannot and should not be used to deploy from here.
 
 There is no linter, formatter, or test suite in this repo — nothing to run beyond the above.
 

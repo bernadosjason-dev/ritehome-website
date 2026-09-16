@@ -117,6 +117,14 @@ wrangler secret put TELEGRAM_CHAT_ID
 
 ## 5. Deploy
 
+**This now happens automatically.** `.github/workflows/deploy-hannah.yml` runs
+`wrangler deploy` on every push to `main` that touches `cloudflare-worker/`,
+using a `CLOUDFLARE_API_TOKEN` repo secret (Settings → Secrets and variables
+→ Actions, on GitHub). Merge to `main`, done — no local Wrangler login, no
+manual step. If that secret is ever missing or revoked, the workflow run
+fails visibly under the repo's **Actions** tab rather than silently.
+
+Only run it by hand if you're testing outside of `main`:
 ```
 wrangler deploy
 ```

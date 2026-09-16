@@ -1,0 +1,25 @@
+name: Deploy Hannah (Cloudflare Worker)
+
+# Runs on GitHub's own servers, not inside any sandboxed Claude Code
+# session -- this is deliberate. It's the one place that can actually
+# reach Cloudflare's API without hitting a session's network policy.
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - "cloudflare-worker/**"
+      - ".github/workflows/deploy-hannah.yml"
+  workflow_dispatch: {}
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Deploy to Cloudflare Workers
+        uses: cloudflare/wrangler-action@v3
+        with:
+          apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          workingDirectory: cloudflare-worker
