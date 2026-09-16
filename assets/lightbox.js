@@ -137,4 +137,15 @@
   } else {
     initLightbox();
   }
+
+  /* Raises the bar against casual "right-click save" / drag-out theft of
+     project photos. Doesn't stop devtools or view-source — nothing served
+     to a browser can — but it's not meant to; the watermark baked into the
+     files is the actual protection once a copy leaves the site. */
+  document.addEventListener("contextmenu", function(e){
+    if(e.target.tagName === "IMG") e.preventDefault();
+  });
+  document.addEventListener("dragstart", function(e){
+    if(e.target.tagName === "IMG") e.preventDefault();
+  });
 })();
