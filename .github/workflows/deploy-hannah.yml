@@ -24,3 +24,13 @@ jobs:
           apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
           workingDirectory: cloudflare-worker
           wranglerVersion: "4"
+
+      # TEMPORARY -- one-off diagnostic, names only, never prints values.
+      # Remove once we've confirmed which AI backend secret is actually set.
+      - name: TEMP list configured secrets
+        uses: cloudflare/wrangler-action@v3
+        with:
+          apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          workingDirectory: cloudflare-worker
+          wranglerVersion: "4"
+          command: secret list

@@ -144,7 +144,7 @@ text doesn't already make clear. Leave chips as an empty array when the question
 open-ended (a measurement, a name, an address) or when you're not asking anything.
 
 Output ONLY a JSON object, no other text, in exactly this shape:
-{"reply": "<your answer to the customer>", "needs_human": true or false, "reason": "<one short phrase for an internal note, empty string if needs_human is false>", "chips": ["<short option>", "..."] or []}`;
+{"reply": "<your answer to the customer>", "needs_human": true or false, "reason": "<internal note, under 8 words, empty string if needs_human is false — never a full sentence>", "chips": ["<short option>", "..."] or []}`;
 
 const SYSTEM_PROMPT = FACTS + "\n\n" + RESPONSE_FORMAT;
 
@@ -273,9 +273,35 @@ function parseModelJSON(text) {
       } catch (e2) { /* fall through */ }
     }
   }
-  // Couldn't parse structured output — treat the raw text as the reply
-  // itself so the visitor still gets an answer; the keyword safety net
-  // still catches an explicit escalation ask on top of this.
+  // No complete JSON object -- usually a response that got cut off
+  // mid-"reason" or mid-"chips" (a long reply + reason can exceed the
+  // output token budget). Try to salvage just the "reply" field's text
+  // rather than ever showing raw JSON syntax to the visitor.
+  var replyMatch = candidate.match(/"reply"\s*:\s*"((?:[^"\\]|\\.)*)"/);
+  if (replyMatch) {
+    try {
+      return { reply: JSON.parse('"' + replyMatch[1] + '"'), needs_human: false, reason: "" };
+    } catch (e3) { /* fall through */ }
+  }
+  // Cut off so early even the closing quote on "reply" never arrived --
+  // salvage whatever text came after it anyway, best-effort, since it's
+  // still real customer-facing text and better than nothing or raw JSON.
+  var openReplyMatch = candidate.match(/"reply"\s*:\s*"((?:[^"\\]|\\.)*)$/);
+  if (openReplyMatch && openReplyMatch[1].trim()) {
+    try {
+      return { reply: JSON.parse('"' + openReplyMatch[1] + '"'), needs_human: false, reason: "" };
+    } catch (e4) {
+      return { reply: openReplyMatch[1].replace(/\\"/g, '"').replace(/\\\\/g, "\\"), needs_human: false, reason: "" };
+    }
+  }
+  // Even the "reply" field is unrecoverable. If this still looks like
+  // broken JSON rather than a model that just ignored the "JSON only"
+  // instruction and wrote plain prose, showing it verbatim would read
+  // as a visible bug -- fail to the honest fallback and flag a human
+  // instead of guessing.
+  if (/^\s*\{[\s\S]*"needs_human"/.test(candidate)) {
+    return { reply: FALLBACK_REPLY, needs_human: true, reason: "Model returned malformed/truncated JSON" };
+  }
   return { reply: candidate, needs_human: false, reason: "" };
 }
 
@@ -346,7 +372,7 @@ async function callGeminiModel(env, model, message, history) {
       system_instruction: { parts: [{ text: SYSTEM_PROMPT }] },
       contents: contents,
       generationConfig: {
-        maxOutputTokens: 400,
+        maxOutputTokens: 700,
         responseMimeType: "application/json",
         responseSchema: {
           type: "OBJECT",
@@ -385,7 +411,7 @@ async function askAnthropic(env, message, history) {
     },
     body: JSON.stringify({
       model: env.ANTHROPIC_MODEL || "claude-haiku-4-5-20251001",
-      max_tokens: 400,
+      max_tokens: 700,
       system: SYSTEM_PROMPT,
       messages: toChatMessages(history, message)
     })
@@ -406,7 +432,7 @@ async function askWorkersAI(env, message, history) {
   const messages = [{ role: "system", content: SYSTEM_PROMPT }].concat(toChatMessages(history, message));
   const result = await env.AI.run("@cf/meta/llama-3.1-8b-instruct", {
     messages,
-    max_tokens: 400
+    max_tokens: 700
   });
   const text = result && (result.response || result.result);
   if (typeof text !== "string") {
