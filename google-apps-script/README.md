@@ -65,6 +65,40 @@ failing silently.
    the new note is appended under the old one — rather than adding a
    second row.
 
+## 6. Telegram notifications (recommended)
+
+Without this, a submission only ever becomes a spreadsheet row — nothing
+alerts anyone in real time. Hannah (the site's chat widget) already pages
+a Telegram bot when she needs a human; reuse that same bot here so both
+channels back the same 2-business-hour response commitment.
+
+1. **Get the bot's token again.** In Telegram, message **@BotFather** →
+   `/mybots` → pick the bot Hannah already uses → **API Token**. This
+   redisplays the existing token (doesn't rotate it, so Hannah's setup in
+   `cloudflare-worker/` is untouched) — copy it.
+2. **Get the chat ID.** Same one already used for
+   `cloudflare-worker`'s `TELEGRAM_CHAT_ID` secret — if you don't have it
+   saved, `cloudflare-worker/README.md` step 4 explains how to look it up
+   again via the bot's `getUpdates` endpoint.
+3. **Add both as Script Properties** (this project's equivalent of
+   secrets — never paste these into `Code.gs` itself):
+   - In the Apps Script editor (the tab from step 1), click the **gear
+     icon** ("Project Settings") in the left sidebar.
+   - Scroll to **Script Properties** → **Add script property**.
+   - Add `TELEGRAM_BOT_TOKEN` with that token as its value.
+   - Add another: `TELEGRAM_CHAT_ID` with that chat ID as its value.
+   - Click **Save script properties**.
+4. **Redeploy** so the updated `Code.gs` (with the new `notifyTelegram_`
+   call) actually runs: **Deploy → Manage deployments → the pencil
+   (Edit) icon → Version: New version → Deploy**. This keeps the same
+   `/exec` URL — see "Updating the script later" below.
+5. **Test**: submit the inquiry form on the live site. A Telegram message
+   should arrive within a couple of seconds, alongside the new sheet row.
+
+Leaving either property unset is safe — `notifyTelegram_` just does
+nothing, and the sheet logging (the part that actually matters) is
+unaffected either way.
+
 ## Updating the script later
 
 If you edit `Code.gs` again, use **Deploy → Manage deployments → the

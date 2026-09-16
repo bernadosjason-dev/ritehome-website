@@ -57,6 +57,7 @@ function doPost(e) {
 
     if (matchRow === -1) {
       sheet.appendRow([now, name, phone, email, line, location, notes, 1, now]);
+      notifyTelegram_("added", name, phone, email, line, location, notes, 1);
       return respond({ ok: true, action: "added" });
     }
 
@@ -76,9 +77,45 @@ function doPost(e) {
     existing[8] = now;
     range.setValues([existing]);
 
+    notifyTelegram_("updated", name, phone, email, line, location, notes, timesInquired);
     return respond({ ok: true, action: "updated" });
   } finally {
     lock.releaseLock();
+  }
+}
+
+/* Best-effort Telegram ping on every inquiry -- the sheet row is the
+   source of truth and must never be blocked by this failing. Reads
+   TELEGRAM_BOT_TOKEN and TELEGRAM_CHAT_ID from this project's Script
+   Properties (Project Settings -> Script Properties in the Apps Script
+   editor), never hardcoded here -- see README.md. Does nothing if
+   either is unset, so notifications stay entirely optional. */
+function notifyTelegram_(action, name, phone, email, line, location, notes, timesInquired) {
+  var props = PropertiesService.getScriptProperties();
+  var token = props.getProperty("TELEGRAM_BOT_TOKEN");
+  var chatId = props.getProperty("TELEGRAM_CHAT_ID");
+  if (!token || !chatId) return;
+
+  var lines = [
+    action === "added" ? "🔔 New site inquiry" : "🔁 Repeat inquiry (#" + timesInquired + ")",
+    "",
+    "Name: " + name,
+    "Phone: " + (phone || "—"),
+    "Email: " + (email || "—"),
+    "Product line: " + (line || "—"),
+    "Location: " + (location || "—"),
+    notes ? "Notes: " + notes : null
+  ].filter(function (l) { return l !== null; });
+
+  try {
+    UrlFetchApp.fetch("https://api.telegram.org/bot" + token + "/sendMessage", {
+      method: "post",
+      contentType: "application/json",
+      payload: JSON.stringify({ chat_id: chatId, text: lines.join("\n") }),
+      muteHttpExceptions: true
+    });
+  } catch (err) {
+    // A Telegram hiccup should never break the inquiry logging itself.
   }
 }
 
