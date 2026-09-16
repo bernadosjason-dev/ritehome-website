@@ -178,6 +178,19 @@
     return html.replace(/<[^>]+>/g, "").replace(/\s+/g, " ").trim();
   }
 
+  var MAX_CHIPS = 4;
+  var MAX_CHIP_LENGTH = 30;
+
+  // The worker already sanitizes chips; re-check here too since this
+  // renders as clickable UI straight from a network response.
+  function sanitizeChips(chips) {
+    if (!Array.isArray(chips)) return [];
+    return chips
+      .filter(function (c) { return typeof c === "string" && c.trim(); })
+      .map(function (c) { return c.trim().slice(0, MAX_CHIP_LENGTH); })
+      .slice(0, MAX_CHIPS);
+  }
+
   function addBotMessage(html, opts) {
     var row = el("div", "hn-row hn-row-bot");
     var avatar = el("div", "hn-avatar", "H");
@@ -186,11 +199,12 @@
     row.appendChild(bubble);
     thread.appendChild(row);
     if (!opts || opts.remember !== false) remember("bot", stripHtml(html));
-    if (opts && opts.chips) {
+    if (opts && opts.chips && opts.chips.length) {
       var chipWrap = el("div", "hn-chips");
       opts.chips.forEach(function (label) {
-        var chip = el("button", "hn-chip", label);
+        var chip = el("button", "hn-chip");
         chip.type = "button";
+        chip.textContent = label; // not innerHTML — chip text can come from the AI backend
         chip.addEventListener("click", function () { handleSend(label); });
         chipWrap.appendChild(chip);
       });
@@ -292,7 +306,7 @@
           hideTyping();
           sendBtn.disabled = false;
           if (data && data.needs_human) hasEscalated = true;
-          if (data && data.reply) addBotMessage(data.reply);
+          if (data && data.reply) addBotMessage(data.reply, { chips: sanitizeChips(data.chips) });
           else respondLocally(text);
         }).catch(function () {
           hideTyping();

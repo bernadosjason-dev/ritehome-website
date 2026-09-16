@@ -109,7 +109,9 @@ a lookup. You need two things before answering: which system (kitchen, storage,
 partition, or workspace) and a rough size (small / medium / large, or enough detail
 to judge one — e.g. "just one wall" is small, "the whole room" is large). If either
 is missing, ask ONE short, plain-language question to fill the biggest gap — don't
-interrogate them with a checklist. Once you have system and size: if they've also
+interrogate them with a checklist — and offer it as chips (system options, or
+Small/Medium/Large for size) so they can tap instead of typing.
+Once you have system and size: if they've also
 said a tier (Essential, Premium, or Executive), give that row's range as a friendly
 ballpark ("roughly ₱X–₱Y for that size and spec"). If they haven't said a tier,
 give the Essential range as a starting point and mention Premium and Executive cost
@@ -121,8 +123,18 @@ When needs_human is true, still write a normal, helpful "reply" to the customer 
 acknowledge you're flagging it for the team and that they'll follow up, and give
 the phone number and email as a faster option if they don't want to wait.
 
+Whenever your reply asks the customer to pick from a small, known set of options —
+which system, which size, which spec tier, or a yes/no confirmation — also return
+"chips": a list of 2 to 4 short button labels (2-4 words, no punctuation at the end)
+they can tap instead of typing. Use the exact words you'd want back if they typed
+it, e.g. ["Kitchen","Storage","Partition","Workspace"] or ["Small","Medium","Large"]
+or ["Essential","Premium","Executive"]. A tapped chip arrives back as their next
+message, unchanged, so never rely on chips to carry information the plain reply
+text doesn't already make clear. Leave chips as an empty array when the question is
+open-ended (a measurement, a name, an address) or when you're not asking anything.
+
 Output ONLY a JSON object, no other text, in exactly this shape:
-{"reply": "<your answer to the customer>", "needs_human": true or false, "reason": "<one short phrase for an internal note, empty string if needs_human is false>"}`;
+{"reply": "<your answer to the customer>", "needs_human": true or false, "reason": "<one short phrase for an internal note, empty string if needs_human is false>", "chips": ["<short option>", "..."] or []}`;
 
 const SYSTEM_PROMPT = FACTS + "\n\n" + RESPONSE_FORMAT;
 
@@ -157,6 +169,7 @@ export default {
     let reply = FALLBACK_REPLY;
     let needsHuman = false;
     let reason = "";
+    let chips = [];
     let backendFailed = false;
 
     try {
@@ -169,6 +182,7 @@ export default {
       reply = parsed.reply || FALLBACK_REPLY;
       needsHuman = !!parsed.needs_human;
       reason = parsed.reason || "";
+      chips = sanitizeChips(parsed.chips);
     } catch (err) {
       // Fail soft to the visitor (the widget itself also has its own local
       // fallback if this endpoint errors outright) — but the AI being down
@@ -193,7 +207,7 @@ export default {
       );
     }
 
-    return json({ reply, needs_human: needsHuman }, 200, headers);
+    return json({ reply, needs_human: needsHuman, chips }, 200, headers);
   }
 };
 
@@ -218,6 +232,20 @@ function json(obj, status, headers) {
 function matchesHumanTrigger(message) {
   const m = message.toLowerCase();
   return HUMAN_TRIGGER_PHRASES.some((p) => m.indexOf(p) !== -1);
+}
+
+const MAX_CHIPS = 4;
+const MAX_CHIP_LENGTH = 30;
+
+/* The model chose these labels, so treat them like any other untrusted
+   input before they reach the visitor's browser as clickable buttons —
+   plain strings only, capped in count and length. */
+function sanitizeChips(chips) {
+  if (!Array.isArray(chips)) return [];
+  return chips
+    .filter((c) => typeof c === "string" && c.trim())
+    .map((c) => c.trim().slice(0, MAX_CHIP_LENGTH))
+    .slice(0, MAX_CHIPS);
 }
 
 /* Models occasionally wrap JSON in prose or a code fence despite
@@ -315,7 +343,8 @@ async function callGeminiModel(env, model, message, history) {
           properties: {
             reply: { type: "STRING" },
             needs_human: { type: "BOOLEAN" },
-            reason: { type: "STRING" }
+            reason: { type: "STRING" },
+            chips: { type: "ARRAY", items: { type: "STRING" } }
           },
           required: ["reply", "needs_human"]
         }
