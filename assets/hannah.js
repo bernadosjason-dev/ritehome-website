@@ -157,6 +157,7 @@
   var conversation = []; // {role:"user"|"bot", text} — session-only, sent as context to HANNAH_ENDPOINT
   var HISTORY_LIMIT = 10;
   var hasEscalated = false; // true once this visitor's session has already paged Telegram once
+  var hasSentContact = false; // true once a callback number/email from this session has been forwarded
 
   function remember(role, text) {
     conversation.push({ role: role, text: text });
@@ -299,13 +300,15 @@
           message: text,
           history: historyForRequest,
           page: window.location.href,
-          already_escalated: hasEscalated // tells the worker whether it already paged Telegram this session
+          already_escalated: hasEscalated, // tells the worker whether it already paged Telegram this session
+          already_contacted: hasSentContact // separate throttle: a callback number can arrive after escalation
         })
       }).then(function (r) { return r.json(); })
         .then(function (data) {
           hideTyping();
           sendBtn.disabled = false;
           if (data && data.needs_human) hasEscalated = true;
+          if (data && data.contact_captured) hasSentContact = true;
           if (data && data.reply) addBotMessage(data.reply, { chips: sanitizeChips(data.chips) });
           else respondLocally(text);
         }).catch(function () {

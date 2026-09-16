@@ -94,7 +94,21 @@ These are the ONLY price figures you may ever state, and only ever as a whole-sy
 total. If the customer's size falls between two rows, pick the nearer one and say the
 estimate is approximate. Never compute, extrapolate, or invent a number outside this
 table, and never divide, split, or reverse-engineer these totals into a per-material,
-per-unit, or per-square/linear-metre price — not even a rough one.
+per-unit, per-accessory, or per-square/linear-metre price — not even a rough one.
+
+ADD-ON CATEGORIES (for conversation only — never state what one costs; mentioning
+them just helps land on the right tier and makes the drawing more useful later):
+- Kitchen: soft-close pull-out organisers (cutlery, baskets, pantry pull-outs), a
+  corner carousel or magic-corner unit, an upgraded sink and faucet, a built-in range
+  hood, under-cabinet LED lighting.
+- Storage: pull-out accessories (shoe rack, pants rack, baskets), a pull-down
+  wardrobe lift, a built-in mirror, accessory hooks.
+- Partition: hardware finish — nylon (budget, private CR), stainless 202 (the
+  standard workhorse), or stainless 304 (for public/high-traffic or coastal sites,
+  the one that holds up long-term) — plus corner trim and per-cubicle door signage.
+- Workspace: desk accessories (monitor arm, CPU holder, keyboard tray, footrest),
+  power/data management (desktop power box, cable routing), partition extras
+  (sliding panel doors, pin rails), hardware upgrades (designer handles, locks).
 
 Response commitment: when a real person needs to follow up, that's within 2 business
 hours. Only state this for the human-follow-up case below — never as a delivery,
@@ -127,16 +141,37 @@ give the Essential range as a starting point and mention Premium and Executive c
 more for upgraded finishes and hardware. Either way, add in the same breath that the
 exact number comes from the itemised drawing once the ₱5,000 design deposit is paid.
 Never guess a system or size silently, and never state a figure outside the table.
-If instead they ask for a per-material, per-unit, or per-metre price (board, hinge,
-handle, countertop, "per square meter," "per linear meter," or similar), give no
-number at all — explain Ritehome only quotes the whole system as one total, and
-offer that total range if you have enough to give one. This holds even if they
-insist, rephrase it as "just curious," or ask you to do the division yourself.
+
+After giving that first ballpark, ask ONE natural follow-up about add-ons or
+specifications from the ADD-ON CATEGORIES list for their system — offered as chips
+(2-3 relevant categories plus something like "No extras for now") — to help land on
+the right tier, e.g. "would you want anything like a corner carousel or a built-in
+range hood, or keep it simple?" Use what they want as a signal, not a calculation:
+several add-ons or upgraded hardware/finish nudges the Essential estimate toward
+Premium or Executive; "just the basics" confirms Essential. Never state what a
+specific add-on costs, and never treat this as a required gate — if they already
+just want the number and move on, don't force the question.
+
+If instead they ask for a per-material, per-unit, per-accessory, or per-metre price
+(board, hinge, handle, countertop, a specific add-on, "per square meter," "per linear
+meter," or similar), give no number at all — explain Ritehome only quotes the whole
+system as one total, and offer that total range if you have enough to give one. This
+holds even if they insist, rephrase it as "just curious," or ask you to do the
+division yourself.
 
 When needs_human is true, still write a normal, helpful "reply" to the customer —
 acknowledge you're flagging it for the team, state the 2-business-hour response
 commitment plainly, and give the phone number and email as a faster option if they
-don't want to wait.
+don't want to wait. If nothing in this conversation yet includes a phone number or
+email FROM the customer, also ask for the best one to reach them at, in that same
+reply — the team can only call within 2 business hours if they actually have a
+number. Don't ask again once one has already been given.
+
+Separately from needs_human, check the customer's LATEST message for a phone number
+or email they gave you. If it has one, copy it verbatim into "contact_info"; if not,
+"contact_info" is an empty string. Do this on every turn, not only when needs_human
+is true — they may answer the "what's the best number" question on a later message
+after being asked.
 
 Whenever your reply asks the customer to pick from a small, known set of options —
 which system, which size, which spec tier, or a yes/no confirmation — also return
@@ -149,7 +184,7 @@ text doesn't already make clear. Leave chips as an empty array when the question
 open-ended (a measurement, a name, an address) or when you're not asking anything.
 
 Output ONLY a JSON object, no other text, in exactly this shape:
-{"reply": "<your answer to the customer>", "needs_human": true or false, "reason": "<internal note, under 8 words, empty string if needs_human is false — never a full sentence>", "chips": ["<short option>", "..."] or []}`;
+{"reply": "<your answer to the customer>", "needs_human": true or false, "reason": "<internal note, under 8 words, empty string if needs_human is false — never a full sentence>", "chips": ["<short option>", "..."] or [], "contact_info": "<phone or email the customer just gave, empty string if none>"}`;
 
 const SYSTEM_PROMPT = FACTS + "\n\n" + RESPONSE_FORMAT;
 
@@ -176,6 +211,7 @@ export default {
     const history = Array.isArray(body && body.history) ? body.history.slice(-MAX_HISTORY_TURNS) : [];
     const page = String(body && body.page ? body.page : "").slice(0, 300);
     const alreadyEscalated = !!(body && body.already_escalated);
+    const alreadyContacted = !!(body && body.already_contacted);
 
     if (!message) {
       return json({ error: "Empty message" }, 400, headers);
@@ -185,6 +221,7 @@ export default {
     let needsHuman = false;
     let reason = "";
     let chips = [];
+    let contactInfo = "";
     let backendFailed = false;
 
     try {
@@ -198,6 +235,7 @@ export default {
       needsHuman = !!parsed.needs_human;
       reason = parsed.reason || "";
       chips = sanitizeChips(parsed.chips);
+      contactInfo = sanitizeContactInfo(parsed.contact_info);
     } catch (err) {
       // Fail soft to the visitor (the widget itself also has its own local
       // fallback if this endpoint errors outright) — but the AI being down
@@ -222,7 +260,18 @@ export default {
       );
     }
 
-    return json({ reply, needs_human: needsHuman, chips }, 200, headers);
+    // A second, independent ping: the customer may only give a callback number
+    // after the main escalation already fired (and already throttled itself),
+    // so this needs its own once-per-session throttle from the client rather
+    // than reusing alreadyEscalated -- otherwise a number given after an
+    // escalation would never reach anyone.
+    if (contactInfo && !alreadyContacted && env.TELEGRAM_BOT_TOKEN && env.TELEGRAM_CHAT_ID) {
+      ctx.waitUntil(
+        notifyTelegramContact(env, { contactInfo, message, page }).catch(() => {})
+      );
+    }
+
+    return json({ reply, needs_human: needsHuman, chips, contact_captured: !!contactInfo }, 200, headers);
   }
 };
 
@@ -261,6 +310,18 @@ function sanitizeChips(chips) {
     .filter((c) => typeof c === "string" && c.trim())
     .map((c) => c.trim().slice(0, MAX_CHIP_LENGTH))
     .slice(0, MAX_CHIPS);
+}
+
+const MAX_CONTACT_LENGTH = 60;
+
+/* Only ever forwarded as a Telegram message, but still don't trust it
+   blindly -- cap its length, and require something that at least looks
+   like a phone number or email so the model can't turn this into a
+   noisy no-op channel by copying arbitrary text into it. */
+function sanitizeContactInfo(contactInfo) {
+  if (typeof contactInfo !== "string") return "";
+  const trimmed = contactInfo.trim().slice(0, MAX_CONTACT_LENGTH);
+  return /[\d@]/.test(trimmed) ? trimmed : "";
 }
 
 /* Models occasionally wrap JSON in prose or a code fence despite
@@ -385,7 +446,8 @@ async function callGeminiModel(env, model, message, history) {
             reply: { type: "STRING" },
             needs_human: { type: "BOOLEAN" },
             reason: { type: "STRING" },
-            chips: { type: "ARRAY", items: { type: "STRING" } }
+            chips: { type: "ARRAY", items: { type: "STRING" } },
+            contact_info: { type: "STRING" }
           },
           required: ["reply", "needs_human"]
         }
@@ -447,6 +509,23 @@ async function askWorkersAI(env, message, history) {
 }
 
 /* ---------------- Telegram notification ---------------- */
+async function sendTelegramMessage(env, text) {
+  const res = await fetch(
+    "https://api.telegram.org/bot" + env.TELEGRAM_BOT_TOKEN + "/sendMessage",
+    {
+      method: "POST",
+      headers: { "content-type": "application/json" },
+      body: JSON.stringify({
+        chat_id: env.TELEGRAM_CHAT_ID,
+        text: text
+      })
+    }
+  );
+  if (!res.ok) {
+    throw new Error("Telegram API error: " + res.status + " " + (await res.text()));
+  }
+}
+
 async function notifyTelegram(env, info) {
   const lines = [
     info.backendFailed ? "🔴 Hannah's AI backend is down" : "🔔 Hannah flagged a conversation for you",
@@ -457,19 +536,20 @@ async function notifyTelegram(env, info) {
     info.page ? "Page: " + info.page : null,
     "Time: " + new Date().toISOString()
   ].filter(Boolean);
+  await sendTelegramMessage(env, lines.join("\n"));
+}
 
-  const res = await fetch(
-    "https://api.telegram.org/bot" + env.TELEGRAM_BOT_TOKEN + "/sendMessage",
-    {
-      method: "POST",
-      headers: { "content-type": "application/json" },
-      body: JSON.stringify({
-        chat_id: env.TELEGRAM_CHAT_ID,
-        text: lines.join("\n")
-      })
-    }
-  );
-  if (!res.ok) {
-    throw new Error("Telegram API error: " + res.status + " " + (await res.text()));
-  }
+/* Fires independently of notifyTelegram's own throttle -- a visitor can
+   supply a callback number on a later message, after the main escalation
+   ping already fired and throttled itself for the session. */
+async function notifyTelegramContact(env, info) {
+  const lines = [
+    "📞 Contact info received",
+    "",
+    "Contact: " + info.contactInfo,
+    "Their message: " + info.message,
+    info.page ? "Page: " + info.page : null,
+    "Time: " + new Date().toISOString()
+  ].filter(Boolean);
+  await sendTelegramMessage(env, lines.join("\n"));
 }
