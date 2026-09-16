@@ -51,7 +51,7 @@ a{color:inherit;}
   display:flex; align-items:center; justify-content:space-between; gap:20px;
 }
 .brand{display:flex; align-items:center; gap:10px; text-decoration:none; color:var(--ink); flex-shrink:0;}
-.brand svg{width:26px; height:30px; color:var(--core);}
+.brand img.wm-icon{width:auto; height:30px; display:block;}
 .brand span{font-family:var(--f-display); font-weight:600; font-size:14px; letter-spacing:-.01em;}
 .topbar nav{display:flex; align-items:center; gap:22px;}
 .topbar nav a.tel{
