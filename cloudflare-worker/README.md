@@ -214,6 +214,16 @@ a policy changes on the real site, update it there too — she only
 knows what's written in that prompt, on purpose, so she can't invent
 something that isn't true.
 
+`FACTS` also carries a `PRICING` table — small/medium/large ballpark
+₱ ranges per system × spec tier, so Hannah can give a visitor a rough
+estimate in conversation without a human quoting it live. These
+numbers are derived from RiteHome's real internal quoting tools, kept
+deliberately as ranges, and deliberately stop at the final total — no
+supplier cost, multiplier, or per-unit rate from those tools belongs
+in this file or anywhere public. If the internal rates move materially,
+re-derive the ranges and update this table; nothing recalculates it
+automatically.
+
 ## Troubleshooting: Hannah always gives canned answers, no Telegram alerts ever fire
 
 Symptoms: `curl` against the worker directly works fine, `assets/hannah.js`
