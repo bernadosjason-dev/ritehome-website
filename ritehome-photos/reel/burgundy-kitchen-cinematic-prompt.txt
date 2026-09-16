@@ -1,0 +1,27 @@
+Concept: burgundy kitchen cinematic showcase — NOT YET GENERATED, NOT WIRED
+============================================================================
+
+Status: prompt only. No video file exists for this yet. Doesn't match any
+current Ritehome project or finish (existing slides/photos are graphite
+gloss, charcoal shaker, light oak, matte white, grey oak, white gloss —
+see /photos and ritehome-photos/enhanced). Save this here so the prompt
+isn't lost; generate the clip with an external text-to-video tool (Veo,
+Sora, Runway, etc.) when there's a real burgundy-cabinet kitchen project
+to pair it with, then wire it the way graphite-gloss-loop.mp4 is wired to
+slide 1 (see SOURCE.txt in this folder for that pattern).
+
+Source: pasted by Jason as a screenshot; the screenshot cut off before the
+final word of the last sentence. Ending completed here with the most
+likely word ("romantic") — confirm/edit before actually generating.
+
+Prompt
+------
+A smooth, slow-panning architectural cinematic showcase of a high-end
+modern kitchen at night, highlighting dark burgundy cabinets, fluted
+wooden details, white tile backsplash, and warm under-cabinet lighting.
+The camera gracefully shifts focus through cinematic close-ups, sweeping
+past plush bar stools, sleek countertops with cooking utensils, and
+built-in luxury appliances. It concludes with a warm, intimate close-up
+on a stylishly set island table featuring plated steak dinners, asparagus,
+a glass of red wine, a wine bottle, and a soft flickering candle, creating
+a romantic atmosphere.
