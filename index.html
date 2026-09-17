@@ -1694,6 +1694,10 @@ body.reading .stagetab,body.reading .hint{display:none;}
       <div class="tier"><p class="tier-n">Tier 02</p><h4>Premium</h4><p>Upgraded finishes and hardware, with accessories brought into the drawing.</p></div>
       <div class="tier"><p class="tier-n">Tier 03</p><h4>Executive</h4><p>The full specification, with counter and accessory selections opened up.</p></div>
     </div>
+    <p class="note" style="margin-top:22px">Want a rough number before booking the site visit? Chat
+    with Hannah — tell her your room's size (or send a photo) and she'll give you a same-session
+    ballpark, no waiting for a callback.</p>
+    <button class="togglebtn" type="button" data-open-hannah style="margin-top:12px">Get an instant estimate from Hannah</button>
   </section>
 
   <section class="docsec" id="inquiry">
@@ -2413,6 +2417,18 @@ body.reading .stagetab,body.reading .hint{display:none;}
   Array.prototype.forEach.call(document.querySelectorAll("[data-doc]"), function(b){
     b.addEventListener("click", function(){ showDoc(b.getAttribute("data-doc")); });
   });
+  /* CTA text/buttons that should open Hannah's chat directly rather than a
+     reading-view section — falls back to the inquiry form if hannah.js
+     hasn't finished building the widget yet for some reason. */
+  Array.prototype.forEach.call(document.querySelectorAll("[data-open-hannah]"), function(b){
+    b.addEventListener("click", function(){
+      if (window.RitehomeApp && typeof window.RitehomeApp.openHannah === "function") {
+        window.RitehomeApp.openHannah();
+      } else {
+        showDoc("inquiry");
+      }
+    });
+  });
   /* a project detail's "back to the work" returns to that exact slide,
      not to the front of the run */
   Array.prototype.forEach.call(document.querySelectorAll("[data-back-slide]"), function(b){
@@ -2541,6 +2557,6 @@ body.reading .stagetab,body.reading .hint{display:none;}
 })();
 </script>
 <script src="assets/lightbox.js?v=387b4d42" defer></script>
-<script src="assets/hannah.js?v=da86cf30" defer></script>
+<script src="assets/hannah.js?v=60e8867e" defer></script>
 </body>
 </html>
