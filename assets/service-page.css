@@ -8,6 +8,11 @@
    carousel on the homepage.
    ============================================================ */
 
+/* WebP <picture> wrappers around photo <img>s must not add a box of their
+   own -- the img sizing rules below (width/height:100%, object-fit:cover)
+   assume the img sits directly in its actual parent. */
+picture{display:contents;}
+
 :root{
   --bg:       #FFFFFF;
   --bg-2:     #F4F4F2;

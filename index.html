@@ -114,6 +114,11 @@
 }
 
 *{box-sizing:border-box;}
+/* WebP <picture> wrappers around photo <img>s must not add a box of their
+   own -- .photo img etc. size themselves against their actual parent
+   (width/height:100%, object-fit:cover), and a <picture> left at its
+   default inline display would break that. */
+picture{display:contents;}
 html,body{height:100%;}
 body{
   margin:0;background:var(--ink);color:var(--chalk);
@@ -1115,7 +1120,7 @@ body.reading .stagetab,body.reading .hint{display:none;}
   <!-- ---------- 01 — the hero, on the darkest project we have ---------- -->
   <section class="slide shot" data-name="Graphite Gloss" data-meta="Kitchen · Gloss" data-shot="1">
     <div class="photo">
-      <img src="ritehome-photos/enhanced/01-graphite-gloss.jpg" alt="Installed U-shaped kitchen in black gloss with a white quartz counter, backlit glass wall units and a grey island, on a marble-tiled floor.">
+      <picture><source type="image/webp" srcset="ritehome-photos/enhanced/01-graphite-gloss.webp"><img src="ritehome-photos/enhanced/01-graphite-gloss.jpg" alt="Installed U-shaped kitchen in black gloss with a white quartz counter, backlit glass wall units and a grey island, on a marble-tiled floor."></picture>
       <video class="photo-vid" autoplay muted loop playsinline preload="none" tabindex="-1" aria-hidden="true"
              poster="ritehome-photos/enhanced/01-graphite-gloss.jpg"
              data-src="ritehome-photos/reel/graphite-gloss-loop.mp4"></video>
@@ -1140,7 +1145,7 @@ body.reading .stagetab,body.reading .hint{display:none;}
   <!-- ---------- 02 ---------- -->
   <section class="slide shot" data-name="White Gloss" data-meta="Kitchen · Island" data-shot="1">
     <div class="photo">
-      <img src="ritehome-photos/enhanced/06-white-gloss.jpg" alt="Large white gloss kitchen with a central island, extractor hood, integrated oven column and a stepped ceiling detail." loading="lazy">
+      <picture><source type="image/webp" srcset="ritehome-photos/enhanced/06-white-gloss.webp"><img src="ritehome-photos/enhanced/06-white-gloss.jpg" alt="Large white gloss kitchen with a central island, extractor hood, integrated oven column and a stepped ceiling detail." loading="lazy"></picture>
     </div>
     <div class="copy">
       <p class="eyebrow rise">Project 02</p>
@@ -1160,7 +1165,7 @@ body.reading .stagetab,body.reading .hint{display:none;}
   <!-- ---------- 03 — storage systems begin ---------- -->
   <section class="slide shot" data-name="TV Console — Onyx" data-meta="Storage · TV console" data-shot="1">
     <div class="photo">
-      <img src="ritehome-photos/enhanced/07-storage-feature-wall.jpg" alt="Backlit onyx-marble TV console wall with a wall-mounted television, ribbed timber pilasters, a floating console cabinet and a full-height wardrobe on either side." loading="lazy">
+      <picture><source type="image/webp" srcset="ritehome-photos/enhanced/07-storage-feature-wall.webp"><img src="ritehome-photos/enhanced/07-storage-feature-wall.jpg" alt="Backlit onyx-marble TV console wall with a wall-mounted television, ribbed timber pilasters, a floating console cabinet and a full-height wardrobe on either side." loading="lazy"></picture>
     </div>
     <div class="copy">
       <p class="eyebrow rise">Project 03</p>
@@ -1181,7 +1186,7 @@ body.reading .stagetab,body.reading .hint{display:none;}
   <!-- ---------- 04 ---------- -->
   <section class="slide shot" data-name="Walk-in Wardrobe" data-meta="Storage · Closet" data-shot="1">
     <div class="photo">
-      <img src="ritehome-photos/enhanced/08-storage-wardrobe.jpg" alt="Full-height woodgrain wardrobe run turning through a corner, with concealed vertical pulls and an open shelving nook beside the window." loading="lazy">
+      <picture><source type="image/webp" srcset="ritehome-photos/enhanced/08-storage-wardrobe.webp"><img src="ritehome-photos/enhanced/08-storage-wardrobe.jpg" alt="Full-height woodgrain wardrobe run turning through a corner, with concealed vertical pulls and an open shelving nook beside the window." loading="lazy"></picture>
     </div>
     <div class="copy">
       <p class="eyebrow rise">Project 04</p>
@@ -1202,7 +1207,7 @@ body.reading .stagetab,body.reading .hint{display:none;}
   <!-- ---------- 05 ---------- -->
   <section class="slide shot" data-name="Open Storage Wall" data-meta="Storage · Shelving" data-shot="1">
     <div class="photo">
-      <img src="ritehome-photos/enhanced/09-storage-shelving.jpg" alt="Open pigeonhole shelving wall in light woodgrain, built floor to ceiling beside a window, ready for fit-out." loading="lazy">
+      <picture><source type="image/webp" srcset="ritehome-photos/enhanced/09-storage-shelving.webp"><img src="ritehome-photos/enhanced/09-storage-shelving.jpg" alt="Open pigeonhole shelving wall in light woodgrain, built floor to ceiling beside a window, ready for fit-out." loading="lazy"></picture>
     </div>
     <div class="copy">
       <p class="eyebrow rise">Project 05</p>
@@ -1222,7 +1227,7 @@ body.reading .stagetab,body.reading .hint{display:none;}
   <!-- ---------- 06 — partition systems begin ---------- -->
   <section class="slide shot" data-name="CR Partition" data-meta="Partition · Toilet cubicles" data-shot="1">
     <div class="photo">
-      <img src="ritehome-photos/enhanced/10-partition-cr.jpg" alt="Toilet cubicle partitions in blue-grey phenolic board on a stainless top rail, over a black-and-white tiled floor." loading="lazy">
+      <picture><source type="image/webp" srcset="ritehome-photos/enhanced/10-partition-cr.webp"><img src="ritehome-photos/enhanced/10-partition-cr.jpg" alt="Toilet cubicle partitions in blue-grey phenolic board on a stainless top rail, over a black-and-white tiled floor." loading="lazy"></picture>
     </div>
     <div class="copy">
       <p class="eyebrow rise">Project 06</p>
@@ -1243,7 +1248,7 @@ body.reading .stagetab,body.reading .hint{display:none;}
   <!-- ---------- 07 ---------- -->
   <section class="slide shot" data-name="Reception Partition" data-meta="Partition · Desk counters" data-shot="1">
     <div class="photo">
-      <img src="ritehome-photos/enhanced/11-partition-reception.jpg" alt="Row of laminate reception desk partitions with blue counter fronts, dividing a service floor into individual windows." loading="lazy">
+      <picture><source type="image/webp" srcset="ritehome-photos/enhanced/11-partition-reception.webp"><img src="ritehome-photos/enhanced/11-partition-reception.jpg" alt="Row of laminate reception desk partitions with blue counter fronts, dividing a service floor into individual windows." loading="lazy"></picture>
     </div>
     <div class="copy">
       <p class="eyebrow rise">Project 07</p>
@@ -1263,7 +1268,7 @@ body.reading .stagetab,body.reading .hint{display:none;}
   <!-- ---------- 08 — workspace systems begin ---------- -->
   <section class="slide shot" data-name="Office Workstations" data-meta="Workspace · Corporate fit-out" data-shot="1">
     <div class="photo">
-      <img src="ritehome-photos/enhanced/12-office-workstations.jpg" alt="Open-plan office with a wall of built-in wood shelving, a cubicle-style desk divider and a row of workstations beside an interior glass partition." loading="lazy">
+      <picture><source type="image/webp" srcset="ritehome-photos/enhanced/12-office-workstations.webp"><img src="ritehome-photos/enhanced/12-office-workstations.jpg" alt="Open-plan office with a wall of built-in wood shelving, a cubicle-style desk divider and a row of workstations beside an interior glass partition." loading="lazy"></picture>
     </div>
     <div class="copy">
       <p class="eyebrow rise">Project 08</p>
@@ -1283,7 +1288,7 @@ body.reading .stagetab,body.reading .hint{display:none;}
   <!-- ---------- 09 ---------- -->
   <section class="slide shot" data-name="Corporate Floor" data-meta="Workspace · Desk cubicles" data-shot="1">
     <div class="photo">
-      <img src="ritehome-photos/enhanced/13-workspace-corporate-floor.jpg" alt="Full floor of modular timber desk cubicles repeated in long rows under a black ceiling, fitted out for a corporate opening." loading="lazy">
+      <picture><source type="image/webp" srcset="ritehome-photos/enhanced/13-workspace-corporate-floor.webp"><img src="ritehome-photos/enhanced/13-workspace-corporate-floor.jpg" alt="Full floor of modular timber desk cubicles repeated in long rows under a black ceiling, fitted out for a corporate opening." loading="lazy"></picture>
     </div>
     <div class="copy">
       <p class="eyebrow rise">Project 09</p>
@@ -1559,6 +1564,7 @@ body.reading .stagetab,body.reading .hint{display:none;}
     <div class="menu-contact">
       <a class="em" href="mailto:ritehomemodularsystems@gmail.com">ritehomemodularsystems@gmail.com</a>
       <a class="em tel" href="tel:+639177010109">+63 917 701 0109</a>
+      <a class="em" href="https://wa.me/639177010109?text=Hi%20Ritehome%2C%20I%27d%20like%20to%20ask%20about%20a%20project.">WhatsApp</a>
       <p class="loc micro">E &amp; J Building, Apovel<br>Cagayan de Oro City, Misamis</p>
     </div>
   </div>
@@ -1695,6 +1701,7 @@ body.reading .stagetab,body.reading .hint{display:none;}
           <div class="contactcard-h">Contact</div>
           <div class="cfield"><span class="cfield-k">Office</span><span class="cfield-v">Cagayan de Oro City</span></div>
           <div class="cfield"><span class="cfield-k">Telephone</span><span class="cfield-v"><a href="tel:+639177010109">+63 917 701 0109</a></span></div>
+          <div class="cfield"><span class="cfield-k">WhatsApp</span><span class="cfield-v"><a href="https://wa.me/639177010109?text=Hi%20Ritehome%2C%20I%27d%20like%20to%20ask%20about%20a%20project.">Message us</a></span></div>
           <div class="cfield"><span class="cfield-k">Email</span><span class="cfield-v"><a href="mailto:ritehomemodularsystems@gmail.com">ritehomemodularsystems@gmail.com</a></span></div>
           <div class="cfield"><span class="cfield-k">Showroom</span><span class="cfield-v">E &amp; J Building, Apovel<br>Cagayan de Oro City, Misamis</span></div>
         </div>
@@ -1826,7 +1833,7 @@ body.reading .stagetab,body.reading .hint{display:none;}
         </div>
       </div>
       <div>
-        <img src="ritehome-photos/enhanced/01-graphite-gloss.jpg" alt="Installed U-shaped kitchen in black gloss with a white quartz counter, backlit glass wall units and a grey island, on a marble-tiled floor." style="width:100%;display:block;object-fit:cover;max-height:520px;border:1px solid var(--rule-soft)">
+        <picture><source type="image/webp" srcset="ritehome-photos/enhanced/01-graphite-gloss.webp"><img src="ritehome-photos/enhanced/01-graphite-gloss.jpg" alt="Installed U-shaped kitchen in black gloss with a white quartz counter, backlit glass wall units and a grey island, on a marble-tiled floor." style="width:100%;display:block;object-fit:cover;max-height:520px;border:1px solid var(--rule-soft)"></picture>
         <ul class="spec-list">
           <li><span class="spec-k">Carcass core</span><span class="spec-v">18 mm Marine Plywood</span></li>
           <li><span class="spec-k">Door finish</span><span class="spec-v">Woodgrain · Matte · High-Gloss UV</span></li>
@@ -1852,7 +1859,7 @@ body.reading .stagetab,body.reading .hint{display:none;}
         </div>
       </div>
       <div>
-        <img src="ritehome-photos/enhanced/06-white-gloss.jpg" alt="Large white gloss kitchen with a central island, extractor hood, integrated oven column and a stepped ceiling detail." style="width:100%;display:block;object-fit:cover;max-height:520px;border:1px solid var(--rule-soft)">
+        <picture><source type="image/webp" srcset="ritehome-photos/enhanced/06-white-gloss.webp"><img src="ritehome-photos/enhanced/06-white-gloss.jpg" alt="Large white gloss kitchen with a central island, extractor hood, integrated oven column and a stepped ceiling detail." style="width:100%;display:block;object-fit:cover;max-height:520px;border:1px solid var(--rule-soft)"></picture>
         <ul class="spec-list">
           <li><span class="spec-k">Carcass core</span><span class="spec-v">18 mm Marine Plywood</span></li>
           <li><span class="spec-k">Door finish</span><span class="spec-v">Woodgrain · Matte · High-Gloss UV</span></li>
@@ -1878,7 +1885,7 @@ body.reading .stagetab,body.reading .hint{display:none;}
         </div>
       </div>
       <div>
-        <img src="ritehome-photos/enhanced/07-storage-feature-wall.jpg" alt="Backlit onyx-marble TV console wall with a wall-mounted television, ribbed timber pilasters, a floating console cabinet and a full-height wardrobe on either side." style="width:100%;display:block;object-fit:cover;max-height:520px;border:1px solid var(--rule-soft)">
+        <picture><source type="image/webp" srcset="ritehome-photos/enhanced/07-storage-feature-wall.webp"><img src="ritehome-photos/enhanced/07-storage-feature-wall.jpg" alt="Backlit onyx-marble TV console wall with a wall-mounted television, ribbed timber pilasters, a floating console cabinet and a full-height wardrobe on either side." style="width:100%;display:block;object-fit:cover;max-height:520px;border:1px solid var(--rule-soft)"></picture>
         <ul class="spec-list">
           <li><span class="spec-k">Carcass core</span><span class="spec-v">18 mm Marine Plywood, waterproof PVC on wet walls</span></li>
           <li><span class="spec-k">Screen wall</span><span class="spec-v">Backlit onyx panel, ribbed timber pilasters either side</span></li>
@@ -1904,7 +1911,7 @@ body.reading .stagetab,body.reading .hint{display:none;}
         </div>
       </div>
       <div>
-        <img src="ritehome-photos/enhanced/08-storage-wardrobe.jpg" alt="Full-height woodgrain wardrobe run turning through a corner, with concealed vertical pulls and an open shelving nook beside the window." style="width:100%;display:block;object-fit:cover;max-height:520px;border:1px solid var(--rule-soft)">
+        <picture><source type="image/webp" srcset="ritehome-photos/enhanced/08-storage-wardrobe.webp"><img src="ritehome-photos/enhanced/08-storage-wardrobe.jpg" alt="Full-height woodgrain wardrobe run turning through a corner, with concealed vertical pulls and an open shelving nook beside the window." style="width:100%;display:block;object-fit:cover;max-height:520px;border:1px solid var(--rule-soft)"></picture>
         <ul class="spec-list">
           <li><span class="spec-k">Carcass core</span><span class="spec-v">18 mm Marine Plywood, waterproof PVC on wet walls</span></li>
           <li><span class="spec-k">Door options</span><span class="spec-v">Swing · sliding track · aluminium-framed glass</span></li>
@@ -1928,7 +1935,7 @@ body.reading .stagetab,body.reading .hint{display:none;}
         </div>
       </div>
       <div>
-        <img src="ritehome-photos/enhanced/09-storage-shelving.jpg" alt="Open pigeonhole shelving wall in light woodgrain, built floor to ceiling beside a window, ready for fit-out." style="width:100%;display:block;object-fit:cover;max-height:520px;border:1px solid var(--rule-soft)">
+        <picture><source type="image/webp" srcset="ritehome-photos/enhanced/09-storage-shelving.webp"><img src="ritehome-photos/enhanced/09-storage-shelving.jpg" alt="Open pigeonhole shelving wall in light woodgrain, built floor to ceiling beside a window, ready for fit-out." style="width:100%;display:block;object-fit:cover;max-height:520px;border:1px solid var(--rule-soft)"></picture>
         <ul class="spec-list">
           <li><span class="spec-k">Carcass core</span><span class="spec-v">18 mm Marine Plywood, waterproof PVC on wet walls</span></li>
           <li><span class="spec-k">Door options</span><span class="spec-v">Swing · sliding track · aluminium-framed glass</span></li>
@@ -1953,7 +1960,7 @@ body.reading .stagetab,body.reading .hint{display:none;}
         </div>
       </div>
       <div>
-        <img src="ritehome-photos/enhanced/10-partition-cr.jpg" alt="Toilet cubicle partitions in blue-grey phenolic board on a stainless top rail, over a black-and-white tiled floor." style="width:100%;display:block;object-fit:cover;max-height:520px;border:1px solid var(--rule-soft)">
+        <picture><source type="image/webp" srcset="ritehome-photos/enhanced/10-partition-cr.webp"><img src="ritehome-photos/enhanced/10-partition-cr.jpg" alt="Toilet cubicle partitions in blue-grey phenolic board on a stainless top rail, over a black-and-white tiled floor." style="width:100%;display:block;object-fit:cover;max-height:520px;border:1px solid var(--rule-soft)"></picture>
         <ul class="spec-list">
           <li><span class="spec-k">Panel</span><span class="spec-v">12 mm solid phenolic &mdash; waterproof, fire-retardant</span></li>
           <li><span class="spec-k">Frame</span><span class="spec-v">Anodized aluminium / Grade 304 stainless top rail</span></li>
@@ -1977,7 +1984,7 @@ body.reading .stagetab,body.reading .hint{display:none;}
         </div>
       </div>
       <div>
-        <img src="ritehome-photos/enhanced/11-partition-reception.jpg" alt="Row of laminate reception desk partitions with blue counter fronts, dividing a service floor into individual windows." style="width:100%;display:block;object-fit:cover;max-height:520px;border:1px solid var(--rule-soft)">
+        <picture><source type="image/webp" srcset="ritehome-photos/enhanced/11-partition-reception.webp"><img src="ritehome-photos/enhanced/11-partition-reception.jpg" alt="Row of laminate reception desk partitions with blue counter fronts, dividing a service floor into individual windows." style="width:100%;display:block;object-fit:cover;max-height:520px;border:1px solid var(--rule-soft)"></picture>
         <ul class="spec-list">
           <li><span class="spec-k">Panel</span><span class="spec-v">12 mm solid phenolic &mdash; waterproof, fire-retardant</span></li>
           <li><span class="spec-k">Frame</span><span class="spec-v">Anodized aluminium / Grade 304 stainless top rail</span></li>
@@ -2001,7 +2008,7 @@ body.reading .stagetab,body.reading .hint{display:none;}
         </div>
       </div>
       <div>
-        <img src="ritehome-photos/enhanced/12-office-workstations.jpg" alt="Open-plan office with a wall of built-in wood shelving, a cubicle-style desk divider and a row of workstations beside an interior glass partition." style="width:100%;display:block;object-fit:cover;max-height:520px;border:1px solid var(--rule-soft)">
+        <picture><source type="image/webp" srcset="ritehome-photos/enhanced/12-office-workstations.webp"><img src="ritehome-photos/enhanced/12-office-workstations.jpg" alt="Open-plan office with a wall of built-in wood shelving, a cubicle-style desk divider and a row of workstations beside an interior glass partition." style="width:100%;display:block;object-fit:cover;max-height:520px;border:1px solid var(--rule-soft)"></picture>
         <ul class="spec-list">
           <li><span class="spec-k">Panel</span><span class="spec-v">MFC, fabric or glass insert in aluminium frame</span></li>
           <li><span class="spec-k">Standard height</span><span class="spec-v">1,200 &ndash; 1,500 mm, seated privacy</span></li>
@@ -2026,7 +2033,7 @@ body.reading .stagetab,body.reading .hint{display:none;}
         </div>
       </div>
       <div>
-        <img src="ritehome-photos/enhanced/13-workspace-corporate-floor.jpg" alt="Full floor of modular timber desk cubicles repeated in long rows under a black ceiling, fitted out for a corporate opening." style="width:100%;display:block;object-fit:cover;max-height:520px;border:1px solid var(--rule-soft)">
+        <picture><source type="image/webp" srcset="ritehome-photos/enhanced/13-workspace-corporate-floor.webp"><img src="ritehome-photos/enhanced/13-workspace-corporate-floor.jpg" alt="Full floor of modular timber desk cubicles repeated in long rows under a black ceiling, fitted out for a corporate opening." style="width:100%;display:block;object-fit:cover;max-height:520px;border:1px solid var(--rule-soft)"></picture>
         <ul class="spec-list">
           <li><span class="spec-k">Panel</span><span class="spec-v">MFC, fabric or glass insert in aluminium frame</span></li>
           <li><span class="spec-k">Standard height</span><span class="spec-v">1,200 &ndash; 1,500 mm, seated privacy</span></li>
@@ -2049,41 +2056,41 @@ body.reading .stagetab,body.reading .hint{display:none;}
       <button class="togglebtn" type="button" data-back-slide="0">&larr; Back to the work</button>
     </div>
     <div class="photogrid">
-      <a href="ritehome-photos/enhanced/01-graphite-gloss.jpg" target="_blank" rel="noopener"><img src="ritehome-photos/enhanced/01-graphite-gloss.jpg" alt="U-shaped kitchen in black gloss with backlit glass wall units and a grey island." loading="lazy"><span class="cap">Graphite Gloss<br>U-shaped · Backlit glass uppers</span></a>
-      <a href="ritehome-photos/enhanced/02-charcoal-shaker.jpg" target="_blank" rel="noopener"><img src="ritehome-photos/enhanced/02-charcoal-shaker.jpg" alt="Charcoal shaker-front kitchen with a herringbone stone backsplash and a freestanding island." loading="lazy"><span class="cap">Charcoal Shaker<br>Single-wall run · Freestanding island</span></a>
-      <a href="ritehome-photos/enhanced/03-light-oak.jpg" target="_blank" rel="noopener"><img src="ritehome-photos/enhanced/03-light-oak.jpg" alt="L-shaped light oak woodgrain kitchen with glazed display uppers and a peninsula bar." loading="lazy"><span class="cap">Light Oak<br>L-shaped · Glazed display uppers</span></a>
-      <a href="ritehome-photos/enhanced/04-matte-white.jpg" target="_blank" rel="noopener"><img src="ritehome-photos/enhanced/04-matte-white.jpg" alt="Handleless matte white kitchen with a herringbone backsplash and a speckled quartz island." loading="lazy"><span class="cap">Matte White<br>Handleless · Herringbone splashback</span></a>
-      <a href="ritehome-photos/enhanced/05-grey-oak.jpg" target="_blank" rel="noopener"><img src="ritehome-photos/enhanced/05-grey-oak.jpg" alt="Two-tone grey and oak kitchen with a slatted timber peninsula and an open shelving column." loading="lazy"><span class="cap">Grey &amp; Oak<br>L-shaped · Slatted peninsula</span></a>
-      <a href="ritehome-photos/enhanced/06-white-gloss.jpg" target="_blank" rel="noopener"><img src="ritehome-photos/enhanced/06-white-gloss.jpg" alt="Large white gloss U-shaped kitchen with a central island and a stepped LED ceiling cove." loading="lazy"><span class="cap">White Gloss<br>U-shaped · Stepped ceiling cove</span></a>
-      <a href="ritehome-photos/gallery/gallery-kitchen-01.jpg" target="_blank" rel="noopener"><img src="ritehome-photos/gallery/gallery-kitchen-01.jpg" alt="L-shaped light grey gloss kitchen with a black tile splashback and a glazed corner display cabinet." loading="lazy"><span class="cap">Light Grey Gloss<br>L-shaped · Black tile splashback</span></a>
-      <a href="ritehome-photos/gallery/gallery-kitchen-02.jpg" target="_blank" rel="noopener"><img src="ritehome-photos/gallery/gallery-kitchen-02.jpg" alt="L-shaped walnut woodgrain kitchen under a double-height window, with an open shelving nook." loading="lazy"><span class="cap">Walnut Woodgrain<br>L-shaped · Open shelving nook</span></a>
-      <a href="ritehome-photos/gallery/gallery-kitchen-03.jpg" target="_blank" rel="noopener"><img src="ritehome-photos/gallery/gallery-kitchen-03.jpg" alt="Two-tone black gloss and walnut kitchen with a waterfall-edge gold-veined quartz island and a wine rack." loading="lazy"><span class="cap">Two-tone Gloss<br>U-shaped · Waterfall island</span></a>
-      <a href="ritehome-photos/gallery/gallery-kitchen-04.jpg" target="_blank" rel="noopener"><img src="ritehome-photos/gallery/gallery-kitchen-04.jpg" alt="All-white gloss U-shaped kitchen under a stepped ceiling lit with blue LED cove lighting." loading="lazy"><span class="cap">White Gloss<br>U-shaped · Blue LED ceiling cove</span></a>
-      <a href="ritehome-photos/gallery/gallery-kitchen-05.jpg" target="_blank" rel="noopener"><img src="ritehome-photos/gallery/gallery-kitchen-05.jpg" alt="Small kitchenette with a striped wood and white breakfast bar front, against exposed concrete walls." loading="lazy"><span class="cap">Striped Breakfast Bar<br>Kitchenette · Concrete walls</span></a>
-      <a href="ritehome-photos/gallery/gallery-kitchen-06.jpg" target="_blank" rel="noopener"><img src="ritehome-photos/gallery/gallery-kitchen-06.jpg" alt="White gloss kitchen with a dark timber cove ceiling, an olive fridge and a slatted peninsula front." loading="lazy"><span class="cap">White Gloss<br>Peninsula · Timber cove ceiling</span></a>
-      <a href="ritehome-photos/gallery/gallery-kitchen-07.jpg" target="_blank" rel="noopener"><img src="ritehome-photos/gallery/gallery-kitchen-07.jpg" alt="White gloss kitchen with a long island seating four, styled and in daily use." loading="lazy"><span class="cap">White Gloss<br>Long island · Family kitchen</span></a>
-      <a href="ritehome-photos/gallery/gallery-kitchen-08.jpg" target="_blank" rel="noopener"><img src="ritehome-photos/gallery/gallery-kitchen-08.jpg" alt="L-shaped charcoal kitchen with blue LED-lit open display shelving flanking the upper cabinets." loading="lazy"><span class="cap">Charcoal<br>L-shaped · LED display shelving</span></a>
-      <a href="ritehome-photos/gallery/gallery-kitchen-09.jpg" target="_blank" rel="noopener"><img src="ritehome-photos/gallery/gallery-kitchen-09.jpg" alt="Forest green U-shaped kitchen with an island and layered pendant lighting." loading="lazy"><span class="cap">Forest Green<br>U-shaped · Island</span></a>
-      <a href="ritehome-photos/gallery/gallery-kitchen-10.jpg" target="_blank" rel="noopener"><img src="ritehome-photos/gallery/gallery-kitchen-10.jpg" alt="Wide view of a forest green U-shaped kitchen with an island, under a vaulted ceiling." loading="lazy"><span class="cap">Forest Green<br>U-shaped · Wide angle</span></a>
-      <a href="ritehome-photos/gallery/gallery-kitchen-11.jpg" target="_blank" rel="noopener"><img src="ritehome-photos/gallery/gallery-kitchen-11.jpg" alt="L-shaped kitchen with grey woodgrain wall units over walnut base cabinets and a mosaic splashback." loading="lazy"><span class="cap">Grey &amp; Walnut<br>L-shaped · Mosaic splashback</span></a>
-      <a href="ritehome-photos/gallery/gallery-kitchen-12.jpg" target="_blank" rel="noopener"><img src="ritehome-photos/gallery/gallery-kitchen-12.jpg" alt="Handleless white kitchen with a fluted timber island front under a dark timber dropped ceiling." loading="lazy"><span class="cap">White &amp; Fluted Timber<br>Island · Dropped timber ceiling</span></a>
-      <a href="ritehome-photos/gallery/gallery-kitchen-13.jpg" target="_blank" rel="noopener"><img src="ritehome-photos/gallery/gallery-kitchen-13.jpg" alt="Single-wall kitchen with white wall units, beige base cabinets and a four-door fridge alongside." loading="lazy"><span class="cap">White &amp; Beige<br>Single-wall run</span></a>
-      <a href="ritehome-photos/gallery/gallery-kitchen-14.jpg" target="_blank" rel="noopener"><img src="ritehome-photos/gallery/gallery-kitchen-14.jpg" alt="Galley kitchen in white gloss and light oak, screened by a full-height fluted timber partition." loading="lazy"><span class="cap">White Gloss &amp; Light Oak<br>Galley · Fluted screen</span></a>
-      <a href="ritehome-photos/gallery/gallery-kitchen-15.jpg" target="_blank" rel="noopener"><img src="ritehome-photos/gallery/gallery-kitchen-15.jpg" alt="White gloss kitchen with black granite worktops and an LED-lit island." loading="lazy"><span class="cap">White Gloss &amp; Granite<br>LED-lit island</span></a>
-      <a href="ritehome-photos/gallery/gallery-kitchen-16.jpg" target="_blank" rel="noopener"><img src="ritehome-photos/gallery/gallery-kitchen-16.jpg" alt="Exhibition kitchen display with walnut base cabinets, a breakfast bar and a wall-mounted screen." loading="lazy"><span class="cap">Showroom Build<br>Walnut · Breakfast bar</span></a>
-      <a href="ritehome-photos/gallery/gallery-kitchen-17.jpg" target="_blank" rel="noopener"><img src="ritehome-photos/gallery/gallery-kitchen-17.jpg" alt="Compact white condominium kitchen with a black worktop and open display shelving." loading="lazy"><span class="cap">Condo Compact<br>White · Black worktop</span></a>
-      <a href="ritehome-photos/gallery/gallery-kitchen-18.jpg" target="_blank" rel="noopener"><img src="ritehome-photos/gallery/gallery-kitchen-18.jpg" alt="All-white L-shaped kitchen with a ribbed tile splashback and a bar-height return." loading="lazy"><span class="cap">All White<br>L-shaped · Ribbed splashback</span></a>
-      <a href="ritehome-photos/gallery/gallery-kitchen-19.jpg" target="_blank" rel="noopener"><img src="ritehome-photos/gallery/gallery-kitchen-19.jpg" alt="Cream kitchen with a navy island and a speckled terrazzo worktop." loading="lazy"><span class="cap">Cream &amp; Navy<br>Terrazzo worktop</span></a>
-      <a href="ritehome-photos/gallery/gallery-kitchen-20.jpg" target="_blank" rel="noopener"><img src="ritehome-photos/gallery/gallery-kitchen-20.jpg" alt="White and oak kitchen with a large black granite waterfall island." loading="lazy"><span class="cap">White &amp; Oak<br>Waterfall island</span></a>
-      <a href="ritehome-photos/gallery/gallery-kitchen-21.jpg" target="_blank" rel="noopener"><img src="ritehome-photos/gallery/gallery-kitchen-21.jpg" alt="Open-plan white and oak kitchen with a slatted breakfast bar under pendant lighting." loading="lazy"><span class="cap">White &amp; Oak<br>Slatted bar · Pendants</span></a>
-      <a href="ritehome-photos/gallery/gallery-kitchen-22.jpg" target="_blank" rel="noopener"><img src="ritehome-photos/gallery/gallery-kitchen-22.jpg" alt="White gloss kitchen under a floating staircase with a live-edge timber counter." loading="lazy"><span class="cap">Under-stair Kitchen<br>Live-edge counter</span></a>
-      <a href="ritehome-photos/gallery/gallery-kitchen-23.jpg" target="_blank" rel="noopener"><img src="ritehome-photos/gallery/gallery-kitchen-23.jpg" alt="Handleless white kitchen with black-framed glass wall units and integrated ovens." loading="lazy"><span class="cap">Handleless White<br>Glass uppers · Integrated ovens</span></a>
-      <a href="ritehome-photos/gallery/gallery-kitchen-24.jpg" target="_blank" rel="noopener"><img src="ritehome-photos/gallery/gallery-kitchen-24.jpg" alt="Single-wall utility kitchen in beech woodgrain with a black granite worktop." loading="lazy"><span class="cap">Beech Woodgrain<br>Single-wall · Granite top</span></a>
-      <a href="ritehome-photos/gallery/gallery-kitchen-25.jpg" target="_blank" rel="noopener"><img src="ritehome-photos/gallery/gallery-kitchen-25.jpg" alt="White L-shaped condominium kitchen with a black marble worktop and a tall appliance column." loading="lazy"><span class="cap">Condo L-shape<br>Black marble worktop</span></a>
-      <a href="ritehome-photos/gallery/gallery-kitchen-26.jpg" target="_blank" rel="noopener"><img src="ritehome-photos/gallery/gallery-kitchen-26.jpg" alt="Light oak wall units over white shaker base cabinets with cup pulls and a glossy tile splashback." loading="lazy"><span class="cap">Oak &amp; Shaker White<br>Cup pulls</span></a>
-      <a href="ritehome-photos/gallery/gallery-kitchen-27.jpg" target="_blank" rel="noopener"><img src="ritehome-photos/gallery/gallery-kitchen-27.jpg" alt="Close view of a speckled terrazzo worktop with an undermount sink and grey base cabinets." loading="lazy"><span class="cap">Terrazzo Worktop<br>Undermount sink</span></a>
-      <a href="ritehome-photos/gallery/gallery-kitchen-28.jpg" target="_blank" rel="noopener"><img src="ritehome-photos/gallery/gallery-kitchen-28.jpg" alt="Handleless mocha kitchen with a black apron sink and an integrated dishwasher." loading="lazy"><span class="cap">Mocha Handleless<br>Apron sink · Integrated dishwasher</span></a>
-      <a href="ritehome-photos/gallery/gallery-kitchen-29.jpg" target="_blank" rel="noopener"><img src="ritehome-photos/gallery/gallery-kitchen-29.jpg" alt="Cream kitchen with a marble-look worktop and a blue LED strip under the wall units." loading="lazy"><span class="cap">Cream &amp; Marble<br>LED under-unit strip</span></a>
+      <a href="ritehome-photos/enhanced/01-graphite-gloss.webp" target="_blank" rel="noopener"><picture><source type="image/webp" srcset="ritehome-photos/enhanced/01-graphite-gloss.webp"><img src="ritehome-photos/enhanced/01-graphite-gloss.jpg" alt="U-shaped kitchen in black gloss with backlit glass wall units and a grey island." loading="lazy"></picture><span class="cap">Graphite Gloss<br>U-shaped · Backlit glass uppers</span></a>
+      <a href="ritehome-photos/enhanced/02-charcoal-shaker.webp" target="_blank" rel="noopener"><picture><source type="image/webp" srcset="ritehome-photos/enhanced/02-charcoal-shaker.webp"><img src="ritehome-photos/enhanced/02-charcoal-shaker.jpg" alt="Charcoal shaker-front kitchen with a herringbone stone backsplash and a freestanding island." loading="lazy"></picture><span class="cap">Charcoal Shaker<br>Single-wall run · Freestanding island</span></a>
+      <a href="ritehome-photos/enhanced/03-light-oak.webp" target="_blank" rel="noopener"><picture><source type="image/webp" srcset="ritehome-photos/enhanced/03-light-oak.webp"><img src="ritehome-photos/enhanced/03-light-oak.jpg" alt="L-shaped light oak woodgrain kitchen with glazed display uppers and a peninsula bar." loading="lazy"></picture><span class="cap">Light Oak<br>L-shaped · Glazed display uppers</span></a>
+      <a href="ritehome-photos/enhanced/04-matte-white.webp" target="_blank" rel="noopener"><picture><source type="image/webp" srcset="ritehome-photos/enhanced/04-matte-white.webp"><img src="ritehome-photos/enhanced/04-matte-white.jpg" alt="Handleless matte white kitchen with a herringbone backsplash and a speckled quartz island." loading="lazy"></picture><span class="cap">Matte White<br>Handleless · Herringbone splashback</span></a>
+      <a href="ritehome-photos/enhanced/05-grey-oak.webp" target="_blank" rel="noopener"><picture><source type="image/webp" srcset="ritehome-photos/enhanced/05-grey-oak.webp"><img src="ritehome-photos/enhanced/05-grey-oak.jpg" alt="Two-tone grey and oak kitchen with a slatted timber peninsula and an open shelving column." loading="lazy"></picture><span class="cap">Grey &amp; Oak<br>L-shaped · Slatted peninsula</span></a>
+      <a href="ritehome-photos/enhanced/06-white-gloss.webp" target="_blank" rel="noopener"><picture><source type="image/webp" srcset="ritehome-photos/enhanced/06-white-gloss.webp"><img src="ritehome-photos/enhanced/06-white-gloss.jpg" alt="Large white gloss U-shaped kitchen with a central island and a stepped LED ceiling cove." loading="lazy"></picture><span class="cap">White Gloss<br>U-shaped · Stepped ceiling cove</span></a>
+      <a href="ritehome-photos/gallery/gallery-kitchen-01.webp" target="_blank" rel="noopener"><picture><source type="image/webp" srcset="ritehome-photos/gallery/gallery-kitchen-01.webp"><img src="ritehome-photos/gallery/gallery-kitchen-01.jpg" alt="L-shaped light grey gloss kitchen with a black tile splashback and a glazed corner display cabinet." loading="lazy"></picture><span class="cap">Light Grey Gloss<br>L-shaped · Black tile splashback</span></a>
+      <a href="ritehome-photos/gallery/gallery-kitchen-02.webp" target="_blank" rel="noopener"><picture><source type="image/webp" srcset="ritehome-photos/gallery/gallery-kitchen-02.webp"><img src="ritehome-photos/gallery/gallery-kitchen-02.jpg" alt="L-shaped walnut woodgrain kitchen under a double-height window, with an open shelving nook." loading="lazy"></picture><span class="cap">Walnut Woodgrain<br>L-shaped · Open shelving nook</span></a>
+      <a href="ritehome-photos/gallery/gallery-kitchen-03.webp" target="_blank" rel="noopener"><picture><source type="image/webp" srcset="ritehome-photos/gallery/gallery-kitchen-03.webp"><img src="ritehome-photos/gallery/gallery-kitchen-03.jpg" alt="Two-tone black gloss and walnut kitchen with a waterfall-edge gold-veined quartz island and a wine rack." loading="lazy"></picture><span class="cap">Two-tone Gloss<br>U-shaped · Waterfall island</span></a>
+      <a href="ritehome-photos/gallery/gallery-kitchen-04.webp" target="_blank" rel="noopener"><picture><source type="image/webp" srcset="ritehome-photos/gallery/gallery-kitchen-04.webp"><img src="ritehome-photos/gallery/gallery-kitchen-04.jpg" alt="All-white gloss U-shaped kitchen under a stepped ceiling lit with blue LED cove lighting." loading="lazy"></picture><span class="cap">White Gloss<br>U-shaped · Blue LED ceiling cove</span></a>
+      <a href="ritehome-photos/gallery/gallery-kitchen-05.webp" target="_blank" rel="noopener"><picture><source type="image/webp" srcset="ritehome-photos/gallery/gallery-kitchen-05.webp"><img src="ritehome-photos/gallery/gallery-kitchen-05.jpg" alt="Small kitchenette with a striped wood and white breakfast bar front, against exposed concrete walls." loading="lazy"></picture><span class="cap">Striped Breakfast Bar<br>Kitchenette · Concrete walls</span></a>
+      <a href="ritehome-photos/gallery/gallery-kitchen-06.webp" target="_blank" rel="noopener"><picture><source type="image/webp" srcset="ritehome-photos/gallery/gallery-kitchen-06.webp"><img src="ritehome-photos/gallery/gallery-kitchen-06.jpg" alt="White gloss kitchen with a dark timber cove ceiling, an olive fridge and a slatted peninsula front." loading="lazy"></picture><span class="cap">White Gloss<br>Peninsula · Timber cove ceiling</span></a>
+      <a href="ritehome-photos/gallery/gallery-kitchen-07.webp" target="_blank" rel="noopener"><picture><source type="image/webp" srcset="ritehome-photos/gallery/gallery-kitchen-07.webp"><img src="ritehome-photos/gallery/gallery-kitchen-07.jpg" alt="White gloss kitchen with a long island seating four, styled and in daily use." loading="lazy"></picture><span class="cap">White Gloss<br>Long island · Family kitchen</span></a>
+      <a href="ritehome-photos/gallery/gallery-kitchen-08.webp" target="_blank" rel="noopener"><picture><source type="image/webp" srcset="ritehome-photos/gallery/gallery-kitchen-08.webp"><img src="ritehome-photos/gallery/gallery-kitchen-08.jpg" alt="L-shaped charcoal kitchen with blue LED-lit open display shelving flanking the upper cabinets." loading="lazy"></picture><span class="cap">Charcoal<br>L-shaped · LED display shelving</span></a>
+      <a href="ritehome-photos/gallery/gallery-kitchen-09.webp" target="_blank" rel="noopener"><picture><source type="image/webp" srcset="ritehome-photos/gallery/gallery-kitchen-09.webp"><img src="ritehome-photos/gallery/gallery-kitchen-09.jpg" alt="Forest green U-shaped kitchen with an island and layered pendant lighting." loading="lazy"></picture><span class="cap">Forest Green<br>U-shaped · Island</span></a>
+      <a href="ritehome-photos/gallery/gallery-kitchen-10.webp" target="_blank" rel="noopener"><picture><source type="image/webp" srcset="ritehome-photos/gallery/gallery-kitchen-10.webp"><img src="ritehome-photos/gallery/gallery-kitchen-10.jpg" alt="Wide view of a forest green U-shaped kitchen with an island, under a vaulted ceiling." loading="lazy"></picture><span class="cap">Forest Green<br>U-shaped · Wide angle</span></a>
+      <a href="ritehome-photos/gallery/gallery-kitchen-11.webp" target="_blank" rel="noopener"><picture><source type="image/webp" srcset="ritehome-photos/gallery/gallery-kitchen-11.webp"><img src="ritehome-photos/gallery/gallery-kitchen-11.jpg" alt="L-shaped kitchen with grey woodgrain wall units over walnut base cabinets and a mosaic splashback." loading="lazy"></picture><span class="cap">Grey &amp; Walnut<br>L-shaped · Mosaic splashback</span></a>
+      <a href="ritehome-photos/gallery/gallery-kitchen-12.webp" target="_blank" rel="noopener"><picture><source type="image/webp" srcset="ritehome-photos/gallery/gallery-kitchen-12.webp"><img src="ritehome-photos/gallery/gallery-kitchen-12.jpg" alt="Handleless white kitchen with a fluted timber island front under a dark timber dropped ceiling." loading="lazy"></picture><span class="cap">White &amp; Fluted Timber<br>Island · Dropped timber ceiling</span></a>
+      <a href="ritehome-photos/gallery/gallery-kitchen-13.webp" target="_blank" rel="noopener"><picture><source type="image/webp" srcset="ritehome-photos/gallery/gallery-kitchen-13.webp"><img src="ritehome-photos/gallery/gallery-kitchen-13.jpg" alt="Single-wall kitchen with white wall units, beige base cabinets and a four-door fridge alongside." loading="lazy"></picture><span class="cap">White &amp; Beige<br>Single-wall run</span></a>
+      <a href="ritehome-photos/gallery/gallery-kitchen-14.webp" target="_blank" rel="noopener"><picture><source type="image/webp" srcset="ritehome-photos/gallery/gallery-kitchen-14.webp"><img src="ritehome-photos/gallery/gallery-kitchen-14.jpg" alt="Galley kitchen in white gloss and light oak, screened by a full-height fluted timber partition." loading="lazy"></picture><span class="cap">White Gloss &amp; Light Oak<br>Galley · Fluted screen</span></a>
+      <a href="ritehome-photos/gallery/gallery-kitchen-15.webp" target="_blank" rel="noopener"><picture><source type="image/webp" srcset="ritehome-photos/gallery/gallery-kitchen-15.webp"><img src="ritehome-photos/gallery/gallery-kitchen-15.jpg" alt="White gloss kitchen with black granite worktops and an LED-lit island." loading="lazy"></picture><span class="cap">White Gloss &amp; Granite<br>LED-lit island</span></a>
+      <a href="ritehome-photos/gallery/gallery-kitchen-16.webp" target="_blank" rel="noopener"><picture><source type="image/webp" srcset="ritehome-photos/gallery/gallery-kitchen-16.webp"><img src="ritehome-photos/gallery/gallery-kitchen-16.jpg" alt="Exhibition kitchen display with walnut base cabinets, a breakfast bar and a wall-mounted screen." loading="lazy"></picture><span class="cap">Showroom Build<br>Walnut · Breakfast bar</span></a>
+      <a href="ritehome-photos/gallery/gallery-kitchen-17.webp" target="_blank" rel="noopener"><picture><source type="image/webp" srcset="ritehome-photos/gallery/gallery-kitchen-17.webp"><img src="ritehome-photos/gallery/gallery-kitchen-17.jpg" alt="Compact white condominium kitchen with a black worktop and open display shelving." loading="lazy"></picture><span class="cap">Condo Compact<br>White · Black worktop</span></a>
+      <a href="ritehome-photos/gallery/gallery-kitchen-18.webp" target="_blank" rel="noopener"><picture><source type="image/webp" srcset="ritehome-photos/gallery/gallery-kitchen-18.webp"><img src="ritehome-photos/gallery/gallery-kitchen-18.jpg" alt="All-white L-shaped kitchen with a ribbed tile splashback and a bar-height return." loading="lazy"></picture><span class="cap">All White<br>L-shaped · Ribbed splashback</span></a>
+      <a href="ritehome-photos/gallery/gallery-kitchen-19.webp" target="_blank" rel="noopener"><picture><source type="image/webp" srcset="ritehome-photos/gallery/gallery-kitchen-19.webp"><img src="ritehome-photos/gallery/gallery-kitchen-19.jpg" alt="Cream kitchen with a navy island and a speckled terrazzo worktop." loading="lazy"></picture><span class="cap">Cream &amp; Navy<br>Terrazzo worktop</span></a>
+      <a href="ritehome-photos/gallery/gallery-kitchen-20.webp" target="_blank" rel="noopener"><picture><source type="image/webp" srcset="ritehome-photos/gallery/gallery-kitchen-20.webp"><img src="ritehome-photos/gallery/gallery-kitchen-20.jpg" alt="White and oak kitchen with a large black granite waterfall island." loading="lazy"></picture><span class="cap">White &amp; Oak<br>Waterfall island</span></a>
+      <a href="ritehome-photos/gallery/gallery-kitchen-21.webp" target="_blank" rel="noopener"><picture><source type="image/webp" srcset="ritehome-photos/gallery/gallery-kitchen-21.webp"><img src="ritehome-photos/gallery/gallery-kitchen-21.jpg" alt="Open-plan white and oak kitchen with a slatted breakfast bar under pendant lighting." loading="lazy"></picture><span class="cap">White &amp; Oak<br>Slatted bar · Pendants</span></a>
+      <a href="ritehome-photos/gallery/gallery-kitchen-22.webp" target="_blank" rel="noopener"><picture><source type="image/webp" srcset="ritehome-photos/gallery/gallery-kitchen-22.webp"><img src="ritehome-photos/gallery/gallery-kitchen-22.jpg" alt="White gloss kitchen under a floating staircase with a live-edge timber counter." loading="lazy"></picture><span class="cap">Under-stair Kitchen<br>Live-edge counter</span></a>
+      <a href="ritehome-photos/gallery/gallery-kitchen-23.webp" target="_blank" rel="noopener"><picture><source type="image/webp" srcset="ritehome-photos/gallery/gallery-kitchen-23.webp"><img src="ritehome-photos/gallery/gallery-kitchen-23.jpg" alt="Handleless white kitchen with black-framed glass wall units and integrated ovens." loading="lazy"></picture><span class="cap">Handleless White<br>Glass uppers · Integrated ovens</span></a>
+      <a href="ritehome-photos/gallery/gallery-kitchen-24.webp" target="_blank" rel="noopener"><picture><source type="image/webp" srcset="ritehome-photos/gallery/gallery-kitchen-24.webp"><img src="ritehome-photos/gallery/gallery-kitchen-24.jpg" alt="Single-wall utility kitchen in beech woodgrain with a black granite worktop." loading="lazy"></picture><span class="cap">Beech Woodgrain<br>Single-wall · Granite top</span></a>
+      <a href="ritehome-photos/gallery/gallery-kitchen-25.webp" target="_blank" rel="noopener"><picture><source type="image/webp" srcset="ritehome-photos/gallery/gallery-kitchen-25.webp"><img src="ritehome-photos/gallery/gallery-kitchen-25.jpg" alt="White L-shaped condominium kitchen with a black marble worktop and a tall appliance column." loading="lazy"></picture><span class="cap">Condo L-shape<br>Black marble worktop</span></a>
+      <a href="ritehome-photos/gallery/gallery-kitchen-26.webp" target="_blank" rel="noopener"><picture><source type="image/webp" srcset="ritehome-photos/gallery/gallery-kitchen-26.webp"><img src="ritehome-photos/gallery/gallery-kitchen-26.jpg" alt="Light oak wall units over white shaker base cabinets with cup pulls and a glossy tile splashback." loading="lazy"></picture><span class="cap">Oak &amp; Shaker White<br>Cup pulls</span></a>
+      <a href="ritehome-photos/gallery/gallery-kitchen-27.webp" target="_blank" rel="noopener"><picture><source type="image/webp" srcset="ritehome-photos/gallery/gallery-kitchen-27.webp"><img src="ritehome-photos/gallery/gallery-kitchen-27.jpg" alt="Close view of a speckled terrazzo worktop with an undermount sink and grey base cabinets." loading="lazy"></picture><span class="cap">Terrazzo Worktop<br>Undermount sink</span></a>
+      <a href="ritehome-photos/gallery/gallery-kitchen-28.webp" target="_blank" rel="noopener"><picture><source type="image/webp" srcset="ritehome-photos/gallery/gallery-kitchen-28.webp"><img src="ritehome-photos/gallery/gallery-kitchen-28.jpg" alt="Handleless mocha kitchen with a black apron sink and an integrated dishwasher." loading="lazy"></picture><span class="cap">Mocha Handleless<br>Apron sink · Integrated dishwasher</span></a>
+      <a href="ritehome-photos/gallery/gallery-kitchen-29.webp" target="_blank" rel="noopener"><picture><source type="image/webp" srcset="ritehome-photos/gallery/gallery-kitchen-29.webp"><img src="ritehome-photos/gallery/gallery-kitchen-29.jpg" alt="Cream kitchen with a marble-look worktop and a blue LED strip under the wall units." loading="lazy"></picture><span class="cap">Cream &amp; Marble<br>LED under-unit strip</span></a>
     </div>
   </section>
 
@@ -2098,21 +2105,21 @@ body.reading .stagetab,body.reading .hint{display:none;}
       <button class="togglebtn" type="button" data-back-slide="2">&larr; Back to the work</button>
     </div>
     <div class="photogrid">
-      <a href="ritehome-photos/enhanced/07-storage-feature-wall.jpg" target="_blank" rel="noopener"><img src="ritehome-photos/enhanced/07-storage-feature-wall.jpg" alt="Backlit onyx-marble TV console wall with a television, a floating console cabinet and a wardrobe on either side." loading="lazy"><span class="cap">TV Console — Onyx Wall<br>Backlit stone · Wardrobe returns</span></a>
-      <a href="ritehome-photos/enhanced/08-storage-wardrobe.jpg" target="_blank" rel="noopener"><img src="ritehome-photos/enhanced/08-storage-wardrobe.jpg" alt="Full-height woodgrain wardrobe run turning through a corner." loading="lazy"><span class="cap">Walk-in Wardrobe<br>Woodgrain · Corner run</span></a>
-      <a href="ritehome-photos/enhanced/09-storage-shelving.jpg" target="_blank" rel="noopener"><img src="ritehome-photos/enhanced/09-storage-shelving.jpg" alt="Open pigeonhole shelving wall in light woodgrain, floor to ceiling." loading="lazy"><span class="cap">Open Storage Wall<br>Pigeonhole shelving</span></a>
-      <a href="ritehome-photos/gallery/gallery-storage-01.jpg" target="_blank" rel="noopener"><img src="ritehome-photos/gallery/gallery-storage-01.jpg" alt="Matte white walk-in wardrobe with rose-gold pulls, over a herringbone timber floor." loading="lazy"><span class="cap">Walk-in Wardrobe<br>Matte white · Herringbone floor</span></a>
-      <a href="ritehome-photos/gallery/gallery-storage-02.jpg" target="_blank" rel="noopener"><img src="ritehome-photos/gallery/gallery-storage-02.jpg" alt="Wall-mounted television panel beside an open woodgrain shelving tower lit with LED strips." loading="lazy"><span class="cap">TV Console — Shelving Tower<br>LED-lit · Open shelving</span></a>
-      <a href="ritehome-photos/gallery/gallery-storage-03.jpg" target="_blank" rel="noopener"><img src="ritehome-photos/gallery/gallery-storage-03.jpg" alt="Fluted timber TV console wall in a warm red-brown, with white low cabinets and LED strips above and below." loading="lazy"><span class="cap">TV Console — Fluted Timber<br>Low cabinets · LED cove</span></a>
-      <a href="ritehome-photos/gallery/gallery-storage-04.jpg" target="_blank" rel="noopener"><img src="ritehome-photos/gallery/gallery-storage-04.jpg" alt="Walk-in wardrobe in walnut woodgrain with aluminium pull profiles and a built-in dressing desk." loading="lazy"><span class="cap">Walk-in Wardrobe<br>Walnut · Dressing desk</span></a>
-      <a href="ritehome-photos/gallery/gallery-storage-05.jpg" target="_blank" rel="noopener"><img src="ritehome-photos/gallery/gallery-storage-05.jpg" alt="Open white walk-in closet with hanging rails, adjustable shelves and a bank of drawers." loading="lazy"><span class="cap">Walk-in Closet<br>White · Open rails &amp; drawers</span></a>
-      <a href="ritehome-photos/gallery/gallery-storage-06.jpg" target="_blank" rel="noopener"><img src="ritehome-photos/gallery/gallery-storage-06.jpg" alt="Light oak wardrobe run beside a dressing table with an LED-backlit mirror panel." loading="lazy"><span class="cap">Wardrobe &amp; Vanity<br>Light oak · Backlit mirror</span></a>
-      <a href="ritehome-photos/gallery/gallery-storage-07.jpg" target="_blank" rel="noopener"><img src="ritehome-photos/gallery/gallery-storage-07.jpg" alt="White wardrobe with overhead lockers beside a mirrored dressing table with drawers." loading="lazy"><span class="cap">Wardrobe &amp; Dresser<br>White · Overhead lockers</span></a>
-      <a href="ritehome-photos/gallery/gallery-storage-08.jpg" target="_blank" rel="noopener"><img src="ritehome-photos/gallery/gallery-storage-08.jpg" alt="Compact walk-in closet in light woodgrain with corner shelving and drawer stacks." loading="lazy"><span class="cap">Walk-in Closet<br>Light woodgrain · Corner shelves</span></a>
-      <a href="ritehome-photos/gallery/gallery-storage-09.jpg" target="_blank" rel="noopener"><img src="ritehome-photos/gallery/gallery-storage-09.jpg" alt="Open pigeonhole shelving unit in light woodgrain next to a two-door wardrobe." loading="lazy"><span class="cap">Shelving &amp; Wardrobe<br>Pigeonhole unit</span></a>
-      <a href="ritehome-photos/gallery/gallery-storage-10.jpg" target="_blank" rel="noopener"><img src="ritehome-photos/gallery/gallery-storage-10.jpg" alt="Grey four-door office credenza cabinet standing against a white wall." loading="lazy"><span class="cap">File Cabinet<br>Grey · Four-door credenza</span></a>
-      <a href="ritehome-photos/gallery/gallery-storage-11.jpg" target="_blank" rel="noopener"><img src="ritehome-photos/gallery/gallery-storage-11.jpg" alt="Stockroom shelving bays in white board on a light steel frame, running wall to wall." loading="lazy"><span class="cap">Stockroom Shelving<br>Steel frame · White board</span></a>
-      <a href="ritehome-photos/gallery/gallery-storage-12.jpg" target="_blank" rel="noopener"><img src="ritehome-photos/gallery/gallery-storage-12.jpg" alt="Built-in white storage wall with long open shelves over a run of pull-out trays." loading="lazy"><span class="cap">Built-in Storage Wall<br>Open shelves · Pull-out trays</span></a>
+      <a href="ritehome-photos/enhanced/07-storage-feature-wall.webp" target="_blank" rel="noopener"><picture><source type="image/webp" srcset="ritehome-photos/enhanced/07-storage-feature-wall.webp"><img src="ritehome-photos/enhanced/07-storage-feature-wall.jpg" alt="Backlit onyx-marble TV console wall with a television, a floating console cabinet and a wardrobe on either side." loading="lazy"></picture><span class="cap">TV Console — Onyx Wall<br>Backlit stone · Wardrobe returns</span></a>
+      <a href="ritehome-photos/enhanced/08-storage-wardrobe.webp" target="_blank" rel="noopener"><picture><source type="image/webp" srcset="ritehome-photos/enhanced/08-storage-wardrobe.webp"><img src="ritehome-photos/enhanced/08-storage-wardrobe.jpg" alt="Full-height woodgrain wardrobe run turning through a corner." loading="lazy"></picture><span class="cap">Walk-in Wardrobe<br>Woodgrain · Corner run</span></a>
+      <a href="ritehome-photos/enhanced/09-storage-shelving.webp" target="_blank" rel="noopener"><picture><source type="image/webp" srcset="ritehome-photos/enhanced/09-storage-shelving.webp"><img src="ritehome-photos/enhanced/09-storage-shelving.jpg" alt="Open pigeonhole shelving wall in light woodgrain, floor to ceiling." loading="lazy"></picture><span class="cap">Open Storage Wall<br>Pigeonhole shelving</span></a>
+      <a href="ritehome-photos/gallery/gallery-storage-01.webp" target="_blank" rel="noopener"><picture><source type="image/webp" srcset="ritehome-photos/gallery/gallery-storage-01.webp"><img src="ritehome-photos/gallery/gallery-storage-01.jpg" alt="Matte white walk-in wardrobe with rose-gold pulls, over a herringbone timber floor." loading="lazy"></picture><span class="cap">Walk-in Wardrobe<br>Matte white · Herringbone floor</span></a>
+      <a href="ritehome-photos/gallery/gallery-storage-02.webp" target="_blank" rel="noopener"><picture><source type="image/webp" srcset="ritehome-photos/gallery/gallery-storage-02.webp"><img src="ritehome-photos/gallery/gallery-storage-02.jpg" alt="Wall-mounted television panel beside an open woodgrain shelving tower lit with LED strips." loading="lazy"></picture><span class="cap">TV Console — Shelving Tower<br>LED-lit · Open shelving</span></a>
+      <a href="ritehome-photos/gallery/gallery-storage-03.webp" target="_blank" rel="noopener"><picture><source type="image/webp" srcset="ritehome-photos/gallery/gallery-storage-03.webp"><img src="ritehome-photos/gallery/gallery-storage-03.jpg" alt="Fluted timber TV console wall in a warm red-brown, with white low cabinets and LED strips above and below." loading="lazy"></picture><span class="cap">TV Console — Fluted Timber<br>Low cabinets · LED cove</span></a>
+      <a href="ritehome-photos/gallery/gallery-storage-04.webp" target="_blank" rel="noopener"><picture><source type="image/webp" srcset="ritehome-photos/gallery/gallery-storage-04.webp"><img src="ritehome-photos/gallery/gallery-storage-04.jpg" alt="Walk-in wardrobe in walnut woodgrain with aluminium pull profiles and a built-in dressing desk." loading="lazy"></picture><span class="cap">Walk-in Wardrobe<br>Walnut · Dressing desk</span></a>
+      <a href="ritehome-photos/gallery/gallery-storage-05.webp" target="_blank" rel="noopener"><picture><source type="image/webp" srcset="ritehome-photos/gallery/gallery-storage-05.webp"><img src="ritehome-photos/gallery/gallery-storage-05.jpg" alt="Open white walk-in closet with hanging rails, adjustable shelves and a bank of drawers." loading="lazy"></picture><span class="cap">Walk-in Closet<br>White · Open rails &amp; drawers</span></a>
+      <a href="ritehome-photos/gallery/gallery-storage-06.webp" target="_blank" rel="noopener"><picture><source type="image/webp" srcset="ritehome-photos/gallery/gallery-storage-06.webp"><img src="ritehome-photos/gallery/gallery-storage-06.jpg" alt="Light oak wardrobe run beside a dressing table with an LED-backlit mirror panel." loading="lazy"></picture><span class="cap">Wardrobe &amp; Vanity<br>Light oak · Backlit mirror</span></a>
+      <a href="ritehome-photos/gallery/gallery-storage-07.webp" target="_blank" rel="noopener"><picture><source type="image/webp" srcset="ritehome-photos/gallery/gallery-storage-07.webp"><img src="ritehome-photos/gallery/gallery-storage-07.jpg" alt="White wardrobe with overhead lockers beside a mirrored dressing table with drawers." loading="lazy"></picture><span class="cap">Wardrobe &amp; Dresser<br>White · Overhead lockers</span></a>
+      <a href="ritehome-photos/gallery/gallery-storage-08.webp" target="_blank" rel="noopener"><picture><source type="image/webp" srcset="ritehome-photos/gallery/gallery-storage-08.webp"><img src="ritehome-photos/gallery/gallery-storage-08.jpg" alt="Compact walk-in closet in light woodgrain with corner shelving and drawer stacks." loading="lazy"></picture><span class="cap">Walk-in Closet<br>Light woodgrain · Corner shelves</span></a>
+      <a href="ritehome-photos/gallery/gallery-storage-09.webp" target="_blank" rel="noopener"><picture><source type="image/webp" srcset="ritehome-photos/gallery/gallery-storage-09.webp"><img src="ritehome-photos/gallery/gallery-storage-09.jpg" alt="Open pigeonhole shelving unit in light woodgrain next to a two-door wardrobe." loading="lazy"></picture><span class="cap">Shelving &amp; Wardrobe<br>Pigeonhole unit</span></a>
+      <a href="ritehome-photos/gallery/gallery-storage-10.webp" target="_blank" rel="noopener"><picture><source type="image/webp" srcset="ritehome-photos/gallery/gallery-storage-10.webp"><img src="ritehome-photos/gallery/gallery-storage-10.jpg" alt="Grey four-door office credenza cabinet standing against a white wall." loading="lazy"></picture><span class="cap">File Cabinet<br>Grey · Four-door credenza</span></a>
+      <a href="ritehome-photos/gallery/gallery-storage-11.webp" target="_blank" rel="noopener"><picture><source type="image/webp" srcset="ritehome-photos/gallery/gallery-storage-11.webp"><img src="ritehome-photos/gallery/gallery-storage-11.jpg" alt="Stockroom shelving bays in white board on a light steel frame, running wall to wall." loading="lazy"></picture><span class="cap">Stockroom Shelving<br>Steel frame · White board</span></a>
+      <a href="ritehome-photos/gallery/gallery-storage-12.webp" target="_blank" rel="noopener"><picture><source type="image/webp" srcset="ritehome-photos/gallery/gallery-storage-12.webp"><img src="ritehome-photos/gallery/gallery-storage-12.jpg" alt="Built-in white storage wall with long open shelves over a run of pull-out trays." loading="lazy"></picture><span class="cap">Built-in Storage Wall<br>Open shelves · Pull-out trays</span></a>
     </div>
   </section>
 
@@ -2127,11 +2134,11 @@ body.reading .stagetab,body.reading .hint{display:none;}
       <button class="togglebtn" type="button" data-back-slide="5">&larr; Back to the work</button>
     </div>
     <div class="photogrid">
-      <a href="ritehome-photos/enhanced/10-partition-cr.jpg" target="_blank" rel="noopener"><img src="ritehome-photos/enhanced/10-partition-cr.jpg" alt="Toilet cubicle partitions in blue-grey phenolic board on a stainless top rail." loading="lazy"><span class="cap">CR Partition<br>Phenolic cubicles</span></a>
-      <a href="ritehome-photos/enhanced/11-partition-reception.jpg" target="_blank" rel="noopener"><img src="ritehome-photos/enhanced/11-partition-reception.jpg" alt="Row of laminate reception desk partitions dividing a service floor into individual windows." loading="lazy"><span class="cap">Reception Partition<br>Desk counters</span></a>
-      <a href="ritehome-photos/gallery/gallery-partition-01.jpg" target="_blank" rel="noopener"><img src="ritehome-photos/gallery/gallery-partition-01.jpg" alt="Toilet cubicle partitions in light walnut laminate with black hardware, set on pedestal feet over tiled floor." loading="lazy"><span class="cap">Toilet Partition<br>Light walnut · Black hardware</span></a>
-      <a href="ritehome-photos/gallery/gallery-partition-02.jpg" target="_blank" rel="noopener"><img src="ritehome-photos/gallery/gallery-partition-02.jpg" alt="Row of toilet cubicles in dark wenge laminate with a continuous head rail and indicator bolts." loading="lazy"><span class="cap">Toilet Partition<br>Dark wenge · Head rail</span></a>
-      <a href="ritehome-photos/gallery/gallery-partition-03.jpg" target="_blank" rel="noopener"><img src="ritehome-photos/gallery/gallery-partition-03.jpg" alt="Washroom vanity counter in solid surface with twin basins, open shelving below and a mirrored splashback." loading="lazy"><span class="cap">Washroom Vanity<br>Twin basins · Open shelving</span></a>
+      <a href="ritehome-photos/enhanced/10-partition-cr.webp" target="_blank" rel="noopener"><picture><source type="image/webp" srcset="ritehome-photos/enhanced/10-partition-cr.webp"><img src="ritehome-photos/enhanced/10-partition-cr.jpg" alt="Toilet cubicle partitions in blue-grey phenolic board on a stainless top rail." loading="lazy"></picture><span class="cap">CR Partition<br>Phenolic cubicles</span></a>
+      <a href="ritehome-photos/enhanced/11-partition-reception.webp" target="_blank" rel="noopener"><picture><source type="image/webp" srcset="ritehome-photos/enhanced/11-partition-reception.webp"><img src="ritehome-photos/enhanced/11-partition-reception.jpg" alt="Row of laminate reception desk partitions dividing a service floor into individual windows." loading="lazy"></picture><span class="cap">Reception Partition<br>Desk counters</span></a>
+      <a href="ritehome-photos/gallery/gallery-partition-01.webp" target="_blank" rel="noopener"><picture><source type="image/webp" srcset="ritehome-photos/gallery/gallery-partition-01.webp"><img src="ritehome-photos/gallery/gallery-partition-01.jpg" alt="Toilet cubicle partitions in light walnut laminate with black hardware, set on pedestal feet over tiled floor." loading="lazy"></picture><span class="cap">Toilet Partition<br>Light walnut · Black hardware</span></a>
+      <a href="ritehome-photos/gallery/gallery-partition-02.webp" target="_blank" rel="noopener"><picture><source type="image/webp" srcset="ritehome-photos/gallery/gallery-partition-02.webp"><img src="ritehome-photos/gallery/gallery-partition-02.jpg" alt="Row of toilet cubicles in dark wenge laminate with a continuous head rail and indicator bolts." loading="lazy"></picture><span class="cap">Toilet Partition<br>Dark wenge · Head rail</span></a>
+      <a href="ritehome-photos/gallery/gallery-partition-03.webp" target="_blank" rel="noopener"><picture><source type="image/webp" srcset="ritehome-photos/gallery/gallery-partition-03.webp"><img src="ritehome-photos/gallery/gallery-partition-03.jpg" alt="Washroom vanity counter in solid surface with twin basins, open shelving below and a mirrored splashback." loading="lazy"></picture><span class="cap">Washroom Vanity<br>Twin basins · Open shelving</span></a>
     </div>
   </section>
 
@@ -2146,13 +2153,13 @@ body.reading .stagetab,body.reading .hint{display:none;}
       <button class="togglebtn" type="button" data-back-slide="7">&larr; Back to the work</button>
     </div>
     <div class="photogrid">
-      <a href="ritehome-photos/enhanced/12-office-workstations.jpg" target="_blank" rel="noopener"><img src="ritehome-photos/enhanced/12-office-workstations.jpg" alt="Open-plan office with built-in shelving and a cubicle-style desk divider." loading="lazy"><span class="cap">Office Workstations<br>Cubicle desks</span></a>
-      <a href="ritehome-photos/enhanced/13-workspace-corporate-floor.jpg" target="_blank" rel="noopener"><img src="ritehome-photos/enhanced/13-workspace-corporate-floor.jpg" alt="Full floor of modular timber desk cubicles repeated in long rows." loading="lazy"><span class="cap">Corporate Floor<br>Full-floor fit-out</span></a>
-      <a href="ritehome-photos/gallery/gallery-workspace-01.jpg" target="_blank" rel="noopener"><img src="ritehome-photos/gallery/gallery-workspace-01.jpg" alt="Office floor of light oak workstation pods with black frames and glazed upper screens." loading="lazy"><span class="cap">Workstation Pods<br>Light oak · Glazed screens</span></a>
-      <a href="ritehome-photos/gallery/gallery-workspace-02.jpg" target="_blank" rel="noopener"><img src="ritehome-photos/gallery/gallery-workspace-02.jpg" alt="Corner office with oak desk returns and fabric-faced screen dividers along a window wall." loading="lazy"><span class="cap">Desk Returns<br>Oak · Screen dividers</span></a>
-      <a href="ritehome-photos/gallery/gallery-workspace-03.jpg" target="_blank" rel="noopener"><img src="ritehome-photos/gallery/gallery-workspace-03.jpg" alt="Narrow office run with blue and grey cubicle screens, oak desktops and an overhead storage cabinet." loading="lazy"><span class="cap">Cubicle Run<br>Overhead storage</span></a>
-      <a href="ritehome-photos/gallery/gallery-workspace-04.jpg" target="_blank" rel="noopener"><img src="ritehome-photos/gallery/gallery-workspace-04.jpg" alt="Bench desks in beech laminate on black steel frames with clear acrylic divider screens." loading="lazy"><span class="cap">Bench Desks<br>Acrylic dividers</span></a>
-      <a href="ritehome-photos/gallery/gallery-workspace-05.jpg" target="_blank" rel="noopener"><img src="ritehome-photos/gallery/gallery-workspace-05.jpg" alt="Built-in white office desk running the length of a wall with an overhead open shelving box." loading="lazy"><span class="cap">Built-in Office Desk<br>Overhead shelving</span></a>
+      <a href="ritehome-photos/enhanced/12-office-workstations.webp" target="_blank" rel="noopener"><picture><source type="image/webp" srcset="ritehome-photos/enhanced/12-office-workstations.webp"><img src="ritehome-photos/enhanced/12-office-workstations.jpg" alt="Open-plan office with built-in shelving and a cubicle-style desk divider." loading="lazy"></picture><span class="cap">Office Workstations<br>Cubicle desks</span></a>
+      <a href="ritehome-photos/enhanced/13-workspace-corporate-floor.webp" target="_blank" rel="noopener"><picture><source type="image/webp" srcset="ritehome-photos/enhanced/13-workspace-corporate-floor.webp"><img src="ritehome-photos/enhanced/13-workspace-corporate-floor.jpg" alt="Full floor of modular timber desk cubicles repeated in long rows." loading="lazy"></picture><span class="cap">Corporate Floor<br>Full-floor fit-out</span></a>
+      <a href="ritehome-photos/gallery/gallery-workspace-01.webp" target="_blank" rel="noopener"><picture><source type="image/webp" srcset="ritehome-photos/gallery/gallery-workspace-01.webp"><img src="ritehome-photos/gallery/gallery-workspace-01.jpg" alt="Office floor of light oak workstation pods with black frames and glazed upper screens." loading="lazy"></picture><span class="cap">Workstation Pods<br>Light oak · Glazed screens</span></a>
+      <a href="ritehome-photos/gallery/gallery-workspace-02.webp" target="_blank" rel="noopener"><picture><source type="image/webp" srcset="ritehome-photos/gallery/gallery-workspace-02.webp"><img src="ritehome-photos/gallery/gallery-workspace-02.jpg" alt="Corner office with oak desk returns and fabric-faced screen dividers along a window wall." loading="lazy"></picture><span class="cap">Desk Returns<br>Oak · Screen dividers</span></a>
+      <a href="ritehome-photos/gallery/gallery-workspace-03.webp" target="_blank" rel="noopener"><picture><source type="image/webp" srcset="ritehome-photos/gallery/gallery-workspace-03.webp"><img src="ritehome-photos/gallery/gallery-workspace-03.jpg" alt="Narrow office run with blue and grey cubicle screens, oak desktops and an overhead storage cabinet." loading="lazy"></picture><span class="cap">Cubicle Run<br>Overhead storage</span></a>
+      <a href="ritehome-photos/gallery/gallery-workspace-04.webp" target="_blank" rel="noopener"><picture><source type="image/webp" srcset="ritehome-photos/gallery/gallery-workspace-04.webp"><img src="ritehome-photos/gallery/gallery-workspace-04.jpg" alt="Bench desks in beech laminate on black steel frames with clear acrylic divider screens." loading="lazy"></picture><span class="cap">Bench Desks<br>Acrylic dividers</span></a>
+      <a href="ritehome-photos/gallery/gallery-workspace-05.webp" target="_blank" rel="noopener"><picture><source type="image/webp" srcset="ritehome-photos/gallery/gallery-workspace-05.webp"><img src="ritehome-photos/gallery/gallery-workspace-05.jpg" alt="Built-in white office desk running the length of a wall with an overhead open shelving box." loading="lazy"></picture><span class="cap">Built-in Office Desk<br>Overhead shelving</span></a>
     </div>
   </section>
 
@@ -2490,7 +2497,8 @@ body.reading .stagetab,body.reading .hint{display:none;}
       })["catch"](function(){
         if (btn) btn.disabled = false;
         status.innerHTML = "That did not send. Please email <a href=\"mailto:" + INQ_TO + "\">" +
-          INQ_TO + "</a> or call <a href=\"tel:+639177010109\">+63 917 701 0109</a>.";
+          INQ_TO + "</a>, call <a href=\"tel:+639177010109\">+63 917 701 0109</a>, or message us on " +
+          "<a href=\"https://wa.me/639177010109\">WhatsApp</a>.";
       });
       return;
     }
@@ -2509,7 +2517,8 @@ body.reading .stagetab,body.reading .hint{display:none;}
 
     status.innerHTML = "Opening your mail app with this inquiry ready to send. " +
       "If nothing happens, email <a href=\"mailto:" + INQ_TO + "\">" + INQ_TO +
-      "</a> or call <a href=\"tel:+639177010109\">+63 917 701 0109</a>.";
+      "</a>, call <a href=\"tel:+639177010109\">+63 917 701 0109</a>, or message us on " +
+      "<a href=\"https://wa.me/639177010109\">WhatsApp</a>.";
 
     window.location.href = "mailto:" + INQ_TO +
       "?subject=" + encodeURIComponent("Site visit request — " + data.name) +

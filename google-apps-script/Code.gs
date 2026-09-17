@@ -15,6 +15,13 @@ var HEADERS = [
   "Site Location", "Notes", "Times Inquired", "Last Inquiry"
 ];
 
+/* Placeholder name Hannah's Cloudflare Worker (cloudflare-worker/src/index.js,
+   logLeadToSheet) posts for a lead she captures in chat, since she never
+   asks a visitor's name -- must stay the exact same literal string as that
+   file's HANNAH_LEAD_PREFIX so this row can later recognise and replace it
+   with a real name. */
+var HANNAH_LEAD_PREFIX = "Hannah lead (";
+
 function doPost(e) {
   var lock = LockService.getScriptLock();
   lock.waitLock(30000);
@@ -66,6 +73,15 @@ function doPost(e) {
     var existingNotes = String(existing[6] || "");
     var timesInquired = Number(existing[7] || 1) + 1;
 
+    // Name is never overwritten by a later submission -- except when the
+    // row's current name is itself just the Hannah chat placeholder
+    // (see HANNAH_LEAD_PREFIX in cloudflare-worker/src/index.js), in which
+    // case a real name arriving later (e.g. the same phone number now
+    // filling in the actual inquiry form) should replace it. A real name
+    // is never replaced by anything, placeholder included.
+    if (name && String(existing[1] || "").indexOf(HANNAH_LEAD_PREFIX) === 0) {
+      existing[1] = name;
+    }
     existing[2] = phone || existing[2];
     existing[3] = email || existing[3];
     existing[4] = line || existing[4];
