@@ -136,13 +136,32 @@
 .hn-send:hover{ background: var(--hn-core-lift); }
 .hn-send:disabled{ opacity: .5; cursor: default; }
 
-@media (max-width: 480px){
-  .hn-root{ right: 12px; bottom: 12px; }
+@media (max-width: 720px){
+  /* Two separate mobile constraints, both real:
+     1. safe-area-inset-bottom only clears the home-indicator gesture bar,
+        not Safari's/Chrome's own bottom toolbar -- 12px flat landed the
+        button underneath that toolbar, so taps hit the browser chrome
+        instead of the page and the widget looked completely dead.
+     2. The homepage's own slide captions sit at bottom:clamp(124px,18vh,196px)
+        -- raise the toggle enough to clear the browser toolbar and its
+        top edge starts colliding with that caption text instead (this is
+        exactly what the "ASK HANNAH" label overlapping "PROJECT 01" was).
+     A flat 76px bottom + a 44px icon-only button (no text label, widened
+     to a 720px cutoff since a mid-size phone was still wide enough to
+     show the label and collide) keeps the top edge at ~120px --
+     comfortably clear of both the toolbar below and the caption above.
+     --hn-mobile-bottom is shared with .hn-panel's height below so this
+     number only has to live in one place. */
+  .hn-root{
+    --hn-mobile-bottom: 76px;
+    right: 12px;
+    bottom: var(--hn-mobile-bottom);
+  }
   .hn-toggle-label{ display: none; }
-  .hn-toggle{ padding: 12px; }
+  .hn-toggle{ padding: 9px; }
   .hn-panel{
     width: calc(100vw - 24px);
-    height: calc(100vh - 96px);
-    height: calc(100dvh - 96px);
+    height: calc(100vh - 84px - var(--hn-mobile-bottom));
+    height: calc(100dvh - 84px - var(--hn-mobile-bottom));
   }
 }

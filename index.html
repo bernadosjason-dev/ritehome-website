@@ -35,7 +35,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Sora:wght@200;300;400;500;600&family=IBM+Plex+Mono:wght@300;400;500&family=Inter:wght@300;400;500&display=swap">
-<link rel="stylesheet" href="assets/hannah.css?v=42555523">
+<link rel="stylesheet" href="assets/hannah.css?v=5b430d4f">
 <link rel="stylesheet" href="assets/lightbox.css?v=daa832d8">
 
 <style>
@@ -867,6 +867,11 @@ body.reading .stagetab,body.reading .hint{display:none;}
   .stagetab{padding:14px 7px;}
   .hint{display:none;}
   .copy{bottom:clamp(116px,17vh,156px);}
+  /* min(560px,88vw) read as near-full-width on a phone -- the menu-list
+     font-size clamp also floors at a flat 26px below an 812px viewport,
+     which is oversized once the panel itself is this much narrower. */
+  .menu{width:min(280px,62vw);}
+  .menu-list button{font-size:clamp(19px,6.2vw,25px);}
 }
 /* short viewports — landscape phones, small laptops. The hero copy is
    tall enough to run up under the header, so the type steps down. */
@@ -2513,6 +2518,6 @@ body.reading .stagetab,body.reading .hint{display:none;}
 })();
 </script>
 <script src="assets/lightbox.js?v=387b4d42" defer></script>
-<script src="assets/hannah.js?v=3152d04b" defer></script>
+<script src="assets/hannah.js?v=54958758" defer></script>
 </body>
 </html>

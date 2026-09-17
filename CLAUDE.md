@@ -56,6 +56,12 @@ Posts to an Apps Script web app (`INQ_ENDPOINT` in `index.html`) that dedupes su
 ### The CSP gotcha
 `ritehomemodular.com`'s Cloudflare zone has its own Content-Security-Policy Transform Rule that is **not in this repo** (Rules → Transform Rules → Modify Response Header, in the Cloudflare dashboard). Its `connect-src` has to list any origin the browser needs to call — Hannah's worker, the Apps Script `/exec` URL. If a backend is reachable by `curl` but the live site silently never calls it (no console error, requests just don't fire), this is almost always why. See `cloudflare-worker/README.md`'s troubleshooting section.
 
+### Hannah's position is set in TWO files, and `index.html` usually wins
+`assets/hannah.css` styles `.hn-root` (position, size, the icon-only-on-mobile behavior), but `index.html` carries its own `body:not(.reading) .hn-root{bottom:calc(var(--pad) + 74px);}` — added to lift Hannah clear of the stage view's bottom thumbnail strip (`.indexbar`). That selector's specificity beats a bare `.hn-root` rule in `hannah.css` every time, on the site's *default* view (stage mode, not reading mode) — so a positioning fix that only touches `hannah.css` silently does nothing until the visitor switches to reading mode. If Hannah's position looks wrong specifically on the homepage's slide view, check `index.html` first, not `hannah.css`.
+
+### Cache-bust the version query strings, every time
+`hannah.css`/`hannah.js` are loaded as `assets/hannah.css?v=<hash>` / `assets/hannah.js?v=<hash>` in `index.html`, specifically so edits actually reach visitors instead of serving whatever Cloudflare's edge or the visitor's own browser already cached under the old URL. **Bump both `?v=` hashes in `index.html` in the same commit as any edit to either file.** A real debugging session got stuck on exactly this: CSS fixes kept "not working" on a live phone because the cache-bust hash was never touched, so nothing had actually reached the device being tested on.
+
 ### Standing product decisions worth not re-litigating
 - The Facebook Messenger BOM-quotation-bot idea was deliberately dropped; Hannah (this repo's existing chat widget) is the one AI-bot surface for pricing conversations, not Messenger and not the separate (and last known to be broken) n8n "RiteHome Instant BOM from Tally Quote" workflow.
 - Never surface a static price-lookup table or the internal estimator tools on the public site — pricing conversation happens through Hannah only, per the scoping above.
