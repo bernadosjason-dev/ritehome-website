@@ -18,10 +18,17 @@
  * person actually sees it, in addition to whatever Hannah told the
  * visitor. See ../README.md for how to set up Gemini and Telegram.
  *
- * Never put an API key or bot token in this file. Set them with:
+ * If a visitor gives Hannah a phone number or email, this worker also
+ * logs that lead as a row in the same Google Sheet the site's inquiry
+ * form writes to (via the Apps Script endpoint in ../google-apps-script/),
+ * so a Hannah-captured lead doesn't only ever exist as a Telegram message.
+ * Optional -- see README.md for setup.
+ *
+ * Never put an API key, bot token, or URL in this file. Set them with:
  *   wrangler secret put GEMINI_API_KEY
  *   wrangler secret put TELEGRAM_BOT_TOKEN
  *   wrangler secret put TELEGRAM_CHAT_ID
+ *   wrangler secret put APPS_SCRIPT_URL
  * ============================================================
  */
 
@@ -354,6 +361,17 @@ export default {
     if (contactInfo && !alreadyContacted && env.TELEGRAM_BOT_TOKEN && env.TELEGRAM_CHAT_ID) {
       ctx.waitUntil(
         notifyTelegramContact(env, { contactInfo, message, page }).catch(() => {})
+      );
+    }
+
+    // Same throttle, but into the same Sheet the inquiry form writes to --
+    // otherwise a lead Hannah captures only ever exists as a Telegram
+    // message that scrolls away, instead of a row someone can follow up
+    // from. Optional: no-ops if APPS_SCRIPT_URL isn't set, same as the
+    // Telegram secrets above.
+    if (contactInfo && !alreadyContacted && env.APPS_SCRIPT_URL) {
+      ctx.waitUntil(
+        logLeadToSheet(env, { contactInfo, message, reply, page }).catch(() => {})
       );
     }
 
@@ -699,4 +717,39 @@ async function notifyTelegramContact(env, info) {
     "Time: " + new Date().toISOString()
   ].filter(Boolean);
   await sendTelegramMessage(env, lines.join("\n"));
+}
+
+/* ---------------- Lead logging (Google Sheet via Apps Script) ---------------- */
+/* google-apps-script/Code.gs's doPost dedupes a submission onto an existing
+   row by matching name OR phone OR email -- an OR, not an AND. A name
+   that's identical across every Hannah lead (e.g. a plain "Hannah lead")
+   would therefore merge unrelated visitors who happen to share that name
+   but not a phone or email. Keying the name off the contact info itself
+   keeps different visitors from colliding, while still merging correctly
+   if the same visitor gives Hannah the same number twice. Code.gs's merge
+   branch has a matching rule that only overwrites this placeholder name
+   with a real one, never the other way round -- see HANNAH_LEAD_PREFIX
+   there, which must stay the same literal string as this. */
+const HANNAH_LEAD_PREFIX = "Hannah lead (";
+
+async function logLeadToSheet(env, info) {
+  const isEmail = info.contactInfo.indexOf("@") !== -1;
+  const notes = "Via Hannah chat" + (info.page ? " (page: " + info.page + ")" : "") +
+    ".\nVisitor: " + info.message + "\nHannah: " + info.reply;
+  const body = new URLSearchParams({
+    name: HANNAH_LEAD_PREFIX + info.contactInfo + ")",
+    phone: isEmail ? "" : info.contactInfo,
+    email: isEmail ? info.contactInfo : "",
+    line: "Hannah chat",
+    location: "",
+    notes: notes
+  });
+  const res = await fetch(env.APPS_SCRIPT_URL, {
+    method: "POST",
+    headers: { "content-type": "application/x-www-form-urlencoded" },
+    body: body.toString()
+  });
+  if (!res.ok) {
+    throw new Error("Apps Script lead log error: " + res.status + " " + (await res.text()));
+  }
 }

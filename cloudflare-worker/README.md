@@ -115,7 +115,34 @@ wrangler secret put TELEGRAM_BOT_TOKEN
 wrangler secret put TELEGRAM_CHAT_ID
 ```
 
-## 5. Deploy
+## 5. Optional: log Hannah's leads to the same Sheet as the inquiry form
+
+Without this, a lead Hannah captures (a phone number or email a visitor
+gives her mid-chat) only ever exists as a Telegram message — nothing keeps
+a record of it once that message scrolls away. This makes her post the
+same lead as a row in the Google Sheet the site's inquiry form already
+writes to, via the same Apps Script endpoint.
+
+1. You need the Apps Script `/exec` URL from `google-apps-script/README.md`
+   — the same one pasted into `INQ_ENDPOINT` in `index.html`. If you haven't
+   deployed that yet, do that first.
+2. Set it as a secret here too:
+   ```
+   wrangler secret put APPS_SCRIPT_URL
+   ```
+   Paste the same `/exec` URL when prompted.
+
+Hannah doesn't ask a visitor's name, so these rows land with a placeholder
+name like `Hannah lead (0917xxxxxxx)` and "Hannah chat" as the product
+line. If that same phone or email later shows up on a real inquiry-form
+submission, `Code.gs` replaces the placeholder with the real name — see
+`HANNAH_LEAD_PREFIX` in both `Code.gs` and `src/index.js`, which must stay
+the same literal string in both files.
+
+Leaving this secret unset is safe — Hannah still pings Telegram as before,
+this only skips the extra Sheet row.
+
+## 6. Deploy
 
 **This now happens automatically.** `.github/workflows/deploy-hannah.yml` runs
 `wrangler deploy` on every push to `main` that touches `cloudflare-worker/`,
@@ -135,18 +162,18 @@ https://ritehome-hannah.<your-subdomain>.workers.dev
 ```
 That's Hannah's brain. Copy it.
 
-## 6. Point Hannah at it
+## 7. Point Hannah at it
 
 Open `assets/hannah.js` at the repo root, find:
 ```js
 var HANNAH_ENDPOINT = "";
 ```
-Paste the URL from step 5 between the quotes, commit, push. Hannah
+Paste the URL from step 6 between the quotes, commit, push. Hannah
 now calls the worker — and if it's ever unreachable, she falls back
 to her local FAQ list automatically (and, per step 4, that failure
 itself pages your Telegram).
 
-## 7. Test it
+## 8. Test it
 
 Direct test:
 ```
