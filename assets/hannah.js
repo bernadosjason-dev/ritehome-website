@@ -554,6 +554,12 @@
     root.appendChild(panel);
     root.appendChild(toggleBtn);
     document.body.appendChild(root);
+
+    // exposed so a CTA elsewhere on the page (e.g. index.html's
+    // [data-open-hannah] buttons) can open the chat directly, the same way
+    // index.html exposes showDoc/showStage for Hannah to call into.
+    window.RitehomeApp = window.RitehomeApp || {};
+    window.RitehomeApp.openHannah = openPanel;
   }
 
   if (document.readyState === "loading") {
