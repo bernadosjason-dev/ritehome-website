@@ -154,10 +154,94 @@
   var panelOpen = false;
   var everOpened = false;
   var root, panel, thread, input, sendBtn, toggleBtn, typingEl;
+  var fileInput, attachBtn, attachPreview;
+  var pendingImage = null; // { mime, data (base64, no data: prefix), previewUrl } — cleared on send/remove
   var conversation = []; // {role:"user"|"bot", text} — session-only, sent as context to HANNAH_ENDPOINT
   var HISTORY_LIMIT = 10;
   var hasEscalated = false; // true once this visitor's session has already paged Telegram once
   var hasSentContact = false; // true once a callback number/email from this session has been forwarded
+
+  var MAX_RAW_IMAGE_BYTES = 8 * 1024 * 1024; // reject before even trying to compress
+  var MAX_IMAGE_DIMENSION = 1280; // long edge, px — keeps upload + vision-API cost small
+  var IMAGE_JPEG_QUALITY = 0.72;
+
+  function readFileAsDataURL(file) {
+    return new Promise(function (resolve, reject) {
+      var reader = new FileReader();
+      reader.onload = function () { resolve(reader.result); };
+      reader.onerror = function () { reject(reader.error || new Error("file read failed")); };
+      reader.readAsDataURL(file);
+    });
+  }
+
+  // Re-encodes to JPEG at a capped dimension client-side so a phone photo
+  // (often several MB, sometimes HEIC) never has to travel or be paid for
+  // at full size — this also sidesteps HEIC entirely, since canvas always
+  // outputs JPEG regardless of the source format.
+  function compressImage(dataUrl) {
+    return new Promise(function (resolve, reject) {
+      var img = new Image();
+      img.onload = function () {
+        var scale = Math.min(1, MAX_IMAGE_DIMENSION / Math.max(img.width, img.height));
+        var w = Math.max(1, Math.round(img.width * scale));
+        var h = Math.max(1, Math.round(img.height * scale));
+        var canvas = document.createElement("canvas");
+        canvas.width = w;
+        canvas.height = h;
+        var ctx = canvas.getContext("2d");
+        if (!ctx) { reject(new Error("no canvas context")); return; }
+        ctx.drawImage(img, 0, 0, w, h);
+        try {
+          resolve(canvas.toDataURL("image/jpeg", IMAGE_JPEG_QUALITY));
+        } catch (e) { reject(e); }
+      };
+      img.onerror = function () { reject(new Error("could not decode image")); };
+      img.src = dataUrl;
+    });
+  }
+
+  function clearAttachPreview() {
+    pendingImage = null;
+    if (attachPreview) { attachPreview.style.display = "none"; attachPreview.innerHTML = ""; }
+    if (fileInput) fileInput.value = "";
+  }
+
+  function showAttachPreview(dataUrl) {
+    attachPreview.innerHTML = "";
+    var thumb = el("img", "hn-attach-thumb");
+    thumb.src = dataUrl;
+    thumb.alt = "Attached photo preview";
+    var removeBtn = el("button", "hn-attach-remove");
+    removeBtn.type = "button";
+    removeBtn.textContent = "×";
+    removeBtn.setAttribute("aria-label", "Remove attached photo");
+    removeBtn.addEventListener("click", clearAttachPreview);
+    attachPreview.appendChild(thumb);
+    attachPreview.appendChild(removeBtn);
+    attachPreview.style.display = "flex";
+  }
+
+  function handleFileSelected(file) {
+    if (!file) return;
+    if (!/^image\//.test(file.type)) {
+      addBotMessage("That doesn't look like an image file — please attach a photo (JPEG, PNG, or WEBP).", { remember: false });
+      fileInput.value = "";
+      return;
+    }
+    if (file.size > MAX_RAW_IMAGE_BYTES) {
+      addBotMessage("That photo's too large — please attach one under 8MB.", { remember: false });
+      fileInput.value = "";
+      return;
+    }
+    readFileAsDataURL(file).then(compressImage).then(function (dataUrl) {
+      var comma = dataUrl.indexOf(",");
+      pendingImage = { mime: "image/jpeg", data: dataUrl.slice(comma + 1), previewUrl: dataUrl };
+      showAttachPreview(dataUrl);
+    }).catch(function () {
+      addBotMessage("Sorry, that photo couldn't be processed — please try a different one.", { remember: false });
+      fileInput.value = "";
+    });
+  }
 
   function remember(role, text) {
     conversation.push({ role: role, text: text });
@@ -214,13 +298,23 @@
     scrollToEnd();
   }
 
-  function addUserMessage(text) {
+  function addUserMessage(text, imageUrl) {
     var row = el("div", "hn-row hn-row-user");
     var bubble = el("div", "hn-bubble hn-bubble-user");
-    bubble.textContent = text;
+    if (imageUrl) {
+      var img = el("img", "hn-bubble-img");
+      img.src = imageUrl;
+      img.alt = "Photo you sent";
+      bubble.appendChild(img);
+    }
+    if (text) {
+      var textEl = el("div", imageUrl ? "hn-bubble-caption" : null);
+      textEl.textContent = text;
+      bubble.appendChild(textEl);
+    }
     row.appendChild(bubble);
     thread.appendChild(row);
-    remember("user", text);
+    remember("user", text || (imageUrl ? "[sent a reference photo]" : ""));
     scrollToEnd();
   }
 
@@ -285,42 +379,61 @@
 
   function handleSend(text) {
     text = (text || "").trim();
-    if (!text) return;
+    var imageToSend = pendingImage;
+    if (!text && !imageToSend) return;
     var historyForRequest = conversation.slice(); // before this turn's user message
-    addUserMessage(text);
+    addUserMessage(text, imageToSend ? imageToSend.previewUrl : null);
     input.value = "";
+    clearAttachPreview();
     sendBtn.disabled = true;
+    attachBtn.disabled = true;
     showTyping();
+
+    var payload = {
+      message: text,
+      history: historyForRequest,
+      page: window.location.href,
+      already_escalated: hasEscalated, // tells the worker whether it already paged Telegram this session
+      already_contacted: hasSentContact // separate throttle: a callback number can arrive after escalation
+    };
+    if (imageToSend) payload.image = { mime: imageToSend.mime, data: imageToSend.data };
 
     if (HANNAH_ENDPOINT) {
       fetch(HANNAH_ENDPOINT, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          message: text,
-          history: historyForRequest,
-          page: window.location.href,
-          already_escalated: hasEscalated, // tells the worker whether it already paged Telegram this session
-          already_contacted: hasSentContact // separate throttle: a callback number can arrive after escalation
-        })
+        body: JSON.stringify(payload)
       }).then(function (r) { return r.json(); })
         .then(function (data) {
           hideTyping();
           sendBtn.disabled = false;
+          attachBtn.disabled = false;
           if (data && data.needs_human) hasEscalated = true;
           if (data && data.contact_captured) hasSentContact = true;
           if (data && data.reply) addBotMessage(data.reply, { chips: sanitizeChips(data.chips) });
-          else respondLocally(text);
+          else respondLocally(text || "reference photo");
         }).catch(function () {
           hideTyping();
           sendBtn.disabled = false;
-          respondLocally(text);
+          attachBtn.disabled = false;
+          respondLocally(text || "reference photo");
         });
     } else {
+      // The local KB is a keyword matcher over plain text -- it has no way
+      // to look at a photo, so say so plainly instead of pretending to.
       setTimeout(function () {
         hideTyping();
         sendBtn.disabled = false;
-        respondLocally(text);
+        attachBtn.disabled = false;
+        if (imageToSend && !text) {
+          addBotMessage(
+            "I can't look at photos while running offline — call or text " +
+            '<a href="tel:' + CONTACT.tel + '">' + CONTACT.phone + "</a> and the team can review it directly, " +
+            "or type your measurements instead."
+          );
+        } else {
+          respondLocally(text);
+        }
       }, 380);
     }
   }
@@ -374,6 +487,27 @@
     thread = el("div", "hn-thread");
     thread.setAttribute("aria-live", "polite");
 
+    attachPreview = el("div", "hn-attach-preview");
+    attachPreview.style.display = "none";
+
+    fileInput = el("input");
+    fileInput.type = "file";
+    fileInput.accept = "image/*";
+    fileInput.className = "hn-file-input";
+    fileInput.setAttribute("aria-hidden", "true");
+    fileInput.addEventListener("change", function () {
+      handleFileSelected(fileInput.files && fileInput.files[0]);
+    });
+
+    attachBtn = el("button", "hn-attach-btn");
+    attachBtn.type = "button";
+    attachBtn.setAttribute("aria-label", "Attach a reference photo for a price estimate");
+    attachBtn.innerHTML =
+      '<svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" ' +
+      'stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">' +
+      '<path d="M21.44 11.05l-9.19 9.19a5.5 5.5 0 0 1-7.78-7.78l9.19-9.19a3.5 3.5 0 0 1 4.95 4.95l-9.2 9.19a1.5 1.5 0 0 1-2.12-2.12l8.49-8.48"/></svg>';
+    attachBtn.addEventListener("click", function () { fileInput.click(); });
+
     var form = el("form", "hn-form");
     input = el("input", "hn-input");
     input.type = "text";
@@ -381,6 +515,8 @@
     input.setAttribute("aria-label", "Message Hannah");
     sendBtn = el("button", "hn-send", "Send");
     sendBtn.type = "submit";
+    form.appendChild(attachBtn);
+    form.appendChild(fileInput);
     form.appendChild(input);
     form.appendChild(sendBtn);
     form.addEventListener("submit", function (e) {
@@ -390,6 +526,7 @@
 
     panel.appendChild(header);
     panel.appendChild(thread);
+    panel.appendChild(attachPreview);
     panel.appendChild(form);
 
     toggleBtn.addEventListener("click", function () {

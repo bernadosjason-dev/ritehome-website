@@ -122,6 +122,37 @@
   display: flex; gap: 8px; padding: 12px; border-top: 1px solid var(--hn-rule);
   background: var(--hn-panel-2); flex-shrink: 0;
 }
+.hn-file-input{ display: none; }
+.hn-attach-btn{
+  flex-shrink: 0; width: 38px; height: 38px; background: transparent;
+  border: 1px solid var(--hn-rule); color: var(--hn-dim); border-radius: 8px;
+  display: flex; align-items: center; justify-content: center; cursor: pointer;
+  transition: border-color .2s, color .2s;
+}
+.hn-attach-btn:hover{ border-color: var(--hn-core); color: var(--hn-chalk); }
+.hn-attach-btn:disabled{ opacity: .5; cursor: default; }
+
+.hn-attach-preview{
+  align-items: center; gap: 10px; padding: 10px 14px;
+  border-top: 1px solid var(--hn-rule); background: var(--hn-panel-2); flex-shrink: 0;
+}
+.hn-attach-thumb{
+  width: 46px; height: 46px; object-fit: cover; border-radius: 8px;
+  border: 1px solid var(--hn-rule);
+}
+.hn-attach-remove{
+  width: 22px; height: 22px; border-radius: 50%; background: transparent;
+  border: 1px solid var(--hn-rule); color: var(--hn-dim); font-size: 14px; line-height: 1;
+  cursor: pointer; display: flex; align-items: center; justify-content: center;
+  transition: border-color .2s, color .2s;
+}
+.hn-attach-remove:hover{ border-color: var(--hn-core); color: var(--hn-chalk); }
+
+.hn-bubble-img{
+  display: block; max-width: 100%; max-height: 190px; border-radius: 8px;
+  object-fit: cover;
+}
+.hn-bubble-caption{ margin-top: 6px; }
 .hn-input{
   flex: 1; background: var(--hn-ink); border: 1px solid var(--hn-rule); color: var(--hn-chalk);
   border-radius: 8px; padding: 9px 11px; font-size: 13.5px; font-family: inherit;

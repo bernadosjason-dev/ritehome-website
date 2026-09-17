@@ -35,6 +35,15 @@ const ALLOWED_ORIGINS = [
 
 const MAX_MESSAGE_LENGTH = 600;
 const MAX_HISTORY_TURNS = 10;
+const MAX_IMAGE_BASE64_LENGTH = 6000000; // ~4.5MB decoded — generous over the widget's own client-side compression target
+const ALLOWED_IMAGE_MIME = ["image/jpeg", "image/png", "image/webp"];
+
+/* Fed to the model when a photo arrives with no typed question, so a vision
+   call still has direction instead of an empty user turn. Never shown to
+   the visitor. */
+const IMAGE_ONLY_PROMPT =
+  "The customer attached a reference photo with no written message. Analyze it " +
+  "per the IMAGE-BASED ESTIMATES guidance in your instructions and respond accordingly.";
 
 const FALLBACK_REPLY =
   "I'm having trouble reaching my answer service right now — call or text " +
@@ -136,6 +145,23 @@ actual number. Always name their own measurement back in the reply (e.g. "for yo
 2m run...") instead of describing a generic "small kitchen of about 2.7m" — a
 number they didn't say.
 
+IMAGE-BASED ESTIMATES: a customer may attach a reference photo instead of, or
+alongside, typing measurements. When a photo is present, look for common objects of
+known real-world size to judge scale — a standard interior door (~0.8–0.9m wide,
+~2.0m tall), a standard base cabinet (~0.6m deep, ~0.85m tall counter height), a
+full-size refrigerator (~0.6–0.9m wide), a range/cooktop (~0.6m wide), a floor tile
+(commonly ~0.3–0.6m per side) — and use them to judge the visible wall run(s) and
+shape (Straight, L-shape, U-shape, Galley/Parallel, Island) the same way you would
+from a typed measurement, then run the KITCHEN LAYOUT SHAPES math above. Say plainly,
+every time, that this is a rough visual estimate from the photo, not a measured
+figure, and that a firm number needs an on-site measurement or the itemised drawing.
+If the photo doesn't show a kitchen or room clearly enough to judge scale at all (too
+close, too dark, no recognisable reference object, or it isn't a room/kitchen photo
+at all), say so honestly and ask for a wider shot or a typed measurement instead of
+guessing. Every other pricing rule still applies exactly the same to an image-based
+estimate — whole-system totals only, straight from the PRICING table, never a number
+invented just because the input was a picture instead of text.
+
 ADD-ON CATEGORIES (for conversation only — never state what one costs; mentioning
 them just helps land on the right tier and makes the drawing more useful later):
 - Kitchen: soft-close pull-out organisers (cutlery, baskets, pantry pull-outs), a
@@ -171,8 +197,8 @@ and simply — never mention "modules," "linear metres," a table, or that you're
 a lookup. You need two things before answering: which system (kitchen, storage,
 partition, or workspace) and a size. A concrete measurement or count the customer
 already gave you — a wall/run length, a wardrobe opening width, a cubicle count, a
-seat count, in whatever unit they used — ALWAYS takes priority over asking anything
-about size: use it immediately to place them in a band (via KITCHEN LAYOUT SHAPES
+seat count, in whatever unit they used, OR an attached reference photo (see
+IMAGE-BASED ESTIMATES above) — ALWAYS takes priority over asking anything about size: use it immediately to place them in a band (via KITCHEN LAYOUT SHAPES
 for Kitchen, or straight against the row for the other systems) and name their own
 number back in the reply ("for your 2m run..."), rather than reciting a generic
 anchor size or asking a size question they've effectively already answered. Only
@@ -266,9 +292,15 @@ export default {
     const page = String(body && body.page ? body.page : "").slice(0, 300);
     const alreadyEscalated = !!(body && body.already_escalated);
     const alreadyContacted = !!(body && body.already_contacted);
+    const { image, error: imageError } = extractImage(body);
 
-    if (!message) {
+    if (!message && !image) {
       return json({ error: "Empty message" }, 400, headers);
+    }
+    if (imageError) {
+      // Cheap to reject before ever calling an AI backend -- a bad upload
+      // shouldn't cost a vision-model call.
+      return json({ reply: imageError, needs_human: false, chips: [], contact_captured: false }, 200, headers);
     }
 
     let reply = FALLBACK_REPLY;
@@ -280,10 +312,10 @@ export default {
 
     try {
       const raw = env.GEMINI_API_KEY
-        ? await askGemini(env, message, history)
+        ? await askGemini(env, message, history, image)
         : env.ANTHROPIC_API_KEY
-        ? await askAnthropic(env, message, history)
-        : await askWorkersAI(env, message, history);
+        ? await askAnthropic(env, message, history, image)
+        : await askWorkersAI(env, message, history, image);
       const parsed = parseModelJSON(raw);
       reply = parsed.reply || FALLBACK_REPLY;
       needsHuman = !!parsed.needs_human;
@@ -364,6 +396,22 @@ function sanitizeChips(chips) {
     .filter((c) => typeof c === "string" && c.trim())
     .map((c) => c.trim().slice(0, MAX_CHIP_LENGTH))
     .slice(0, MAX_CHIPS);
+}
+
+/* The widget always compresses to a JPEG under a few hundred KB client-side,
+   so anything hitting these limits is either a bypass of the widget or a
+   mistake -- reject cheaply, before any AI backend call, either way. */
+function extractImage(body) {
+  const raw = body && body.image;
+  if (!raw || typeof raw.data !== "string" || !raw.data) return { image: null, error: null };
+  const mime = ALLOWED_IMAGE_MIME.includes(raw.mime) ? raw.mime : null;
+  if (!mime) {
+    return { image: null, error: "That image type isn't supported — please attach a JPEG, PNG, or WEBP photo." };
+  }
+  if (raw.data.length > MAX_IMAGE_BASE64_LENGTH) {
+    return { image: null, error: "That photo's too large — please attach a smaller one." };
+  }
+  return { image: { mime, data: raw.data }, error: null };
 }
 
 const MAX_CONTACT_LENGTH = 60;
@@ -455,12 +503,12 @@ function isModelUnavailableError(err) {
   return /\b(404|429)\b/.test(String(err && err.message));
 }
 
-async function askGemini(env, message, history) {
+async function askGemini(env, message, history, image) {
   const candidates = geminiModelCandidates(env);
   let lastErr;
   for (const model of candidates) {
     try {
-      return await callGeminiModel(env, model, message, history);
+      return await callGeminiModel(env, model, message, history, image);
     } catch (err) {
       lastErr = err;
       // A wrong/retired model name or an exhausted quota for this model —
@@ -472,7 +520,7 @@ async function askGemini(env, message, history) {
   throw lastErr;
 }
 
-async function callGeminiModel(env, model, message, history) {
+async function callGeminiModel(env, model, message, history, image) {
   const url =
     "https://generativelanguage.googleapis.com/v1beta/models/" + model +
     ":generateContent?key=" + encodeURIComponent(env.GEMINI_API_KEY);
@@ -483,7 +531,11 @@ async function callGeminiModel(env, model, message, history) {
       role: h.role === "user" ? "user" : "model",
       parts: [{ text: String(h.text).slice(0, MAX_MESSAGE_LENGTH) }]
     }));
-  contents.push({ role: "user", parts: [{ text: message }] });
+  const lastParts = [];
+  if (image) lastParts.push({ inlineData: { mimeType: image.mime, data: image.data } });
+  const textForModel = message || (image ? IMAGE_ONLY_PROMPT : "");
+  if (textForModel) lastParts.push({ text: textForModel });
+  contents.push({ role: "user", parts: lastParts });
 
   const res = await fetch(url, {
     method: "POST",
@@ -522,7 +574,15 @@ async function callGeminiModel(env, model, message, history) {
 }
 
 /* ---------------- Claude (Anthropic) ---------------- */
-async function askAnthropic(env, message, history) {
+async function askAnthropic(env, message, history, image) {
+  const messages = toChatMessages(history, message);
+  if (image) {
+    const last = messages[messages.length - 1];
+    last.content = [
+      { type: "image", source: { type: "base64", media_type: image.mime, data: image.data } },
+      { type: "text", text: message || IMAGE_ONLY_PROMPT }
+    ];
+  }
   const res = await fetch("https://api.anthropic.com/v1/messages", {
     method: "POST",
     headers: {
@@ -534,7 +594,7 @@ async function askAnthropic(env, message, history) {
       model: env.ANTHROPIC_MODEL || "claude-haiku-4-5-20251001",
       max_tokens: 700,
       system: SYSTEM_PROMPT,
-      messages: toChatMessages(history, message)
+      messages: messages
     })
   });
   if (!res.ok) {
@@ -549,8 +609,41 @@ async function askAnthropic(env, message, history) {
 }
 
 /* ---------------- Cloudflare Workers AI (free default) ---------------- */
-async function askWorkersAI(env, message, history) {
-  const messages = [{ role: "system", content: SYSTEM_PROMPT }].concat(toChatMessages(history, message));
+/* This fallback's chat model (llama-3.1-8b-instruct) is text-only. Rather
+   than drop image support entirely on the one backend that needs no API
+   key, caption the photo with a small vision model first and fold that
+   description into the text turn — a strictly best-effort path (this is
+   the last-resort free backend, only reached if Gemini and Anthropic are
+   both unconfigured or down), so a captioning failure degrades to "no
+   photo" rather than failing the whole request. */
+async function captionImageWorkersAI(env, image) {
+  const binary = atob(image.data);
+  const bytes = new Uint8Array(binary.length);
+  for (let i = 0; i < binary.length; i++) bytes[i] = binary.charCodeAt(i);
+  const result = await env.AI.run("@cf/llava-hf/llava-1.5-7b-hf", {
+    image: Array.from(bytes),
+    prompt: "Describe this photo in detail: is it a kitchen or room? Describe visible walls, " +
+      "cabinets, appliances, doors, and anything else useful for judging real-world scale.",
+    max_tokens: 250
+  });
+  const text = result && (result.description || result.response);
+  if (typeof text !== "string" || !text.trim()) {
+    throw new Error("Workers AI vision model returned no caption");
+  }
+  return text.trim();
+}
+
+async function askWorkersAI(env, message, history, image) {
+  let effectiveMessage = message;
+  if (image) {
+    try {
+      const caption = await captionImageWorkersAI(env, image);
+      effectiveMessage = (message ? message + "\n\n" : "") + "[Attached photo — visible contents: " + caption + "]";
+    } catch (e) {
+      effectiveMessage = message || "The customer attached a reference photo, but it couldn't be analyzed just now — ask them to describe it or give a measurement instead.";
+    }
+  }
+  const messages = [{ role: "system", content: SYSTEM_PROMPT }].concat(toChatMessages(history, effectiveMessage));
   const result = await env.AI.run("@cf/meta/llama-3.1-8b-instruct", {
     messages,
     max_tokens: 700
