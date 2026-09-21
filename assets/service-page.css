@@ -187,3 +187,15 @@ footer.foot{padding:40px var(--pad) calc(40px + env(safe-area-inset-bottom,0px))
   .hero{padding-top:28px;}
   section.block{padding:44px var(--pad);}
 }
+
+/* ---------------- legal / long-form prose (privacy policy, terms) ---------------- */
+.legal{padding:44px var(--pad) 20px;}
+.legal-in{max-width:760px; margin:0 auto;}
+.legal-in h2{margin-top:48px;}
+.legal-in h2:first-child{margin-top:0;}
+.legal-in h3{font-family:var(--f-display); font-weight:600; font-size:17px; margin:28px 0 10px;}
+.legal-in p{font-size:15px; color:var(--ink-dim); margin:0 0 14px; max-width:70ch;}
+.legal-in ul,.legal-in ol{font-size:15px; color:var(--ink-dim); margin:0 0 14px; padding-left:22px; max-width:70ch;}
+.legal-in li{margin-bottom:6px;}
+.legal-in a{color:var(--core); text-decoration:underline; text-underline-offset:2px;}
+.legal-updated{font-family:var(--f-mono); font-size:11px; color:var(--ink-dim); letter-spacing:.04em; margin-bottom:6px;}
