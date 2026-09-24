@@ -11,8 +11,6 @@ Three parts, each deployed independently:
 2. **`cloudflare-worker/`** — "Hannah," the site's AI chat widget's backend. Deployed with Wrangler.
 3. **`google-apps-script/`** — the inquiry form's backend. Deployed by hand through the Apps Script web editor (no CLI for this one).
 
-The internal project/expense tracker is **not** part of this site. It lives in its own repo, `bernadosjason-dev/ritehome-tracker` (GitHub Pages at `bernadosjason-dev.github.io/ritehome-tracker/`, with its own Apps Script backend). It briefly shipped here at `/tracker/` and was deliberately moved out; don't add it back to this repo or link it from the site.
-
 ## Commands
 
 Preview the static site locally:
