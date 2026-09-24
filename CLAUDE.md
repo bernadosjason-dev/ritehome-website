@@ -6,11 +6,12 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 The marketing site and lead-generation tooling for Ritehome Modular Systems, a modular cabinetry / interior fit-out company in Cagayan de Oro, Philippines. Live at `ritehomemodular.com` (see `CNAME`). Static HTML/CSS/JS — no framework, no build step, no `package.json` at the repo root.
 
-Four parts, each deployed independently:
+Three parts, each deployed independently:
 1. **The site itself** — static files, served as-is (GitHub Pages / Cloudflare).
 2. **`cloudflare-worker/`** — "Hannah," the site's AI chat widget's backend. Deployed with Wrangler.
 3. **`google-apps-script/`** — the inquiry form's backend. Deployed by hand through the Apps Script web editor (no CLI for this one).
-4. **`tracker/` + `tracker-backend/`** — the internal project/expense tracker (not a marketing page) and its own Apps Script backend, deployed by hand the same way. See "The project tracker" below.
+
+The internal project/expense tracker is **not** part of this site. It lives in its own repo, `bernadosjason-dev/ritehome-tracker` (GitHub Pages at `bernadosjason-dev.github.io/ritehome-tracker/`, with its own Apps Script backend). It briefly shipped here at `/tracker/` and was deliberately moved out; don't add it back to this repo or link it from the site.
 
 ## Commands
 
@@ -70,13 +71,6 @@ The `#inquiry` section's embedded Google Map (`.mapcard iframe` in `index.html`)
 
 ### Cache-bust the version query strings, every time
 `hannah.css`/`hannah.js` are loaded as `assets/hannah.css?v=<hash>` / `assets/hannah.js?v=<hash>` in `index.html`, specifically so edits actually reach visitors instead of serving whatever Cloudflare's edge or the visitor's own browser already cached under the old URL. **Bump both `?v=` hashes in `index.html` in the same commit as any edit to either file.** A real debugging session got stuck on exactly this: CSS fixes kept "not working" on a live phone because the cache-bust hash was never touched, so nothing had actually reached the device being tested on.
-
-### The project tracker (`tracker/index.html` + `tracker-backend/Code.gs`)
-An internal tool for running jobs, not part of the marketing site: projects with client details, 50/40/10 progress billing, pakyawan and daily-rate labor, BOM vs actual materials, and receipt photos with a "confirmed by head" flag for expenses with no receipt. Setup and operations are in `tracker-backend/README.md`.
-- **One file, two homes.** The same `tracker/index.html` also runs as a claude.ai Artifact. There it uses the platform's `db`/`assets` capabilities (`window.claude.use`). On ritehomemodular.com (`HOSTED` = no `window.claude`), `makeSheetBackend()` stands in for those capabilities with the same call shapes (`collection().doc().onSnapshot/update/delete`, `add`, `assets.upload/delete`), backed by the Apps Script at `TRACKER_ENDPOINT`. Keep new data access going through those call shapes so both homes keep working.
-- **Access is a secret link, and the repo is public.** The page only works with `#key=…` from the share link (stored per device, then stripped from the address bar). The key lives in the Apps Script's Script Properties (`setup()` / `rotateKey()`). Never put the key, the sheet id, or any project data in this repo. Never link `/tracker/` from the site or add it to `sitemap.xml`; it carries `noindex`.
-- **Every save is tracked, never silent.** All writes go through `track()`. A failed write shows the red "not saved" bar with "Save again", and unsubmitted edits warn before leaving. This exists because a real project was lost when a viewer without save access got a fake local "save". Don't add a write path that bypasses `track()`, and don't bring back a silent local fallback.
-- **CSP:** the hosted tracker needs `connect-src https://script.google.com https://script.googleusercontent.com` and `img-src blob: https://drive.google.com https://*.googleusercontent.com` in the Cloudflare CSP rule (see "The CSP gotcha" above).
 
 ### Standing product decisions worth not re-litigating
 - The Facebook Messenger BOM-quotation-bot idea was deliberately dropped; Hannah (this repo's existing chat widget) is the one AI-bot surface for pricing conversations, not Messenger and not the separate (and last known to be broken) n8n "RiteHome Instant BOM from Tally Quote" workflow.
