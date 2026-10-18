@@ -104,17 +104,37 @@ unaffected either way.
 The site-visit request form (`/schedule/`) posts two extra fields —
 address and preferred visit date — through this same endpoint, appended
 as trailing columns so they never shift any existing column's position.
-Two manual steps, once:
 
-1. **Add the header cells.** In the sheet itself, add `Address` in the
-   first empty column after "Last Inquiry" and `Preferred Visit Date` in
-   the one after that. `ensureHeaders` in `Code.gs` only writes the header
-   row on a completely empty sheet, so an already-populated sheet needs
-   these two typed in by hand.
-2. **Redeploy.** Paste the updated `Code.gs` into the Apps Script editor
-   and redeploy the same way as step 6.4 above (**Manage deployments →
-   the pencil icon → Version: New version → Deploy**) — keeps the same
-   `/exec` URL, so nothing else needs to change.
+1. **Header cells** — done. The sheet's header row now has `Address` in
+   column J and `Preferred Visit Date` in column K (added directly via
+   the Sheets API; `ensureHeaders` in `Code.gs` only writes the header row
+   on a completely empty sheet, so on an already-populated sheet these
+   have to be added once, separately from the script).
+2. **Redeploy — still to do.** Paste the current `Code.gs` into the Apps
+   Script editor and redeploy the same way as step 6.4 above (**Manage
+   deployments → the pencil icon → Version: New version → Deploy**) —
+   keeps the same `/exec` URL, so nothing else needs to change. Until
+   this is done, submissions from `/schedule/` still log a row, just
+   without the address/visit-date columns filling in (the live script
+   predates them).
+
+## 8. The "Confirmed" column (manual, admin use)
+
+Column L, header `Confirmed`, with a Pending/Confirmed/Declined dropdown
+on it (data validation, rows 2–1000). This is **not** in `Code.gs`'s
+`HEADERS` array and the script never reads or writes it — it exists
+purely for whoever's managing the sheet by hand:
+
+- Tick a site-visit row to **Confirmed** once you've actually agreed the
+  date with the visitor, or **Declined** if it didn't work out. Leave new
+  rows at **Pending** (the dropdown's default blank reads as pending too).
+- To log a phone-in or walk-in visit that never went through the website
+  form, just add a row by hand with the same columns.
+- Because this column sits outside `HEADERS`, future script edits that
+  only ever append new columns at the end (per the discipline in
+  `CLAUDE.md`) will never collide with it or shift it — but don't insert
+  a new column before L, since that would shift it out from under the
+  dropdown's range.
 
 ## Updating the script later
 
