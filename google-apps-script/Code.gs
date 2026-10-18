@@ -7,12 +7,18 @@
  * name, phone, or email (any one is enough) updates that row instead of
  * adding a new one, so the sheet never carries duplicate people.
  *
+ * Also receives the site-visit request form (schedule/index.html)
+ * through the same endpoint -- it posts two extra fields, address and
+ * visitDate, appended as trailing columns (never inserted mid-sheet, so
+ * existing rows' columns never shift).
+ *
  * Setup: see README.md in this folder.
  */
 
 var HEADERS = [
   "Timestamp", "Name", "Phone", "Email", "Product Line",
-  "Site Location", "Notes", "Times Inquired", "Last Inquiry"
+  "Site Location", "Notes", "Times Inquired", "Last Inquiry",
+  "Address", "Preferred Visit Date"
 ];
 
 /* Placeholder name Hannah's Cloudflare Worker (cloudflare-worker/src/index.js,
@@ -33,6 +39,8 @@ function doPost(e) {
     var line = clean(p.line);
     var location = clean(p.location);
     var notes = clean(p.notes);
+    var address = clean(p.address);
+    var visitDate = clean(p.visitDate);
 
     if (!name || (!phone && !email)) {
       return respond({ ok: false, error: "Name and a phone or email are required." });
@@ -63,8 +71,8 @@ function doPost(e) {
     var now = new Date();
 
     if (matchRow === -1) {
-      sheet.appendRow([now, name, phone, email, line, location, notes, 1, now]);
-      notifyTelegram_("added", name, phone, email, line, location, notes, 1);
+      sheet.appendRow([now, name, phone, email, line, location, notes, 1, now, address, visitDate]);
+      notifyTelegram_("added", name, phone, email, line, location, notes, 1, address, visitDate);
       return respond({ ok: true, action: "added" });
     }
 
@@ -91,9 +99,11 @@ function doPost(e) {
       : existingNotes;
     existing[7] = timesInquired;
     existing[8] = now;
+    existing[9] = address || existing[9];
+    existing[10] = visitDate || existing[10];
     range.setValues([existing]);
 
-    notifyTelegram_("updated", name, phone, email, line, location, notes, timesInquired);
+    notifyTelegram_("updated", name, phone, email, line, location, notes, timesInquired, address, visitDate);
     return respond({ ok: true, action: "updated" });
   } finally {
     lock.releaseLock();
@@ -106,7 +116,7 @@ function doPost(e) {
    Properties (Project Settings -> Script Properties in the Apps Script
    editor), never hardcoded here -- see README.md. Does nothing if
    either is unset, so notifications stay entirely optional. */
-function notifyTelegram_(action, name, phone, email, line, location, notes, timesInquired) {
+function notifyTelegram_(action, name, phone, email, line, location, notes, timesInquired, address, visitDate) {
   var props = PropertiesService.getScriptProperties();
   var token = props.getProperty("TELEGRAM_BOT_TOKEN");
   var chatId = props.getProperty("TELEGRAM_CHAT_ID");
@@ -120,6 +130,8 @@ function notifyTelegram_(action, name, phone, email, line, location, notes, time
     "Email: " + (email || "—"),
     "Product line: " + (line || "—"),
     "Location: " + (location || "—"),
+    address ? "Address: " + address : null,
+    visitDate ? "Preferred visit date: " + visitDate : null,
     notes ? "Notes: " + notes : null
   ].filter(function (l) { return l !== null; });
 

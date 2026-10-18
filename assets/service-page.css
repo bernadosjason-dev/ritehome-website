@@ -199,3 +199,27 @@ footer.foot{padding:40px var(--pad) calc(40px + env(safe-area-inset-bottom,0px))
 .legal-in li{margin-bottom:6px;}
 .legal-in a{color:var(--core); text-decoration:underline; text-underline-offset:2px;}
 .legal-updated{font-family:var(--f-mono); font-size:11px; color:var(--ink-dim); letter-spacing:.04em; margin-bottom:6px;}
+
+/* ---------------- capacity note + request form (schedule page) ---------------- */
+.capacity-card{border:1px solid var(--rule-soft); background:var(--bg-2); padding:26px 28px; margin:28px 0 8px; max-width:70ch;}
+.capacity-card h3{font-family:var(--f-display); font-weight:600; font-size:16px; margin:0 0 10px;}
+.capacity-card p{font-size:14.5px; color:var(--ink-dim); margin:0 0 10px; line-height:1.6;}
+.capacity-card p:last-child{margin-bottom:0;}
+
+.formcard{border:1px solid var(--rule-soft); padding:30px; margin-top:30px; max-width:640px;}
+.form-row{display:grid; grid-template-columns:1fr 1fr; gap:20px;}
+@media (max-width:520px){ .form-row{grid-template-columns:1fr;} }
+.field{margin-bottom:20px;}
+.field label{display:block; font-family:var(--f-mono); font-size:10px; letter-spacing:.1em; text-transform:uppercase; color:var(--ink-dim); margin-bottom:8px;}
+.field input,.field select,.field textarea{
+  width:100%; background:transparent; border:0; border-bottom:1px solid var(--rule);
+  color:var(--ink); font-family:var(--f-body); font-size:14px; font-weight:400;
+  padding:9px 0; transition:border-color .2s;
+}
+.field textarea{min-height:88px; resize:vertical; line-height:1.6;}
+.field input:focus,.field select:focus,.field textarea:focus{border-bottom-color:var(--core); outline:0;}
+.form-status{
+  font-family:var(--f-mono); font-size:11.5px; line-height:1.65; color:var(--core);
+  border-left:2px solid var(--core); padding:9px 0 9px 13px; margin-top:18px;
+}
+.form-status:empty{display:none;}
