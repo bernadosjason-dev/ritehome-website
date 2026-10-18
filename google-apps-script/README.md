@@ -99,6 +99,23 @@ Leaving either property unset is safe — `notifyTelegram_` just does
 nothing, and the sheet logging (the part that actually matters) is
 unaffected either way.
 
+## 7. One-time: add the Address and Preferred Visit Date columns
+
+The site-visit request form (`/schedule/`) posts two extra fields —
+address and preferred visit date — through this same endpoint, appended
+as trailing columns so they never shift any existing column's position.
+Two manual steps, once:
+
+1. **Add the header cells.** In the sheet itself, add `Address` in the
+   first empty column after "Last Inquiry" and `Preferred Visit Date` in
+   the one after that. `ensureHeaders` in `Code.gs` only writes the header
+   row on a completely empty sheet, so an already-populated sheet needs
+   these two typed in by hand.
+2. **Redeploy.** Paste the updated `Code.gs` into the Apps Script editor
+   and redeploy the same way as step 6.4 above (**Manage deployments →
+   the pencil icon → Version: New version → Deploy**) — keeps the same
+   `/exec` URL, so nothing else needs to change.
+
 ## Updating the script later
 
 If you edit `Code.gs` again, use **Deploy → Manage deployments → the

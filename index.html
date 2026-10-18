@@ -683,23 +683,24 @@ body.menu-open .menu-catch{display:block;}
 
 .menu-list{list-style:none;margin:0;padding:0;}
 .menu-list li{overflow:hidden;}
-.menu-list button{
+.menu-list button,.menu-list a{
   display:block;width:100%;text-align:left;
   background:none;border:0;padding:clamp(3px,.7vh,7px) 0;cursor:pointer;
-  color:var(--chalk);
+  color:var(--chalk);text-decoration:none;
   font-family:var(--f-display);font-weight:300;
   font-size:clamp(26px,3.2vw,38px);line-height:1.32;letter-spacing:-.02em;
   transform:translateY(105%);
   transition:transform .7s var(--swing), color .3s;
 }
-body.menu-open .menu-list button{transform:none;}
+body.menu-open .menu-list button,body.menu-open .menu-list a{transform:none;}
 .menu-list li:nth-child(1) button{transition-delay:.10s;}
 .menu-list li:nth-child(2) button{transition-delay:.15s;}
 .menu-list li:nth-child(3) button{transition-delay:.20s;}
 .menu-list li:nth-child(4) button{transition-delay:.25s;}
 .menu-list li:nth-child(5) button{transition-delay:.30s;}
 .menu-list li:nth-child(6) button{transition-delay:.35s;}
-.menu-list button:hover,.menu-list button:focus-visible{color:var(--core);}
+.menu-list li:nth-child(7) a{transition-delay:.40s;}
+.menu-list button:hover,.menu-list button:focus-visible,.menu-list a:hover,.menu-list a:focus-visible{color:var(--core);}
 
 /* the ten sheets stay reachable without breaking the airy list above */
 .menu-sheets-label{color:var(--draft);margin:0 0 12px;}
@@ -1562,6 +1563,7 @@ body.reading .stagetab,body.reading .hint{display:none;}
       <li><button type="button" data-doc="engagement">Terms</button></li>
       <li><button type="button" data-doc="faq">FAQ</button></li>
       <li><button type="button" data-doc="inquiry">Contact</button></li>
+      <li><a href="schedule/index.html">Schedule</a></li>
     </ul>
   </div>
 
@@ -2192,7 +2194,8 @@ body.reading .stagetab,body.reading .hint{display:none;}
 
   <footer class="foot">
     <div class="foot-note">
-      Ritehome Modular Systems<br>E &amp; J Building, Apovel<br>Cagayan de Oro City · Misamis
+      Ritehome Modular Systems<br>E &amp; J Building, Apovel<br>Cagayan de Oro City · Misamis<br>
+      &copy; 2026 Ritehome Modular Systems. All rights reserved.
     </div>
     <div class="foot-note" style="text-align:right">
       Drawn in house<br>Built in house<br>Installed in house
