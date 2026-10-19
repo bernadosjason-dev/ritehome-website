@@ -16,17 +16,33 @@ web app.
 
 Deploy time: about 10 minutes.
 
-## 1. Open the sheet's script editor
+**`Code.gs` is a standalone script, not container-bound** — it opens the
+sheet by ID (`SPREADSHEET_ID` near the top of the file) via
+`SpreadsheetApp.openById(...)` rather than relying on
+`getActiveSpreadsheet()`. That's deliberate: it means the project lives
+at its own `script.google.com` URL and doesn't depend on opening it
+*through* the sheet's own **Extensions → Apps Script** menu, which has a
+real failure mode — a stale/wrong signed-in Google account in the
+browser (multiple accounts signed in, `authuser=1` instead of the right
+one) makes that specific path fail with a generic Drive "can't open this
+file" error that has nothing to do with the script or the sheet actually
+being broken. Deploying standalone sidesteps that path entirely. The
+one-time setup below (step 1) reflects this.
 
-Open the [sheet](https://docs.google.com/spreadsheets/d/1e_E9_2VbYB0wSu70OwcyDwYmzsPUpisgrb8WrP4ZeZs/edit),
-then **Extensions → Apps Script**. A new tab opens with a blank
-`Code.gs`.
+## 1. Create the standalone project
+
+Go to **[script.new](https://script.new)** signed into the Google
+account that owns the sheet above — this opens a brand-new, blank
+Apps Script project directly, with no dependency on the sheet's own
+editor. (If `script.new` doesn't redirect for you, use
+[script.google.com/home](https://script.google.com/home) → **New
+project**.) Rename it something like "Ritehome Inquiry Logger" (top
+left, next to the Apps Script logo).
 
 ## 2. Paste the script
 
 Delete the placeholder `myFunction() {}` and paste in the full contents
-of [`Code.gs`](./Code.gs) from this folder. Save (Ctrl/Cmd+S). Name the
-project something like "Ritehome Inquiry Logger" when prompted.
+of [`Code.gs`](./Code.gs) from this folder. Save (Ctrl/Cmd+S).
 
 ## 3. Deploy as a web app
 
@@ -45,14 +61,23 @@ project something like "Ritehome Inquiry Logger" when prompted.
 
 ## 4. Wire it into the site
 
-Open `index.html` at the repo root, find:
+The URL from step 3 goes in **two** files — `index.html` (the `#inquiry`
+section) and `schedule/index.html` (the site-visit request form), both
+of which have their own:
 ```js
-var INQ_ENDPOINT = "";
+var INQ_ENDPOINT = "...";
 ```
-Paste the URL from step 3 between the quotes, commit, push. The form now
-posts straight to the sheet — and if the endpoint is ever empty or
-unreachable, it falls back to opening the visitor's mail app instead of
-failing silently.
+Paste the same URL into both, commit, push. Both forms now post straight
+to the sheet — and if the endpoint is ever empty or unreachable, each
+falls back to opening the visitor's mail app instead of failing
+silently.
+
+If `cloudflare-worker`'s optional `APPS_SCRIPT_URL` secret was ever set
+to a *previous* `/exec` URL (see `cloudflare-worker/README.md` step 5 —
+it's what lets Hannah-captured leads also land as Sheet rows), update it
+to this new URL too: `wrangler secret put APPS_SCRIPT_URL`, run locally
+— this can't be run from inside a Claude Code session (see the top-level
+`CLAUDE.md`'s note on why `wrangler deploy` can't run from here either).
 
 ## 5. Test it
 
@@ -138,11 +163,14 @@ purely for whoever's managing the sheet by hand:
 
 ## Updating the script later
 
-If you edit `Code.gs` again, use **Deploy → Manage deployments → the
+Since this is a standalone project (see the top of this file), reopen it
+at [script.google.com/home](https://script.google.com/home) — it's in
+your own project list there, not behind the sheet's Extensions menu. If
+you edit `Code.gs` again, use **Deploy → Manage deployments → the
 pencil (Edit) icon → Version: New version → Deploy**. This keeps the same
 `/exec` URL. Using **New deployment** instead issues a *different* URL,
-which means editing `INQ_ENDPOINT` in `index.html` again — only do that on
-purpose.
+which means editing `INQ_ENDPOINT` in both `index.html` and
+`schedule/index.html` again — only do that on purpose.
 
 ## Security and spam notes
 
