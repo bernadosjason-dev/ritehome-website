@@ -3,9 +3,10 @@
  *
  * Receives the inquiry form's POST (name, phone, email, line, location,
  * notes as application/x-www-form-urlencoded) and logs it to the sheet
- * this script is bound to. A submission that matches an existing row on
- * name, phone, or email (any one is enough) updates that row instead of
- * adding a new one, so the sheet never carries duplicate people.
+ * named by SPREADSHEET_ID below. A submission that matches an existing
+ * row on name, phone, or email (any one is enough) updates that row
+ * instead of adding a new one, so the sheet never carries duplicate
+ * people.
  *
  * Also receives the site-visit request form (schedule/index.html)
  * through the same endpoint -- it posts two extra fields, address and
@@ -14,6 +15,15 @@
  *
  * Setup: see README.md in this folder.
  */
+
+/* Standalone script, not container-bound -- it opens the sheet by ID
+   instead of SpreadsheetApp.getActiveSpreadsheet(). This is deliberate:
+   a standalone project deploys from script.new, sidestepping any
+   problem opening a bound project's editor from inside the sheet
+   itself (Extensions -> Apps Script). If this project is ever
+   recreated as a container-bound script instead, getActiveSpreadsheet()
+   works too -- just swap the one line in doPost. */
+var SPREADSHEET_ID = "1e_E9_2VbYB0wSu70OwcyDwYmzsPUpisgrb8WrP4ZeZs";
 
 var HEADERS = [
   "Timestamp", "Name", "Phone", "Email", "Product Line",
@@ -46,7 +56,7 @@ function doPost(e) {
       return respond({ ok: false, error: "Name and a phone or email are required." });
     }
 
-    var sheet = SpreadsheetApp.getActiveSpreadsheet().getActiveSheet();
+    var sheet = SpreadsheetApp.openById(SPREADSHEET_ID).getSheets()[0];
     ensureHeaders(sheet);
 
     var normName = name.toLowerCase();
