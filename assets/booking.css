@@ -1,0 +1,95 @@
+/* ============================================================
+   RITEHOME — BOOKING MODAL (assets/booking.js)
+   Self-contained: carries its own fallback tokens so it renders
+   the same on the homepage (which doesn't load service-page.css)
+   as on the service-shell pages. All selectors are .bk- prefixed.
+   ============================================================ */
+
+.bk-overlay{
+  --bk-bg:#FFFFFF; --bk-bg-2:#F4F4F2; --bk-ink:#0A0A0B; --bk-dim:#4E4E53;
+  --bk-rule:#D9D9D5; --bk-core:#D81E24; --bk-core-lift:#A8151A;
+  --bk-display:"Sora","Inter Tight","Helvetica Neue",Arial,sans-serif;
+  --bk-body:"Inter","Helvetica Neue",Arial,sans-serif;
+  --bk-mono:"IBM Plex Mono",ui-monospace,"SF Mono",Menlo,monospace;
+
+  position:fixed; inset:0; z-index:2147483100; /* above Hannah (2147483000) */
+  display:flex; align-items:center; justify-content:center;
+  padding:24px; background:rgba(10,10,11,.62);
+  opacity:0; transition:opacity .18s ease;
+}
+.bk-overlay[hidden]{display:none;}
+.bk-overlay.bk-open{opacity:1;}
+
+.bk-panel{
+  position:relative; display:flex; flex-direction:column;
+  width:min(980px,100%); height:min(760px,100%);
+  background:var(--bk-bg); color:var(--bk-ink); font-family:var(--bk-body);
+  border-radius:6px; box-shadow:0 24px 60px rgba(0,0,0,.28); overflow:hidden;
+  transform:translateY(8px); transition:transform .18s ease;
+}
+.bk-open .bk-panel{transform:none;}
+
+.bk-head{
+  display:flex; align-items:flex-start; justify-content:space-between; gap:16px;
+  padding:20px 24px 16px; border-bottom:1px solid var(--bk-rule);
+}
+.bk-eyebrow{
+  margin:0 0 4px; font-family:var(--bk-mono); font-size:11px; letter-spacing:.08em;
+  text-transform:uppercase; color:var(--bk-core);
+}
+.bk-title{margin:0; font-family:var(--bk-display); font-size:20px; font-weight:600; line-height:1.25;}
+.bk-close{
+  flex:none; width:36px; height:36px; border:1px solid var(--bk-rule); border-radius:50%;
+  background:var(--bk-bg); color:var(--bk-ink); font-size:20px; line-height:1; cursor:pointer;
+}
+.bk-close:hover,.bk-close:focus-visible{border-color:var(--bk-core); color:var(--bk-core); outline:none;}
+
+.bk-types{
+  display:grid; grid-template-columns:1fr 1fr; gap:10px;
+  padding:14px 24px; background:var(--bk-bg-2); border-bottom:1px solid var(--bk-rule);
+}
+.bk-types.bk-single{grid-template-columns:1fr;}
+.bk-type{
+  display:flex; flex-direction:column; align-items:flex-start; gap:2px; text-align:left;
+  padding:10px 14px; border:1px solid var(--bk-rule); border-radius:4px;
+  background:var(--bk-bg); color:var(--bk-ink); font-family:var(--bk-body); cursor:pointer;
+}
+.bk-type[hidden]{display:none;}
+.bk-type:hover{border-color:var(--bk-ink);}
+.bk-type:focus-visible{outline:2px solid var(--bk-core); outline-offset:2px;}
+.bk-type[aria-pressed="true"]{border-color:var(--bk-core); box-shadow:inset 0 0 0 1px var(--bk-core);}
+.bk-type-name{font-family:var(--bk-display); font-size:15px; font-weight:600;}
+.bk-type-meta{font-family:var(--bk-mono); font-size:11px; letter-spacing:.03em; color:var(--bk-dim);}
+
+.bk-body{position:relative; flex:1; min-height:0;}
+.bk-frame{display:block; width:100%; height:100%; border:0; background:var(--bk-bg);}
+.bk-loading{
+  position:absolute; inset:0; display:flex; align-items:center; justify-content:center;
+  font-family:var(--bk-mono); font-size:12px; letter-spacing:.04em; color:var(--bk-dim);
+  pointer-events:none;
+}
+.bk-loading[hidden]{display:none;}
+
+.bk-foot{
+  margin:0; padding:10px 24px; border-top:1px solid var(--bk-rule);
+  font-size:12.5px; color:var(--bk-dim);
+}
+.bk-foot a{color:var(--bk-ink);}
+.bk-foot a:hover{color:var(--bk-core);}
+
+html.bk-lock,html.bk-lock body{overflow:hidden;}
+
+@media (max-width:640px){
+  .bk-overlay{padding:0;}
+  .bk-panel{width:100%; height:100%; border-radius:0;}
+  .bk-head{padding:16px 16px 12px;}
+  .bk-title{font-size:17px;}
+  .bk-types{padding:10px 16px; gap:8px;}
+  .bk-type{padding:8px 10px;}
+  .bk-type-name{font-size:14px;}
+  .bk-foot{padding:10px 16px;}
+}
+
+@media (prefers-reduced-motion:reduce){
+  .bk-overlay,.bk-panel{transition:none;}
+}
