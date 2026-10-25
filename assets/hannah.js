@@ -11,7 +11,7 @@
    {message: "...", history: [{role:"user"|"bot", text:"..."}, ...]}
    as JSON and expects {reply: "..."} back. Left empty, she answers
    from KB below instead of failing silently — same fallback pattern
-   as the inquiry form's INQ_ENDPOINT. A ready-made Cloudflare Worker
+   as the site forms' LEAD_ENDPOINT. A ready-made Cloudflare Worker
    for HANNAH_ENDPOINT lives in /cloudflare-worker — see its README.
    ============================================================ */
 (function () {

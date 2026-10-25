@@ -167,7 +167,25 @@
   var form = document.getElementById("visitForm");
   var status = document.getElementById("visitStatus");
   var INQ_TO = "ritehomemodularsystems@gmail.com";
-  var INQ_ENDPOINT = "https://script.google.com/macros/s/AKfycbxVkSxr0JyzS8aAyCyUGk03nlTXMLkxhZg9t4iBXsfTL8AicusuV9cX1ZF0Rrh2Jy86Hg/exec";
+  /* Same backend as the homepage inquiry form: Hannah's Cloudflare Worker,
+     /lead route. Empty or failing, the request goes to the mail app instead. */
+  var LEAD_ENDPOINT = "https://ritehome-hannah.ritehome.workers.dev/lead";
+
+  function visitMailto(data){
+    var body = [
+      "Name: " + data.name,
+      "Phone: " + (data.phone || "—"),
+      "Email: " + (data.email || "—"),
+      "System: " + data.line,
+      "Address: " + data.address,
+      "Preferred visit: " + data.visitDate + (data.visitTime ? ", " + data.visitTime : ""),
+      "",
+      data.notes || ""
+    ].join(String.fromCharCode(10));
+    return "mailto:" + INQ_TO +
+      "?subject=" + encodeURIComponent("Site visit request — " + data.name) +
+      "&body=" + encodeURIComponent(body);
+  }
 
   form.addEventListener("submit", function(e){
     e.preventDefault();
@@ -187,7 +205,8 @@
       line: val("v-line"),
       address: val("v-address"),
       visitDate: val("v-date"),
-      notes: (val("v-time") ? "Preferred time: " + val("v-time") + ". " : "") + val("v-notes")
+      visitTime: val("v-time"),
+      notes: val("v-notes")
     };
 
     if (!data.name || (!data.phone && !data.email)){
@@ -204,49 +223,45 @@
     }
 
     var btn = form.querySelector('button[type="submit"]');
+    var contactLinks = "call <a href=\"tel:+639177010109\">+63 917 701 0109</a>, or message us on " +
+      "<a href=\"https://wa.me/639177010109\">WhatsApp</a> or <a href=\"viber://chat?number=%2B639177010109\">Viber</a>.";
 
-    if (INQ_ENDPOINT){
+    if (LEAD_ENDPOINT){
       if (btn) btn.disabled = true;
       status.textContent = "Sending…";
-      fetch(INQ_ENDPOINT, {
+      data.source = "site-visit";
+      data.page = location.pathname;
+      fetch(LEAD_ENDPOINT, {
         method: "POST",
-        mode: "no-cors",
-        body: new URLSearchParams(data)
-      }).then(function(){
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(data)
+      }).then(function(res){
+        return res.json().then(function(j){
+          if (!res.ok || !j.ok) throw new Error("not delivered");
+          return j;
+        });
+      }).then(function(j){
         form.reset();
         if (btn) btn.disabled = false;
-        status.textContent = "Thank you — your request is with us. We'll confirm your visit date, or offer the closest one we can do, within 2 business hours.";
+        /* the 2-hour promise only when Telegram actually paged someone */
+        status.textContent = j.telegram
+          ? "Thank you — your request is with us. We'll confirm your visit date, or offer the closest one we can do, within 2 business hours."
+          : "Thank you — your request is with us. We'll be in touch to confirm your visit date.";
       })["catch"](function(){
         if (btn) btn.disabled = false;
-        status.innerHTML = "That did not send. Please email <a href=\"mailto:" + INQ_TO + "\">" +
-          INQ_TO + "</a>, call <a href=\"tel:+639177010109\">+63 917 701 0109</a>, or message us on " +
-          "<a href=\"https://wa.me/639177010109\">WhatsApp</a> or <a href=\"viber://chat?number=%2B639177010109\">Viber</a>.";
+        status.innerHTML = "That did not send. <a href=\"" + visitMailto(data).replace(/"/g, "&quot;") +
+          "\">Send it by email instead</a> (it's already filled in), " + contactLinks;
       });
       return;
     }
 
-    var body = [
-      "Name: " + data.name,
-      "Phone: " + (data.phone || "—"),
-      "Email: " + (data.email || "—"),
-      "System: " + data.line,
-      "Address: " + data.address,
-      "Preferred visit date: " + data.visitDate,
-      "",
-      data.notes || ""
-    ].join(String.fromCharCode(10));
-
     status.innerHTML = "Opening your mail app with this request ready to send. " +
-      "If nothing happens, email <a href=\"mailto:" + INQ_TO + "\">" + INQ_TO +
-      "</a> or call <a href=\"tel:+639177010109\">+63 917 701 0109</a>.";
-
-    window.location.href = "mailto:" + INQ_TO +
-      "?subject=" + encodeURIComponent("Site visit request — " + data.name) +
-      "&body=" + encodeURIComponent(body);
+      "If nothing happens, email <a href=\"mailto:" + INQ_TO + "\">" + INQ_TO + "</a>, " + contactLinks;
+    window.location.href = visitMailto(data);
   });
 })();
 </script>
 <script src="../assets/booking.js?v=bcbda472" defer></script>
-<script src="../assets/hannah.js?v=60e8867e" defer></script>
+<script src="../assets/hannah.js?v=77418121" defer></script>
 </body>
 </html>

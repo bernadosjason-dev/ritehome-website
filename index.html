@@ -2482,11 +2482,27 @@ body.reading .stagetab,body.reading .hint{display:none;}
   var status = document.getElementById("inqStatus");
   var INQ_TO = "ritehomemodularsystems@gmail.com";
 
-  /* Paste the Google Apps Script web-app URL here to log inquiries to the
-     spreadsheet, deduplicated by name/phone/email. Left empty, the form
-     falls back to opening the sender's mail app, so the site is never
-     broken mid-setup. Setup: google-apps-script/README.md in this repo. */
-  var INQ_ENDPOINT = "https://script.google.com/macros/s/AKfycbxVkSxr0JyzS8aAyCyUGk03nlTXMLkxhZg9t4iBXsfTL8AicusuV9cX1ZF0Rrh2Jy86Hg/exec";
+  /* Hannah's Cloudflare Worker, /lead route (cloudflare-worker/src/index.js,
+     handleLead): pages Telegram and logs a Sheet row, and answers with what
+     actually got delivered. Left empty, or if it fails, the form hands the
+     inquiry to the visitor's mail app instead, so nothing is silently lost. */
+  var LEAD_ENDPOINT = "https://ritehome-hannah.ritehome.workers.dev/lead";
+
+  function inquiryMailto(data){
+    var body = [
+      "Name: " + data.name,
+      "Phone: " + (data.phone || "—"),
+      "Email: " + (data.email || "—"),
+      "Product line: " + data.line,
+      "Site location: " + (data.location || "—"),
+      "",
+      "The room:",
+      data.notes || "—"
+    ].join(String.fromCharCode(10));
+    return "mailto:" + INQ_TO +
+      "?subject=" + encodeURIComponent("Site visit request — " + data.name) +
+      "&body=" + encodeURIComponent(body);
+  }
 
   form.addEventListener("submit", function(e){
     e.preventDefault();
@@ -2514,53 +2530,46 @@ body.reading .stagetab,body.reading .hint{display:none;}
     }
 
     var btn = form.querySelector('button[type="submit"]');
+    var contactLinks = "call <a href=\"tel:+639177010109\">+63 917 701 0109</a>, or message us on " +
+      "<a href=\"https://wa.me/639177010109\">WhatsApp</a> or <a href=\"viber://chat?number=%2B639177010109\">Viber</a>.";
 
-    if (INQ_ENDPOINT){
+    if (LEAD_ENDPOINT){
       if (btn) btn.disabled = true;
       status.textContent = "Sending…";
-      /* form-encoded keeps this a simple request, so the browser sends it
-         without a preflight the Apps Script endpoint cannot answer */
-      fetch(INQ_ENDPOINT, {
+      data.source = "inquiry";
+      data.page = location.pathname;
+      fetch(LEAD_ENDPOINT, {
         method: "POST",
-        mode: "no-cors",
-        body: new URLSearchParams(data)
-      }).then(function(){
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(data)
+      }).then(function(res){
+        return res.json().then(function(j){
+          if (!res.ok || !j.ok) throw new Error("not delivered");
+          return j;
+        });
+      }).then(function(j){
         form.reset();
         if (btn) btn.disabled = false;
-        status.textContent = "Thank you — your inquiry is with us. We will be in touch to arrange the site visit.";
+        /* the 2-hour promise only when Telegram actually paged someone */
+        status.textContent = j.telegram
+          ? "Thank you — your inquiry is with us. We'll get back to you within 2 business hours to arrange the site visit."
+          : "Thank you — your inquiry is with us. We will be in touch to arrange the site visit.";
       })["catch"](function(){
         if (btn) btn.disabled = false;
-        status.innerHTML = "That did not send. Please email <a href=\"mailto:" + INQ_TO + "\">" +
-          INQ_TO + "</a>, call <a href=\"tel:+639177010109\">+63 917 701 0109</a>, or message us on " +
-          "<a href=\"https://wa.me/639177010109\">WhatsApp</a> or <a href=\"viber://chat?number=%2B639177010109\">Viber</a>.";
+        status.innerHTML = "That did not send. <a href=\"" + inquiryMailto(data).replace(/"/g, "&quot;") +
+          "\">Send it by email instead</a> (it's already filled in), " + contactLinks;
       });
       return;
     }
 
     /* no endpoint configured: hand the inquiry to the reader's mail app */
-    var body = [
-      "Name: " + data.name,
-      "Phone: " + (data.phone || "—"),
-      "Email: " + (data.email || "—"),
-      "Product line: " + data.line,
-      "Site location: " + (data.location || "—"),
-      "",
-      "The room:",
-      data.notes || "—"
-    ].join(String.fromCharCode(10));
-
     status.innerHTML = "Opening your mail app with this inquiry ready to send. " +
-      "If nothing happens, email <a href=\"mailto:" + INQ_TO + "\">" + INQ_TO +
-      "</a>, call <a href=\"tel:+639177010109\">+63 917 701 0109</a>, or message us on " +
-      "<a href=\"https://wa.me/639177010109\">WhatsApp</a> or <a href=\"viber://chat?number=%2B639177010109\">Viber</a>.";
-
-    window.location.href = "mailto:" + INQ_TO +
-      "?subject=" + encodeURIComponent("Site visit request — " + data.name) +
-      "&body=" + encodeURIComponent(body);
+      "If nothing happens, email <a href=\"mailto:" + INQ_TO + "\">" + INQ_TO + "</a>, " + contactLinks;
+    window.location.href = inquiryMailto(data);
   });
 })();
 </script>
 <script src="assets/lightbox.js?v=387b4d42" defer></script>
-<script src="assets/hannah.js?v=60e8867e" defer></script>
+<script src="assets/hannah.js?v=77418121" defer></script>
 </body>
 </html>

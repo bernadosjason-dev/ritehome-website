@@ -18,17 +18,21 @@
  * person actually sees it, in addition to whatever Hannah told the
  * visitor. See ../README.md for how to set up Gemini and Telegram.
  *
- * If a visitor gives Hannah a phone number or email, this worker also
- * logs that lead as a row in the same Google Sheet the site's inquiry
- * form writes to (via the Apps Script endpoint in ../google-apps-script/),
- * so a Hannah-captured lead doesn't only ever exist as a Telegram message.
- * Optional -- see README.md for setup.
+ * POST /lead is the backend for the site's two forms (the homepage
+ * inquiry form and schedule/'s site-visit request): it pages Telegram
+ * and, once LEAD_FORM below is filled in, also records the lead as a
+ * row in a Google Sheet by submitting it to a plain Google Form linked
+ * to that Sheet. It answers with what actually got delivered, so the
+ * page can tell the visitor the truth instead of a blind "thank you".
+ * Leads Hannah captures in chat (a phone or email a visitor gives her)
+ * go through the same Google Form, so they become Sheet rows too.
  *
- * Never put an API key, bot token, or URL in this file. Set them with:
+ * Never put an API key or bot token in this file. Set them with:
  *   wrangler secret put GEMINI_API_KEY
  *   wrangler secret put TELEGRAM_BOT_TOKEN
  *   wrangler secret put TELEGRAM_CHAT_ID
- *   wrangler secret put APPS_SCRIPT_URL
+ * (LEAD_FORM's IDs aren't secrets -- a Google Form's IDs are in its
+ * public link anyway.)
  * ============================================================
  */
 
@@ -304,6 +308,10 @@ export default {
       return json({ error: "Method not allowed" }, 405, headers);
     }
 
+    if (new URL(request.url).pathname === "/lead") {
+      return handleLead(request, env, origin, headers);
+    }
+
     let body;
     try {
       body = await request.json();
@@ -381,14 +389,12 @@ export default {
       );
     }
 
-    // Same throttle, but into the same Sheet the inquiry form writes to --
-    // otherwise a lead Hannah captures only ever exists as a Telegram
-    // message that scrolls away, instead of a row someone can follow up
-    // from. Optional: no-ops if APPS_SCRIPT_URL isn't set, same as the
-    // Telegram secrets above.
-    if (contactInfo && !alreadyContacted && env.APPS_SCRIPT_URL) {
+    // Same throttle, into the same Sheet the site's forms log to -- otherwise
+    // a lead Hannah captures only ever exists as a Telegram message that
+    // scrolls away. No-ops until LEAD_FORM is filled in.
+    if (contactInfo && !alreadyContacted && leadFormConfigured()) {
       ctx.waitUntil(
-        logLeadToSheet(env, { contactInfo, message, reply, page }).catch(() => {})
+        logHannahLead({ contactInfo, message, reply, page }).catch(() => {})
       );
     }
 
@@ -736,37 +742,153 @@ async function notifyTelegramContact(env, info) {
   await sendTelegramMessage(env, lines.join("\n"));
 }
 
-/* ---------------- Lead logging (Google Sheet via Apps Script) ---------------- */
-/* google-apps-script/Code.gs's doPost dedupes a submission onto an existing
-   row by matching name OR phone OR email -- an OR, not an AND. A name
-   that's identical across every Hannah lead (e.g. a plain "Hannah lead")
-   would therefore merge unrelated visitors who happen to share that name
-   but not a phone or email. Keying the name off the contact info itself
-   keeps different visitors from colliding, while still merging correctly
-   if the same visitor gives Hannah the same number twice. Code.gs's merge
-   branch has a matching rule that only overwrites this placeholder name
-   with a real one, never the other way round -- see HANNAH_LEAD_PREFIX
-   there, which must stay the same literal string as this. */
-const HANNAH_LEAD_PREFIX = "Hannah lead (";
+/* ---------------- Leads: the site's forms + Hannah ---------------- */
 
-async function logLeadToSheet(env, info) {
-  const isEmail = info.contactInfo.indexOf("@") !== -1;
-  const notes = "Via Hannah chat" + (info.page ? " (page: " + info.page + ")" : "") +
-    ".\nVisitor: " + info.message + "\nHannah: " + info.reply;
-  const body = new URLSearchParams({
-    name: HANNAH_LEAD_PREFIX + info.contactInfo + ")",
-    phone: isEmail ? "" : info.contactInfo,
-    email: isEmail ? info.contactInfo : "",
-    line: "Hannah chat",
-    location: "",
-    notes: notes
-  });
-  const res = await fetch(env.APPS_SCRIPT_URL, {
+/* The Google Sheet half of lead logging: a plain Google Form whose
+   responses are linked to the Sheet. Google Forms accepts a server-side
+   POST to its formResponse URL, so this needs no Apps Script and no
+   Google credentials. To fill it in: open the form -> three-dot menu ->
+   "Get pre-filled link", type anything into every question, "Get link",
+   and copy it. The id is the part after /forms/d/e/ in that link; each
+   entry.NNNN in the link is one question, in the order asked. Every
+   question must be a short-answer or paragraph question and none
+   "Required", and the form must not collect emails or require sign-in,
+   or Google rejects these submissions. Left empty, the Sheet half
+   no-ops and leads still reach Telegram. */
+const LEAD_FORM = {
+  id: "",
+  entries: {
+    source: "",     // "Source"
+    name: "",       // "Name"
+    phone: "",      // "Phone"
+    email: "",      // "Email"
+    line: "",       // "System"
+    location: "",   // "Location / site address"
+    visit: "",      // "Preferred visit"
+    notes: ""       // "Notes"
+  }
+};
+
+const LEAD_SOURCES = {
+  inquiry: "Website inquiry form",
+  "site-visit": "Site visit request",
+  hannah: "Hannah chat"
+};
+
+const LEAD_FIELD_MAX = {
+  name: 120, phone: 40, email: 160, line: 60, location: 200, address: 300,
+  visitDate: 20, visitTime: 20, notes: 2000, page: 300
+};
+
+function leadFormConfigured() {
+  return !!LEAD_FORM.id && Object.keys(LEAD_FORM.entries).every((k) => !!LEAD_FORM.entries[k]);
+}
+
+async function handleLead(request, env, origin, headers) {
+  // Browsers always send Origin on a cross-site POST; this keeps the
+  // endpoint from being a free Telegram relay for anything else.
+  if (!ALLOWED_ORIGINS.includes(origin)) {
+    return json({ ok: false, error: "Forbidden" }, 403, headers);
+  }
+
+  let body;
+  try {
+    body = await request.json();
+  } catch (e) {
+    return json({ ok: false, error: "Invalid JSON" }, 400, headers);
+  }
+  body = body && typeof body === "object" ? body : {};
+
+  // Honeypot: a field real visitors never see. Look successful, do nothing.
+  if (body.company) {
+    return json({ ok: true, telegram: false, sheet: false }, 200, headers);
+  }
+
+  const lead = { source: LEAD_SOURCES[body.source] ? body.source : "inquiry" };
+  for (const k in LEAD_FIELD_MAX) {
+    lead[k] = String(body[k] == null ? "" : body[k]).trim().slice(0, LEAD_FIELD_MAX[k]);
+  }
+  if (!lead.name || (!lead.phone && !lead.email)) {
+    return json({ ok: false, error: "Name and a phone or email are required." }, 400, headers);
+  }
+
+  // Awaited, not waitUntil: the response reports what actually got
+  // delivered, and the page only promises a fast reply when Telegram did.
+  const [telegram, sheet] = await Promise.all([
+    env.TELEGRAM_BOT_TOKEN && env.TELEGRAM_CHAT_ID
+      ? sendTelegramMessage(env, formatLeadMessage(lead)).then(() => true, () => false)
+      : false,
+    leadFormConfigured()
+      ? submitLeadForm(leadFormFields(lead)).then(() => true, () => false)
+      : false
+  ]);
+
+  const ok = telegram || sheet;
+  return json({ ok, telegram, sheet }, ok ? 200 : 502, headers);
+}
+
+function preferredVisit(lead) {
+  return [lead.visitDate, lead.visitTime].filter(Boolean).join(", ");
+}
+
+function formatLeadMessage(lead) {
+  const visit = preferredVisit(lead);
+  return [
+    lead.source === "site-visit" ? "📅 New site visit request" : "🔔 New website inquiry",
+    "",
+    "Name: " + lead.name,
+    "Phone: " + (lead.phone || "—"),
+    "Email: " + (lead.email || "—"),
+    lead.line ? "System: " + lead.line : null,
+    lead.address ? "Address: " + lead.address : lead.location ? "Location: " + lead.location : null,
+    visit ? "Preferred visit: " + visit : null,
+    lead.notes ? "Notes: " + lead.notes : null,
+    lead.page ? "Page: " + lead.page : null
+  ].filter((l) => l !== null).join("\n");
+}
+
+function leadFormFields(lead) {
+  return {
+    source: LEAD_SOURCES[lead.source],
+    name: lead.name,
+    phone: lead.phone,
+    email: lead.email,
+    line: lead.line,
+    location: lead.address || lead.location,
+    visit: preferredVisit(lead),
+    notes: lead.notes
+  };
+}
+
+async function submitLeadForm(fields) {
+  const body = new URLSearchParams();
+  for (const k in LEAD_FORM.entries) {
+    if (fields[k]) body.append("entry." + LEAD_FORM.entries[k], fields[k]);
+  }
+  const res = await fetch("https://docs.google.com/forms/d/e/" + LEAD_FORM.id + "/formResponse", {
     method: "POST",
     headers: { "content-type": "application/x-www-form-urlencoded" },
-    body: body.toString()
+    body: body.toString(),
+    redirect: "follow"
   });
-  if (!res.ok) {
-    throw new Error("Apps Script lead log error: " + res.status + " " + (await res.text()));
+  // A form set to require sign-in redirects to Google's login page with a
+  // 200, which would otherwise read as a recorded response.
+  if (!res.ok || (res.url && res.url.indexOf("docs.google.com/forms/") === -1)) {
+    throw new Error("Google Form submit error: " + res.status + " " + res.url);
   }
+}
+
+/* Hannah never asks a visitor's name, so her rows carry the contact itself
+   as a placeholder name -- different visitors stay distinguishable in the
+   Sheet. */
+async function logHannahLead(info) {
+  const isEmail = info.contactInfo.indexOf("@") !== -1;
+  await submitLeadForm({
+    source: LEAD_SOURCES.hannah,
+    name: "Hannah lead (" + info.contactInfo + ")",
+    phone: isEmail ? "" : info.contactInfo,
+    email: isEmail ? info.contactInfo : "",
+    notes: (info.page ? "Page: " + info.page + "\n" : "") +
+      "Visitor: " + info.message + "\nHannah: " + info.reply
+  });
 }
