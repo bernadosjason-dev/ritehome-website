@@ -115,32 +115,38 @@ wrangler secret put TELEGRAM_BOT_TOKEN
 wrangler secret put TELEGRAM_CHAT_ID
 ```
 
-## 5. Optional: log Hannah's leads to the same Sheet as the inquiry form
+## 5. The site's forms, and logging leads to a Google Sheet
 
-Without this, a lead Hannah captures (a phone number or email a visitor
-gives her mid-chat) only ever exists as a Telegram message — nothing keeps
-a record of it once that message scrolls away. This makes her post the
-same lead as a row in the Google Sheet the site's inquiry form already
-writes to, via the same Apps Script endpoint.
+This worker is also the backend for the site's two forms — the homepage
+inquiry form and the `/schedule/` site-visit request — at `POST /lead`.
+Each submission pages the same Telegram chat as above, and the page tells
+the visitor what actually happened: success only when something was
+really delivered, otherwise a pre-filled email plus phone/WhatsApp/Viber
+links. Nothing to set up beyond the Telegram secrets in step 4.
 
-1. You need the Apps Script `/exec` URL from `google-apps-script/README.md`
-   — the same one pasted into `INQ_ENDPOINT` in `index.html`. If you haven't
-   deployed that yet, do that first.
-2. Set it as a secret here too:
-   ```
-   wrangler secret put APPS_SCRIPT_URL
-   ```
-   Paste the same `/exec` URL when prompted.
+**Optional: also keep every lead as a row in a Google Sheet** (form
+submissions *and* phone numbers/emails Hannah captures in chat). This
+works through a plain Google Form, no Apps Script and no Google keys:
 
-Hannah doesn't ask a visitor's name, so these rows land with a placeholder
-name like `Hannah lead (0917xxxxxxx)` and "Hannah chat" as the product
-line. If that same phone or email later shows up on a real inquiry-form
-submission, `Code.gs` replaces the placeholder with the real name — see
-`HANNAH_LEAD_PREFIX` in both `Code.gs` and `src/index.js`, which must stay
-the same literal string in both files.
+1. Create a form at [forms.new](https://forms.new) with exactly these eight
+   **Short answer** questions, in this order, none of them Required:
+   `Source`, `Name`, `Phone`, `Email`, `System`, `Location / site address`,
+   `Preferred visit`, `Notes`.
+2. **Settings → Responses:** "Collect email addresses" off, "Limit to 1
+   response" off, and no sign-in requirement — any of those makes Google
+   reject the worker's submissions.
+3. **Responses tab → Link to Sheets** — pick the spreadsheet the rows
+   should land in.
+4. **⋮ → Get pre-filled link**, type anything into all eight answers,
+   **Get link**, copy it.
+5. Put the IDs from that link into `LEAD_FORM` near the bottom of
+   `src/index.js`: the `id` is the part after `/forms/d/e/`, and each
+   `entry.NNNN` is one question, in order. Commit to `main`, and the
+   deploy workflow (step 6) ships it.
 
-Leaving this secret unset is safe — Hannah still pings Telegram as before,
-this only skips the extra Sheet row.
+Left empty, `LEAD_FORM` simply no-ops and leads still reach Telegram.
+Hannah never asks a visitor's name, so her rows carry the contact as a
+placeholder name, e.g. `Hannah lead (0917xxxxxxx)`.
 
 ## 6. Deploy
 
