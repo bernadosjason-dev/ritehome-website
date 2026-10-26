@@ -6,21 +6,27 @@
    calendar) inside. Google allows one appointment type per schedule,
    so each type is its own schedule URL below.
 
-   Paste each schedule's embed URL into BOOKING below -- in Google
-   Calendar: open the schedule -> Share -> Website embed -> Inline
-   -> copy the iframe's src (https://calendar.google.com/calendar/
-   appointments/schedules/...). Anything else is ignored.
+   Paste each schedule's URL into BOOKING below: either the embed
+   src (Share -> Website embed -> Inline) or the booking page's own
+   address bar after opening its calendar.app.google short link --
+   both are https://calendar.google.com/calendar/[u/N/]appointments/
+   schedules/...; the account slot (/u/0/) is stripped. Short
+   calendar.app.google links can't be used directly (they redirect
+   to a page that refuses to load inside an iframe). Anything else
+   is ignored.
 
    Until at least one URL is set, this does nothing at all: elements
    marked [data-book-section] stay hidden and [data-book] links keep
    their normal href, so the page never offers booking that isn't
    actually wired up. The Cloudflare CSP rule's frame-src must allow
-   https://calendar.google.com or the panel renders blank.
+   https://calendar.google.com for the inline calendar; if it doesn't,
+   the browser's securitypolicyviolation event swaps the blank panel
+   for a button that opens the booking page in a new tab instead.
    ============================================================ */
 (function () {
   var BOOKING = {
     visit: {
-      url: "",
+      url: "https://calendar.google.com/calendar/appointments/schedules/AcZssZ1UyEpgPA8lgXV-n9ROjLs0B4XQxG9HO1UC6qXuelbyAPd6vjeYcxn6IuZA1apIZ4a4ZHcQ348e",
       name: "Site visit",
       meta: "Free · we measure the space on site"
     },
@@ -33,18 +39,21 @@
   var ORDER = ["visit", "call"];
   var FALLBACK_HREF = "/schedule/#request";
 
-  function embedUrl(raw) {
+  function pageUrl(raw) {
     if (!raw) return "";
     var u;
     try { u = new URL(raw); } catch (e) { return ""; }
-    if (u.protocol !== "https:" || u.hostname !== "calendar.google.com" ||
-        u.pathname.indexOf("/calendar/appointments/") !== 0) return "";
-    u.searchParams.set("gv", "true");
+    if (u.protocol !== "https:" || u.hostname !== "calendar.google.com") return "";
+    u.pathname = u.pathname.replace(/^\/calendar\/u\/\d+\//, "/calendar/");
+    if (u.pathname.indexOf("/calendar/appointments/") !== 0) return "";
+    u.search = "";
+    u.hash = "";
     return u.toString();
   }
 
   var types = ORDER.filter(function (k) {
-    BOOKING[k].src = embedUrl(BOOKING[k].url);
+    BOOKING[k].page = pageUrl(BOOKING[k].url);
+    BOOKING[k].src = BOOKING[k].page ? BOOKING[k].page + "?gv=true" : "";
     return !!BOOKING[k].src;
   });
   if (!types.length) return;
@@ -52,8 +61,8 @@
   var sections = document.querySelectorAll("[data-book-section]");
   for (var s = 0; s < sections.length; s++) sections[s].hidden = false;
 
-  var overlay, panel, closeBtn, body, loading, typeBtns = {}, frames = {};
-  var current = null, lastFocus = null;
+  var overlay, panel, closeBtn, body, loading, blockedEl, blockedLink, typeBtns = {}, frames = {};
+  var current = null, lastFocus = null, blocked = false;
 
   function el(tag, cls, text) {
     var n = document.createElement(tag);
@@ -106,6 +115,14 @@
     body = el("div", "bk-body");
     loading = el("div", "bk-loading", "Loading open times…");
     body.appendChild(loading);
+    blockedEl = el("div", "bk-blocked");
+    blockedEl.hidden = true;
+    blockedEl.appendChild(el("p", null, "The calendar opens in a new tab — pick a time there."));
+    blockedLink = el("a", "bk-newtab", "Open the booking calendar");
+    blockedLink.target = "_blank";
+    blockedLink.rel = "noopener";
+    blockedEl.appendChild(blockedLink);
+    body.appendChild(blockedEl);
     panel.appendChild(body);
 
     var foot = el("p", "bk-foot");
@@ -129,13 +146,31 @@
     document.addEventListener("focusin", function (e) {
       if (!overlay.hidden && !panel.contains(e.target)) closeBtn.focus();
     });
+    // The site's CSP (a Cloudflare rule, not in this repo) may not allow
+    // Google Calendar in frame-src; the browser then leaves a blank iframe
+    // but does report the violation, so fall back to a new-tab link.
+    document.addEventListener("securitypolicyviolation", function (e) {
+      var dir = e.effectiveDirective || e.violatedDirective || "";
+      if (!/^(frame|child)-src/.test(dir)) return;
+      if (String(e.blockedURI || "").indexOf("https://calendar.google.com") !== 0) return;
+      blocked = true;
+      if (current) showBlocked();
+    });
     document.body.appendChild(overlay);
+  }
+
+  function showBlocked() {
+    for (var f in frames) frames[f].hidden = true;
+    loading.hidden = true;
+    blockedLink.href = BOOKING[current].page;
+    blockedEl.hidden = false;
   }
 
   function select(k) {
     if (current === k) return;
     current = k;
     for (var t in typeBtns) typeBtns[t].setAttribute("aria-pressed", t === k ? "true" : "false");
+    if (blocked) { showBlocked(); return; }
     for (var f in frames) frames[f].hidden = f !== k;
     if (!frames[k]) {
       var frame = el("iframe", "bk-frame");
