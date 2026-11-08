@@ -204,6 +204,17 @@ body.on-photo .wm-b{color:rgba(244,243,241,.55);}
 body.menu-open .wordmark{opacity:0;pointer-events:none;transition:opacity .3s;}
 
 .topright{display:flex;align-items:center;gap:18px;}
+/* staff portal sign-in: quieter than the quotation CTA, same family as the Menu control */
+.loginbtn{
+  display:inline-flex;align-items:center;gap:8px;text-decoration:none;
+  color:var(--chalk);padding:10px 0;transition:color .3s;
+}
+.loginbtn span{color:var(--draft);transition:color .3s;}
+.loginbtn:hover span,.loginbtn:hover{color:var(--core);}
+body.on-photo .loginbtn{color:#F4F3F1;}
+body.on-photo .loginbtn span{color:rgba(244,243,241,.7);}
+body.on-photo .loginbtn:hover,body.on-photo .loginbtn:hover span{color:#fff;}
+.loginbtn:focus-visible{outline:1px solid currentColor;outline-offset:4px;}
 .cta{
   display:inline-flex;align-items:center;gap:9px;
   font-family:var(--f-body);font-size:10px;font-weight:500;
@@ -874,6 +885,7 @@ body.reading .stagetab,body.reading .hint{display:none;}
   .wordmark .wm-b{display:none;}
   .wm-a{font-size:11px;letter-spacing:.3em;text-indent:.3em;}
   .topright .cta{padding:11px 13px;}
+  .loginbtn{display:none;}   /* runs into the centred wordmark here; the menu has "Staff log in" */
   .seq,.terms,.form-row{grid-template-columns:1fr;}
   .range-row{grid-template-columns:34px 1fr;gap:10px;}
   .range-desc,.range-glyph{display:none;}
@@ -1103,6 +1115,7 @@ body.reading .stagetab,body.reading .hint{display:none;}
     <span class="bars" aria-hidden="true"></span><span class="lbl">Menu</span>
   </button>
   <div class="topright">
+    <a class="loginbtn micro" href="https://portal.ritehomemodular.com/tracker.html" rel="nofollow" aria-label="Staff log in"><svg aria-hidden="true" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="3.6"/><path d="M4.5 20c1.2-3.6 4-5.4 7.5-5.4s6.3 1.8 7.5 5.4"/></svg><span>Log in</span></a>
     <button class="cta" type="button" data-doc="inquiry">Request<span> a quotation</span></button>
   </div>
 </header>
@@ -1564,6 +1577,7 @@ body.reading .stagetab,body.reading .hint{display:none;}
       <li><button type="button" data-doc="faq">FAQ</button></li>
       <li><button type="button" data-doc="inquiry">Contact</button></li>
       <li><a href="schedule/index.html">Schedule</a></li>
+      <li><a href="https://portal.ritehomemodular.com/tracker.html" rel="nofollow">Staff log in</a></li>
     </ul>
   </div>
 
@@ -1577,7 +1591,6 @@ body.reading .stagetab,body.reading .hint{display:none;}
       <a class="em" href="viber://chat?number=%2B639177010109">Viber</a>
       <a class="em" href="https://www.facebook.com/share/1EE6bWMuNw/?mibextid=wwXIfr" target="_blank" rel="noopener">Facebook</a>
       <a class="em" href="privacy-policy/index.html">Privacy &amp; Terms</a>
-      <a class="em" href="https://portal.ritehomemodular.com/tracker.html" rel="nofollow">Staff login</a>
       <p class="loc micro">E &amp; J Building, Apovel<br>Cagayan de Oro City, Misamis</p>
     </div>
   </div>
