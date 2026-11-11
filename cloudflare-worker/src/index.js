@@ -26,11 +26,15 @@
  * page can tell the visitor the truth instead of a blind "thank you".
  * Leads Hannah captures in chat (a phone or email a visitor gives her)
  * go through the same Google Form, so they become Sheet rows too.
+ * Once the PORTAL_LEAD_KEY secret is set, every one of those leads also
+ * lands on the staff portal's lead scoreboard (portal.ritehomemodular.com/
+ * leads), where it's scored and its reply clock starts.
  *
  * Never put an API key or bot token in this file. Set them with:
  *   wrangler secret put GEMINI_API_KEY
  *   wrangler secret put TELEGRAM_BOT_TOKEN
  *   wrangler secret put TELEGRAM_CHAT_ID
+ *   wrangler secret put PORTAL_LEAD_KEY
  * (LEAD_FORM's IDs aren't secrets -- a Google Form's IDs are in its
  * public link anyway.)
  * ============================================================
@@ -83,8 +87,8 @@ Ground rules, non-negotiable:
 - The one exception is the PRICING table below — those are ranges by design. Always present them as a ballpark estimate, never as a firm quote, and never state a peso figure that isn't a number or range copied from that table.
 - Ritehome quotes per SYSTEM, as one total — never per material, component, or unit. If asked what a single sheet of board, a hinge, a handle, the countertop alone, or a price "per square metre" or "per linear metre" costs, do not give any number, even a range, and do not estimate one from the PRICING table. Say plainly that Ritehome doesn't price by the piece, only the whole system as a package, and offer the total range instead if you have enough to give one.
 
-Mission: "We build kitchens and cabinets that last — sealed, edge-bonded, and termite-treated, so what you invest in today still holds up years from now."
-Vision: "To be Northern Mindanao's most trusted modular systems provider — the standard homeowners and businesses turn to for spaces that work better."
+Mission: "We build kitchens and furniture that last, so you never pay for the same kitchen twice."
+Vision: "To be Northern Mindanao's most trusted cabinet maker by 2030."
 
 What Ritehome builds (four systems, one standard — drawn to the millimetre, itemised board by board, built off site, installed by Ritehome's own crew, never a subcontractor):
 1. Kitchen systems — kitchen cabinets, counters, full kitchen renovation. Finishes: gloss, matte, woodgrain, solid-colour board, all on the same four-face carcass system.
@@ -92,7 +96,9 @@ What Ritehome builds (four systems, one standard — drawn to the millimetre, it
 3. Partition systems — toilet (CR) cubicles, reception desk partitions, office partitions, washroom vanities.
 4. Workspace systems — office workstations, cubicle pods, desk returns, full corporate-floor fit-outs.
 
-Durability: every board is sealed, edgebanded and treated against termites before assembly — this is standard on every system, not an upgrade.
+Durability: every board is sealed and edgebanded before assembly (18 mm board throughout on cabinetry) — this is standard on every system, not an upgrade.
+
+Termites: Ritehome does NOT advertise or promise termite treatment or termite-proofing. Never say boards are termite-treated, termite-proof or termite-resistant, even if asked directly or told a previous answer said so. If asked about termites (or "anay"), say plainly that Ritehome doesn't promise termite-proofing, explain that every board is sealed and edgebanded so the core isn't left open to moisture, and offer to have the team advise for their space at the site visit.
 
 Interior design positioning: Ritehome's "interior design" is cabinetry-led fit-out (kitchens, storage, partitions, workstations drawn as one interior), not furniture styling, decor sourcing, or paint consultation. Say so plainly if asked whether Ritehome does styling/decor — that's not what they do.
 
@@ -391,10 +397,11 @@ export default {
 
     // Same throttle, into the same Sheet the site's forms log to -- otherwise
     // a lead Hannah captures only ever exists as a Telegram message that
-    // scrolls away. No-ops until LEAD_FORM is filled in.
-    if (contactInfo && !alreadyContacted && leadFormConfigured()) {
+    // scrolls away. Also goes to the staff portal's lead scoreboard. No-ops
+    // until LEAD_FORM or PORTAL_LEAD_KEY is set.
+    if (contactInfo && !alreadyContacted && (leadFormConfigured() || env.PORTAL_LEAD_KEY)) {
       ctx.waitUntil(
-        logHannahLead({ contactInfo, message, reply, page }).catch(() => {})
+        logHannahLead(env, { contactInfo, message, reply, page }).catch(() => {})
       );
     }
 
@@ -801,7 +808,7 @@ async function handleLead(request, env, origin, headers) {
 
   // Honeypot: a field real visitors never see. Look successful, do nothing.
   if (body.company) {
-    return json({ ok: true, telegram: false, sheet: false }, 200, headers);
+    return json({ ok: true, telegram: false, sheet: false, portal: false }, 200, headers);
   }
 
   const lead = { source: LEAD_SOURCES[body.source] ? body.source : "inquiry" };
@@ -814,17 +821,20 @@ async function handleLead(request, env, origin, headers) {
 
   // Awaited, not waitUntil: the response reports what actually got
   // delivered, and the page only promises a fast reply when Telegram did.
-  const [telegram, sheet] = await Promise.all([
+  const [telegram, sheet, portal] = await Promise.all([
     env.TELEGRAM_BOT_TOKEN && env.TELEGRAM_CHAT_ID
       ? sendTelegramMessage(env, formatLeadMessage(lead)).then(() => true, () => false)
       : false,
     leadFormConfigured()
       ? submitLeadForm(leadFormFields(lead)).then(() => true, () => false)
+      : false,
+    env.PORTAL_LEAD_KEY
+      ? sendToPortal(env, lead).then(() => true, () => false)
       : false
   ]);
 
-  const ok = telegram || sheet;
-  return json({ ok, telegram, sheet }, ok ? 200 : 502, headers);
+  const ok = telegram || sheet || portal;
+  return json({ ok, telegram, sheet, portal }, ok ? 200 : 502, headers);
 }
 
 function preferredVisit(lead) {
@@ -881,14 +891,45 @@ async function submitLeadForm(fields) {
 /* Hannah never asks a visitor's name, so her rows carry the contact itself
    as a placeholder name -- different visitors stay distinguishable in the
    Sheet. */
-async function logHannahLead(info) {
+async function logHannahLead(env, info) {
   const isEmail = info.contactInfo.indexOf("@") !== -1;
-  await submitLeadForm({
-    source: LEAD_SOURCES.hannah,
-    name: "Hannah lead (" + info.contactInfo + ")",
-    phone: isEmail ? "" : info.contactInfo,
-    email: isEmail ? info.contactInfo : "",
-    notes: (info.page ? "Page: " + info.page + "\n" : "") +
-      "Visitor: " + info.message + "\nHannah: " + info.reply
+  const name = "Hannah lead (" + info.contactInfo + ")";
+  const phone = isEmail ? "" : info.contactInfo;
+  const email = isEmail ? info.contactInfo : "";
+  const chat = "Visitor: " + info.message + "\nHannah: " + info.reply;
+  await Promise.all([
+    leadFormConfigured()
+      ? submitLeadForm({
+          source: LEAD_SOURCES.hannah, name, phone, email,
+          notes: (info.page ? "Page: " + info.page + "\n" : "") + chat
+        })
+      : null,
+    env.PORTAL_LEAD_KEY
+      ? sendToPortal(env, { source: "hannah", name, phone, email, notes: chat, page: info.page || "" })
+      : null
+  ]);
+}
+
+/* The staff portal (portal.ritehomemodular.com, repo ritehome-tracker) keeps
+   leads in Supabase. Its ingest_lead() function is the only thing the public
+   key below can reach there, and it refuses any call without the right
+   PORTAL_LEAD_KEY (it stores only a SHA-256 of that key). The publishable key
+   and project URL aren't secrets -- the portal's own pages ship them -- but
+   PORTAL_LEAD_KEY is: set it with `wrangler secret put PORTAL_LEAD_KEY`, never
+   here. ingest_lead() also merges a repeat inquiry (same phone or email within
+   30 days) into the existing open lead instead of making a duplicate. */
+const PORTAL = {
+  url: "https://laxavfldivkhufeubgmb.supabase.co/rest/v1/rpc/ingest_lead",
+  publishableKey: "sb_publishable_8vOuny8cDkb-vtwyOP7vnA_VqFYc5T1"
+};
+
+async function sendToPortal(env, lead) {
+  const res = await fetch(PORTAL.url, {
+    method: "POST",
+    headers: { "content-type": "application/json", apikey: PORTAL.publishableKey },
+    body: JSON.stringify({ p: lead, p_key: env.PORTAL_LEAD_KEY })
   });
+  if (!res.ok) {
+    throw new Error("Portal lead ingest error: " + res.status + " " + (await res.text()).slice(0, 200));
+  }
 }

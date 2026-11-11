@@ -73,15 +73,15 @@
       a: "Every fixed element of the room — cabinetry, storage, partitions, built-in desks — is drawn together as one interior before any of it is built, instead of specifying a kitchen, a wardrobe and a partition as three separate jobs." },
     { q: "Where do I start if I want a full interior?", kw: ["start", "begin", "full interior", "where do i start"],
       a: "The same place as any job — a site visit and measurement. From there we scope which systems apply (kitchen, storage, partitions, workstations) and draw them as one interior." },
-    // -------- Durability / termite --------
-    { q: "Are Ritehome cabinets termite-proof?", kw: ["termite", "termites", "pest", "bug", "proof", "durable", "durability"],
-      a: "Every board is treated against termites before assembly, and every exposed edge is closed with edgebanding, so the treated core is never left open to moisture or termites." },
+    // -------- Durability (Ritehome doesn't advertise termite-proofing: answer honestly, promise nothing) --------
+    { q: "Are Ritehome cabinets termite-proof?", kw: ["termite", "termites", "anay", "pest", "bug"],
+      a: "We don't advertise termite-proofing, so I won't promise it. What every board does get: it's sealed, and every exposed edge is closed with edgebanding so the raw core isn't left open to moisture. If termites are a concern in your house, raise it at the site visit and the team will advise for your space." },
     { q: "Is durability part of the design, or an add-on?", kw: ["durable", "durability", "add-on", "upgrade", "last", "quality"],
-      a: "It's built in, not offered as an upgrade. Every board across every system — kitchen, storage, partitions, workstations — is sealed, edgebanded and treated against termites before it's ever assembled." },
+      a: "It's built in, not offered as an upgrade. Every board across every system — kitchen, storage, partitions, workstations — is sealed and edgebanded before it's ever assembled." },
     { q: "What is Ritehome's mission?", kw: ["mission", "promise", "why"],
-      a: "“We build kitchens and cabinets that last — sealed, edge-bonded, and termite-treated, so what you invest in today still holds up years from now.” That's the standard behind everything we build." },
+      a: "“We build kitchens and furniture that last, so you never pay for the same kitchen twice.”" },
     { q: "What is Ritehome's vision?", kw: ["vision", "goal", "future"],
-      a: "“To be Northern Mindanao's most trusted modular systems provider — the standard homeowners and businesses turn to for spaces that work better.”" },
+      a: "“To be Northern Mindanao's most trusted cabinet maker by 2030.”" },
     // -------- Process / commercial --------
     { q: "What are the stages of a project?", kw: ["stages", "process", "steps", "how it works", "sequence"],
       a: "Five tracked stages: Consultation, Design Phase, Procurement, Fabrication and Installation. At any point you can ask which stage yours is in and get an answer, not an estimate." },
@@ -333,7 +333,7 @@
     typingEl = null;
   }
 
-  var FALLBACK_CHIPS = ["Are cabinets termite-proof?", "How much is the deposit?", "Where are you located?"];
+  var FALLBACK_CHIPS = ["How long do cabinets last?", "How much is the deposit?", "Where are you located?"];
 
   function fallbackAnswer() {
     addBotMessage(
@@ -446,7 +446,7 @@
       everOpened = true;
       addBotMessage(
         "Hi, I'm <b>Hannah</b> — Ritehome's automated FAQ assistant. Ask me about kitchens, storage, " +
-        "partitions, workstations, pricing or termite treatment, and I'll answer from what's on this site.",
+        "partitions, workstations, pricing or materials, and I'll answer from what's on this site.",
         { chips: FALLBACK_CHIPS }
       );
     }
@@ -511,7 +511,7 @@
     var form = el("form", "hn-form");
     input = el("input", "hn-input");
     input.type = "text";
-    input.placeholder = "Ask about kitchens, pricing, termites…";
+    input.placeholder = "Ask about kitchens, pricing, sizes…";
     input.setAttribute("aria-label", "Message Hannah");
     sendBtn = el("button", "hn-send", "Send");
     sendBtn.type = "submit";
