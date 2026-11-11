@@ -148,6 +148,26 @@ Left empty, `LEAD_FORM` simply no-ops and leads still reach Telegram.
 Hannah never asks a visitor's name, so her rows carry the contact as a
 placeholder name, e.g. `Hannah lead (0917xxxxxxx)`.
 
+**Also send every lead to the staff portal's lead scoreboard**
+(`portal.ritehomemodular.com/leads`): both forms and every phone/email
+Hannah captures. The portal scores each lead and starts its 2-business-hour
+reply clock. One secret:
+
+```
+wrangler secret put PORTAL_LEAD_KEY
+```
+
+or, in the Cloudflare dashboard: **Workers & Pages → ritehome-hannah →
+Settings → Variables and Secrets → Add → Type: Secret**, name
+`PORTAL_LEAD_KEY`. The value is the key generated when the portal's leads
+migration was set up; the portal's database keeps only its SHA-256, in
+`app_secrets` (see the ritehome-tracker repo's `supabase/README.md` to
+rotate it). Never commit the key. Without the secret, nothing is sent to the
+portal. A wrong key is refused by the database, and `/lead` reports
+`"portal": false`. The project URL and publishable key in `PORTAL`
+(`src/index.js`) aren't secrets. They can reach nothing in the portal except
+the `ingest_lead()` intake function.
+
 ## 6. Deploy
 
 **This now happens automatically.** `.github/workflows/deploy-hannah.yml` runs
