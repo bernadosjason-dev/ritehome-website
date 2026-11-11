@@ -92,7 +92,7 @@
     { q: "Do you deliver, and how much does it cost?", kw: ["delivery", "deliver", "shipping", "far", "distance"],
       a: "Delivery within the first 50 km of Cagayan de Oro is included. Beyond that, delivery is charged in bands of ₱10,000 per 100 km." },
     { q: "Where is Ritehome located?", kw: ["located", "location", "address", "showroom", "where are you"],
-      a: "Our showroom is at " + CONTACT.address + "." },
+      a: "Our showroom is at " + CONTACT.address + ". We're open Monday to Saturday, 9 AM to 5 PM (closed Sundays)." },
     { q: "How do I contact Ritehome?", kw: ["contact", "phone", "call", "email", "reach", "number"],
       a: "Call or text " + CONTACT.phone + ", or email " + CONTACT.email + ". You can also use the inquiry form on this site to request a site visit." },
     { q: "Which areas do you serve?", kw: ["area", "areas", "serve", "cagayan de oro", "cdo", "mindanao", "misamis"],

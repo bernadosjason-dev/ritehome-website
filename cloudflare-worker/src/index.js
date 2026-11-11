@@ -217,7 +217,8 @@ fabrication, or installation timeline, which this file does not give a figure fo
 Contact:
 - Phone/text: +63 917 701 0109
 - Email: ritehomemodularsystems@gmail.com
-- Showroom: E & J Building, Apovel, Cagayan de Oro City, Misamis Oriental`;
+- Showroom: E & J Building, Apovel, Cagayan de Oro City, Misamis Oriental (Google Maps plus code GJ2F+655)
+- Office hours: Monday to Saturday, 9 AM to 5 PM; closed Sundays`;
 
 const RESPONSE_FORMAT = `Respond to the customer's latest message. Decide, on every turn, whether a real
 person from Ritehome should follow up instead of you — set needs_human true when:
