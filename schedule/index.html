@@ -20,8 +20,8 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Sora:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&family=Inter:wght@300;400;500&display=swap">
-<link rel="stylesheet" href="../assets/service-page.css?v=e9c01fad">
-<link rel="stylesheet" href="../assets/hannah.css?v=784a1ce5">
+<link rel="stylesheet" href="../assets/service-page.css?v=8e35fa11">
+<link rel="stylesheet" href="../assets/hannah.css?v=37e490ff">
 <link rel="stylesheet" href="../assets/booking.css?v=5e00bdf6">
 </head>
 <body data-hannah-page="service">
@@ -243,12 +243,14 @@
       }).then(function(j){
         form.reset();
         if (btn) btn.disabled = false;
+        status.textContent = ""; void status.offsetWidth;   /* replay the slide-in for the answer */
         /* the 2-hour promise only when Telegram actually paged someone */
         status.textContent = j.telegram
           ? "Thank you — your request is with us. We'll confirm your visit date, or offer the closest one we can do, within 2 business hours."
           : "Thank you — your request is with us. We'll be in touch to confirm your visit date.";
       })["catch"](function(){
         if (btn) btn.disabled = false;
+        status.textContent = ""; void status.offsetWidth;
         status.innerHTML = "That did not send. <a href=\"" + visitMailto(data).replace(/"/g, "&quot;") +
           "\">Send it by email instead</a> (it's already filled in), " + contactLinks;
       });
