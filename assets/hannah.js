@@ -79,7 +79,7 @@
     { q: "Is durability part of the design, or an add-on?", kw: ["durable", "durability", "add-on", "upgrade", "last", "quality"],
       a: "It's built in, not offered as an upgrade. Every board across every system — kitchen, storage, partitions, workstations — is sealed and edgebanded before it's ever assembled." },
     { q: "What is Ritehome's mission?", kw: ["mission", "promise", "why"],
-      a: "“We build kitchens and modular furniture decided before they're cut — what you approve is what you get, built to last.”" },
+      a: "“We build kitchens and modular furniture that fit your space and last for years.”" },
     { q: "What is Ritehome's vision?", kw: ["vision", "goal", "future"],
       a: "“To be Northern Mindanao's most trusted cabinet maker by 2030.”" },
     // -------- Process / commercial --------
