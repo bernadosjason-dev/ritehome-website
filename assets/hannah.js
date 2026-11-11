@@ -81,7 +81,7 @@
     { q: "What is Ritehome's mission?", kw: ["mission", "promise", "why"],
       a: "“We build kitchens and modular furniture decided before they're cut — what you approve is what you get, built to last.”" },
     { q: "What is Ritehome's vision?", kw: ["vision", "goal", "future"],
-      a: "“To be Northern Mindanao's most trusted cabinet maker — honest quotes, on-time handovers, spaces that last.”" },
+      a: "“To be Northern Mindanao's most trusted cabinet maker by 2030.”" },
     // -------- Process / commercial --------
     { q: "What are the stages of a project?", kw: ["stages", "process", "steps", "how it works", "sequence"],
       a: "Five tracked stages: Consultation, Design Phase, Procurement, Fabrication and Installation. At any point you can ask which stage yours is in and get an answer, not an estimate." },
