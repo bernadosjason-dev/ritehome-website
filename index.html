@@ -35,7 +35,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Sora:wght@200;300;400;500;600&family=IBM+Plex+Mono:wght@300;400;500&family=Inter:wght@300;400;500&display=swap">
-<link rel="stylesheet" href="assets/hannah.css?v=784a1ce5">
+<link rel="stylesheet" href="assets/hannah.css?v=37e490ff">
 <link rel="stylesheet" href="assets/lightbox.css?v=daa832d8">
 
 <style>
@@ -906,6 +906,86 @@ body.reading .stagetab,body.reading .hint{display:none;}
   .photo img{transform:none;}
   .photo-vid{display:none;}
 }
+/* ============================================================
+   DESIGN REVIEW (2026-11-14) — the 20-point pass. One layer on top
+   of everything above; each rule says which point it serves.
+   ============================================================ */
+/* (4) monospace only where it means something: the dimension and label
+   text inside the drawings. Every other label, button and footnote moves to
+   the body face, with (18) tabular numerals wherever figures line up. */
+:root{ --f-mono: var(--f-body); }
+.dimtxt,.lbltxt{ font-family:"IBM Plex Mono",ui-monospace,"SF Mono",Menlo,monospace; }
+.term-pct,.spec-v,.cfield-v,.seq-n,.range-n,.gallery-count,.foot-note,.sw-num{ font-variant-numeric:tabular-nums; }
+
+/* (15) contrast: body copy at regular weight, not Light; the faintest grey
+   was 2.8:1 on white; "Modular Systems" under the logo was 8px */
+:root:not([data-theme="dark"]){ --draft-dim:#74747A; }
+body,.lede{ font-weight:400; }
+.wm-b{ font-size:9.5px; letter-spacing:.24em; text-indent:.24em; }
+
+/* (11) red is the action and one accent word, not every headline. Headlines in
+   ink at a weight that holds up on a photo; the <em> word carries the red. */
+h1,h2{ color:var(--chalk); font-weight:400; }
+h1 em,h2 em{ color:var(--core); }
+
+/* (16) headlines wrap as balanced lines, paragraphs without one-word last lines */
+h1,h2,h3,h4,.statement p.big{ text-wrap:balance; }
+p,.lede,.body{ text-wrap:pretty; }
+
+/* (4) labels: readable size, light tracking, no spaced-out monospace */
+.eyebrow{ font-size:11.5px; font-weight:600; letter-spacing:.12em; }
+.slide.shot .eyebrow{ color:#F4F3F1; }            /* (15) 10px red on a photo was unreadable */
+.cta,.togglebtn{ font-size:13px; font-weight:600; letter-spacing:.01em; text-transform:none; }
+.togglebtn{ font-weight:500; color:var(--chalk); }
+.note,.inq-status{ font-size:13.5px; line-height:1.65; letter-spacing:0; }
+.foot-note{ font-size:13px; line-height:1.75; letter-spacing:0; }
+.cfield-v,.spec-v{ font-size:13.5px; letter-spacing:0; }
+.photogrid .cap{ font-size:12px; letter-spacing:0; }
+.gallery-count,.range-n{ font-size:12px; letter-spacing:0; }
+.field label{ font-size:12.5px; font-weight:500; letter-spacing:0; text-transform:none; color:var(--chalk-dim); }
+.footlinks a,.range-more button,.range-more a,.menu-sheets button{ font-size:12.5px; letter-spacing:0; text-transform:none; }
+.spec-k,.cfield-k,.contactcard-h,.term-k,.seq-role,.meta,.ix-m,.legend b{ font-size:11px; letter-spacing:.06em; }
+.shotmeta .sm-v{ font-size:12px; letter-spacing:.04em; }
+.legend div{ font-size:12px; letter-spacing:0; }
+
+/* (1)(2) the red side tab repeated the project name the index strip already
+   shows, so it goes (its script still runs against the hidden element) */
+.stagetab{ display:none; }
+
+/* (13) no decorative rule before every label, and the drawing-sheet grid stays
+   on the stage, not behind paragraphs in the reading view */
+.eyebrow::before{ display:none; }
+body.reading .grid{ opacity:0; }
+
+/* (17) the project caption and the material legend sat exactly where Hannah's
+   button floats on the stage; they now clear it */
+.shotmeta,.legend{ bottom:clamp(200px,25vh,250px); }
+
+/* (8)(10) project pages: one red button, one outline button, and the way back
+   is a quiet link, so three equal boxes no longer wrap onto two lines */
+.togglebtn[data-back-slide]{ border-color:transparent; padding-left:2px; padding-right:2px; color:var(--draft); }
+.togglebtn[data-back-slide]:hover{ color:var(--core); }
+
+/* (17) the top button's two text pieces sat a flex gap apart ("Request  a quotation") */
+.topright .cta{ gap:0; }
+.topright .cta span{ white-space:pre; }
+.topright .cta::after{ margin-left:9px; }
+
+/* (19) a sending form says so: the button's dash turns into a spinner */
+.cta:disabled{ cursor:progress; opacity:.85; }
+.cta:disabled::after{
+  width:11px; height:11px; border-radius:50%; background:none;
+  border:2px solid currentColor; border-right-color:transparent; animation:rh-spin .7s linear infinite;
+}
+@keyframes rh-spin{ to{ transform:rotate(360deg); } }
+
+/* (20) the answer to a sent form slides in (the submit code empties the line first, so it replays) */
+@keyframes rh-in{ from{ opacity:0; transform:translateY(-4px); } to{ opacity:1; transform:none; } }
+.inq-status:not(:empty){ animation:rh-in .25s ease-out; }
+@media (prefers-reduced-motion: reduce){
+  .inq-status:not(:empty){ animation:none; }
+  .cta:disabled::after{ animation-duration:2s; }
+}
 </style>
 <script type="application/ld+json">
 {
@@ -1168,17 +1248,16 @@ body.reading .stagetab,body.reading .hint{display:none;}
     </div>
     <div class="copy">
       <p class="eyebrow rise">Cabinet maker · CDO · Since 2017</p>
-      <h1 class="rise">Decided<br>before it is <em>cut</em>.</h1>
-      <p class="lede rise">Modular cabinetry drawn to the millimetre, itemised board by board, and
-      built off site by our own crew. You approve the drawing and the quantities before a single
-      sheet goes on the saw.</p>
+      <h1 class="rise">Build your kitchen <em>once</em>.</h1>
+      <p class="lede rise">Kitchens and cabinets for Cagayan de Oro homes on 18 mm board, every
+      exposed edge sealed and edgebanded, built in our own workshop and installed by our own crew,
+      so you never pay for the same kitchen twice.</p>
       <div class="acts rise">
         <button class="cta" type="button" data-doc="inquiry">Request a quotation</button>
         <button class="togglebtn" type="button" data-doc="detail-01">View project details</button>
       </div>
     </div>
     <div class="shotmeta fadein">
-      <span class="sm-k">Project 01</span>
       <span class="sm-v">Gloss · U-shape<br>Island · Backlit uppers</span>
     </div>
   </section>
@@ -1189,7 +1268,6 @@ body.reading .stagetab,body.reading .hint{display:none;}
       <picture><source type="image/webp" srcset="ritehome-photos/enhanced/06-white-gloss.webp"><img src="ritehome-photos/enhanced/06-white-gloss.jpg" alt="Large white gloss kitchen with a central island, extractor hood, integrated oven column and a stepped ceiling detail." loading="lazy"></picture>
     </div>
     <div class="copy">
-      <p class="eyebrow rise">Project 02</p>
       <h2 class="rise">Delivered finished.<br>Set, not built.</h2>
       <p class="lede rise">Every carcass here was cut, edged and assembled on a bench in our shop,
       then carried in and levelled. The dust, the offcuts and the margin for error stayed with us.</p>
@@ -1198,7 +1276,6 @@ body.reading .stagetab,body.reading .hint{display:none;}
       </div>
     </div>
     <div class="shotmeta fadein">
-      <span class="sm-k">Project 02</span>
       <span class="sm-v">Gloss · Island<br>Oven column · Extractor</span>
     </div>
   </section>
@@ -1209,7 +1286,6 @@ body.reading .stagetab,body.reading .hint{display:none;}
       <picture><source type="image/webp" srcset="ritehome-photos/enhanced/07-storage-feature-wall.webp"><img src="ritehome-photos/enhanced/07-storage-feature-wall.jpg" alt="Backlit onyx-marble TV console wall with a wall-mounted television, ribbed timber pilasters, a floating console cabinet and a full-height wardrobe on either side." loading="lazy"></picture>
     </div>
     <div class="copy">
-      <p class="eyebrow rise">Project 03</p>
       <h2 class="rise">A TV console drawn<br>as the whole wall.</h2>
       <p class="lede rise">A backlit onyx panel between ribbed timber returns, with a floating
       console cabinet under the screen and a full-height wardrobe run either side — the television
@@ -1219,7 +1295,6 @@ body.reading .stagetab,body.reading .hint{display:none;}
       </div>
     </div>
     <div class="shotmeta fadein">
-      <span class="sm-k">Project 03</span>
       <span class="sm-v">TV console · Onyx panel<br>LED edge · Wardrobe returns</span>
     </div>
   </section>
@@ -1230,7 +1305,6 @@ body.reading .stagetab,body.reading .hint{display:none;}
       <picture><source type="image/webp" srcset="ritehome-photos/enhanced/08-storage-wardrobe.webp"><img src="ritehome-photos/enhanced/08-storage-wardrobe.jpg" alt="Full-height woodgrain wardrobe run turning through a corner, with concealed vertical pulls and an open shelving nook beside the window." loading="lazy"></picture>
     </div>
     <div class="copy">
-      <p class="eyebrow rise">Project 04</p>
       <h2 class="rise">Every corner,<br>still square.</h2>
       <p class="lede rise">A full-height wardrobe run turned through the corner, carcasses and
       doors meeting without a filler strip because the room was measured before anything
@@ -1240,7 +1314,6 @@ body.reading .stagetab,body.reading .hint{display:none;}
       </div>
     </div>
     <div class="shotmeta fadein">
-      <span class="sm-k">Project 04</span>
       <span class="sm-v">Woodgrain · Swing doors<br>Corner run</span>
     </div>
   </section>
@@ -1251,7 +1324,6 @@ body.reading .stagetab,body.reading .hint{display:none;}
       <picture><source type="image/webp" srcset="ritehome-photos/enhanced/09-storage-shelving.webp"><img src="ritehome-photos/enhanced/09-storage-shelving.jpg" alt="Open pigeonhole shelving wall in light woodgrain, built floor to ceiling beside a window, ready for fit-out." loading="lazy"></picture>
     </div>
     <div class="copy">
-      <p class="eyebrow rise">Project 05</p>
       <h2 class="rise">Open shelving,<br>still on a grid.</h2>
       <p class="lede rise">No doors to hide behind: an open cubby wall holds its line because
       every division was set out on the drawing before the first board went on the saw.</p>
@@ -1260,7 +1332,6 @@ body.reading .stagetab,body.reading .hint{display:none;}
       </div>
     </div>
     <div class="shotmeta fadein">
-      <span class="sm-k">Project 05</span>
       <span class="sm-v">Open shelving · Adjustable<br>Utility grade</span>
     </div>
   </section>
@@ -1271,7 +1342,6 @@ body.reading .stagetab,body.reading .hint{display:none;}
       <picture><source type="image/webp" srcset="ritehome-photos/enhanced/10-partition-cr.webp"><img src="ritehome-photos/enhanced/10-partition-cr.jpg" alt="Toilet cubicle partitions in blue-grey phenolic board on a stainless top rail, over a black-and-white tiled floor." loading="lazy"></picture>
     </div>
     <div class="copy">
-      <p class="eyebrow rise">Project 06</p>
       <h2 class="rise">Built for a wet room,<br>not a dry demo.</h2>
       <p class="lede rise">Solid phenolic cubicles on a stainless top rail, with occupied/vacant
       indicator locks — waterproof and fire-retardant, to the same specification at three
@@ -1281,7 +1351,6 @@ body.reading .stagetab,body.reading .hint{display:none;}
       </div>
     </div>
     <div class="shotmeta fadein">
-      <span class="sm-k">Project 06</span>
       <span class="sm-v">Phenolic board · Waterproof<br>Stainless rail</span>
     </div>
   </section>
@@ -1292,7 +1361,6 @@ body.reading .stagetab,body.reading .hint{display:none;}
       <picture><source type="image/webp" srcset="ritehome-photos/enhanced/11-partition-reception.webp"><img src="ritehome-photos/enhanced/11-partition-reception.jpg" alt="Row of laminate reception desk partitions with blue counter fronts, dividing a service floor into individual windows." loading="lazy"></picture>
     </div>
     <div class="copy">
-      <p class="eyebrow rise">Project 07</p>
       <h2 class="rise">A counter,<br>drawn like a wall.</h2>
       <p class="lede rise">Laminate desk partitions dividing a reception floor into individual
       windows, each panel and counter run itemised the same way a kitchen carcass is.</p>
@@ -1301,7 +1369,6 @@ body.reading .stagetab,body.reading .hint{display:none;}
       </div>
     </div>
     <div class="shotmeta fadein">
-      <span class="sm-k">Project 07</span>
       <span class="sm-v">Laminate panel · Counter run<br>Desk dividers</span>
     </div>
   </section>
@@ -1312,7 +1379,6 @@ body.reading .stagetab,body.reading .hint{display:none;}
       <picture><source type="image/webp" srcset="ritehome-photos/enhanced/12-office-workstations.webp"><img src="ritehome-photos/enhanced/12-office-workstations.jpg" alt="Open-plan office with a wall of built-in wood shelving, a cubicle-style desk divider and a row of workstations beside an interior glass partition." loading="lazy"></picture>
     </div>
     <div class="copy">
-      <p class="eyebrow rise">Project 08</p>
       <h2 class="rise">A desk run,<br>drawn like a kitchen.</h2>
       <p class="lede rise">Shelving, low dividers and a run of desks fitted to one office floor
       — the same drawing-first process, sized for a workplace instead of a home.</p>
@@ -1321,7 +1387,6 @@ body.reading .stagetab,body.reading .hint{display:none;}
       </div>
     </div>
     <div class="shotmeta fadein">
-      <span class="sm-k">Project 08</span>
       <span class="sm-v">Storage wall · Desk dividers<br>Corporate fit-out</span>
     </div>
   </section>
@@ -1332,7 +1397,6 @@ body.reading .stagetab,body.reading .hint{display:none;}
       <picture><source type="image/webp" srcset="ritehome-photos/enhanced/13-workspace-corporate-floor.webp"><img src="ritehome-photos/enhanced/13-workspace-corporate-floor.jpg" alt="Full floor of modular timber desk cubicles repeated in long rows under a black ceiling, fitted out for a corporate opening." loading="lazy"></picture>
     </div>
     <div class="copy">
-      <p class="eyebrow rise">Project 09</p>
       <h2 class="rise">One drawing,<br>run at any scale.</h2>
       <p class="lede rise">The same modular desk-and-divider system, repeated across a full
       floor. What holds one office square holds a hundred stations the same way.</p>
@@ -1341,7 +1405,6 @@ body.reading .stagetab,body.reading .hint{display:none;}
       </div>
     </div>
     <div class="shotmeta fadein">
-      <span class="sm-k">Project 09</span>
       <span class="sm-v">Modular desks · Repeat run<br>Floor-scale fit-out</span>
     </div>
   </section>
@@ -1377,7 +1440,7 @@ body.reading .stagetab,body.reading .hint{display:none;}
     </div>
     <div class="meta fadein">Sheet 10 / 13<br>Scale 1 : 5<br>Rev &nbsp;—</div>
     <div class="copy plate">
-      <p class="eyebrow rise">10 — Design Team</p>
+      <p class="eyebrow rise">Design Team</p>
       <h2 class="rise">Approved by you.<br>Built as drawn.</h2>
       <p class="lede rise">Our design team turns your walkthrough into a dimensioned elevation —
       every cabinet, door swing and finish drawn exactly as you asked. Layout, hardware, colour and
@@ -1416,7 +1479,7 @@ body.reading .stagetab,body.reading .hint{display:none;}
       </div>
     </div>
     <div class="copy plate">
-      <p class="eyebrow rise">11 — Material</p>
+      <p class="eyebrow rise">Material</p>
       <h2 class="rise">Four faces.<br>One board.</h2>
       <p class="lede rise">Solid colours, a matte surface, woodgrain and high gloss — the four
       faces we run. Move across a sample; the light rakes low, the same way a finish is checked
@@ -1472,7 +1535,7 @@ body.reading .stagetab,body.reading .hint{display:none;}
       <div><b>Base</b>Levelled on site</div>
     </div>
     <div class="copy">
-      <p class="eyebrow rise">12 — Module</p>
+      <p class="eyebrow rise">Module</p>
       <h2 class="rise">Modular does not<br>mean less custom.</h2>
       <p class="lede rise">It means the carcass is built to your exact dimensions in the shop, on a
       bench, under controlled conditions, every board still true to 18 mm — then carried in
@@ -1496,7 +1559,7 @@ body.reading .stagetab,body.reading .hint{display:none;}
     <div class="rangewrap">
       <div style="width:100%">
         <div class="range-head">
-          <p class="eyebrow rise">13 — Systems</p>
+          <p class="eyebrow rise">Systems</p>
           <h2 class="rise" style="margin-bottom:10px">Four systems, one standard.</h2>
           <p class="note rise">Domestic and commercial work run through the same drawing office, the
           same board specification and the same in-house crew.</p>
@@ -1540,7 +1603,7 @@ body.reading .stagetab,body.reading .hint{display:none;}
     <div class="rangewrap">
       <div style="width:100%">
         <div class="range-head">
-          <p class="eyebrow rise">14 — Durability</p>
+          <p class="eyebrow rise">Durability</p>
           <h2 class="rise" style="margin-bottom:10px">Sealed. Edgebanded. Built to last.</h2>
           <p class="note rise">Every board is sealed and edgebanded before it leaves the shop — so what
           you invest in today still holds up years from now.</p>
@@ -1617,7 +1680,7 @@ body.reading .stagetab,body.reading .hint{display:none;}
 <div class="doc-in">
 
   <section class="docsec statement" id="mission">
-    <p class="eyebrow">17 — Mission</p>
+    <p class="eyebrow">Mission</p>
     <p class="big">"We build kitchens and furniture that last, so you never pay for the same kitchen twice."</p>
     <p class="lede" style="max-width:66ch">Space, durability and accountability aren't three
     separate promises. They're one process: a room drawn around how you'll actually use it, built
@@ -1641,7 +1704,6 @@ body.reading .stagetab,body.reading .hint{display:none;}
   </section>
 
   <section class="docsec statement" id="brief">
-    <p class="eyebrow">18 — Brief</p>
     <p class="big">Renovation anxiety is rarely about taste. It is about not knowing.</p>
     <p class="lede" style="max-width:66ch">Not knowing what the number covers. Not knowing whether
     the finish on the last cabinet will match the first. Not knowing what changed between the day you
@@ -1651,7 +1713,6 @@ body.reading .stagetab,body.reading .hint{display:none;}
   </section>
 
   <section class="docsec" id="sequence">
-    <p class="eyebrow">19 — Sequence</p>
     <h2 style="max-width:18ch">Five stages, each with a name attached.</h2>
     <p class="lede" style="max-width:64ch">A job moves through five tracked stages. At any point you
     can ask which stage yours is in and who is holding it, and get an answer rather than an estimate.</p>
@@ -1687,7 +1748,6 @@ body.reading .stagetab,body.reading .hint{display:none;}
   <section class="docsec" id="engagement">
     <div class="split">
       <div>
-        <p class="eyebrow">20 — Engagement</p>
         <h2>What it takes to start.</h2>
       </div>
       <div>
@@ -1723,9 +1783,9 @@ body.reading .stagetab,body.reading .hint{display:none;}
     <p class="body" style="max-width:64ch">Three levels, set against your drawing rather than a
     brochure. What sits in each is agreed line by line before the quotation is issued.</p>
     <div class="tiers">
-      <div class="tier"><p class="tier-n">Tier 01</p><h4>Essential</h4><p>The core specification — the cabinet box (carcass), doors, counter and working hardware.</p></div>
-      <div class="tier"><p class="tier-n">Tier 02</p><h4>Premium</h4><p>Upgraded finishes and hardware, with accessories brought into the drawing.</p></div>
-      <div class="tier"><p class="tier-n">Tier 03</p><h4>Executive</h4><p>The full specification, with counter and accessory selections opened up.</p></div>
+      <div class="tier"><h4>Essential</h4><p>The core specification — the cabinet box (carcass), doors, counter and working hardware.</p></div>
+      <div class="tier"><h4>Premium</h4><p>Upgraded finishes and hardware, with accessories brought into the drawing.</p></div>
+      <div class="tier"><h4>Executive</h4><p>The full specification, with counter and accessory selections opened up.</p></div>
     </div>
     <p class="note" style="margin-top:22px">Want a rough number before booking the site visit? Chat
     with Hannah — tell her your room's size (or send a photo) and she'll give you a same-session
@@ -1736,7 +1796,6 @@ body.reading .stagetab,body.reading .hint{display:none;}
   <section class="docsec" id="inquiry">
     <div class="inq">
       <div>
-        <p class="eyebrow">21 — Inquiry</p>
         <h2>Start with the measurement.</h2>
         <p class="lede">Tell us the room and where you are. A site visit is arranged from there, and
         the drawing follows the visit.</p>
@@ -1803,7 +1862,6 @@ body.reading .stagetab,body.reading .hint{display:none;}
   </section>
 
   <section class="docsec" id="faq">
-    <p class="eyebrow">22 — FAQ</p>
     <h2 style="max-width:26ch">Kitchen cabinets, durability and cost in CDO, answered plainly.</h2>
     <p class="lede" style="max-width:64ch">The questions we hear most from people planning a
     kitchen renovation or new cabinetry in Cagayan de Oro.</p>
@@ -1883,7 +1941,7 @@ body.reading .stagetab,body.reading .hint{display:none;}
   <section class="docsec" id="detail-01">
     <div class="split">
       <div>
-        <p class="eyebrow">Kitchen systems — Project 01</p>
+        <p class="eyebrow">Kitchen system</p>
         <h2>Graphite Gloss</h2>
         <p class="lede">U-shaped run in black gloss with backlit glass wall units, a
         quartz-topped island and a marble-tiled floor. The darkest kitchen we run, held to the
@@ -1909,7 +1967,7 @@ body.reading .stagetab,body.reading .hint{display:none;}
   <section class="docsec" id="detail-02">
     <div class="split">
       <div>
-        <p class="eyebrow">Kitchen systems — Project 02</p>
+        <p class="eyebrow">Kitchen system</p>
         <h2>White Gloss</h2>
         <p class="lede">A large white gloss run with a central island, integrated oven column,
         extractor hood and a stepped ceiling detail — delivered finished and levelled, not
@@ -1935,7 +1993,7 @@ body.reading .stagetab,body.reading .hint{display:none;}
   <section class="docsec" id="detail-03">
     <div class="split">
       <div>
-        <p class="eyebrow">Storage systems — Project 03</p>
+        <p class="eyebrow">Storage system</p>
         <h2>TV Console — Onyx Wall</h2>
         <p class="lede">A backlit onyx panel between ribbed timber returns, with a floating
         console cabinet under the screen and a full-height wardrobe run either side — the
@@ -1961,7 +2019,7 @@ body.reading .stagetab,body.reading .hint{display:none;}
   <section class="docsec" id="detail-04">
     <div class="split">
       <div>
-        <p class="eyebrow">Storage systems — Project 04</p>
+        <p class="eyebrow">Storage system</p>
         <h2>Walk-in Wardrobe</h2>
         <p class="lede">A full-height wardrobe run turned through the corner, carcasses and
         doors meeting without a filler strip because the room was measured before anything
@@ -1986,7 +2044,7 @@ body.reading .stagetab,body.reading .hint{display:none;}
   <section class="docsec" id="detail-05">
     <div class="split">
       <div>
-        <p class="eyebrow">Storage systems — Project 05</p>
+        <p class="eyebrow">Storage system</p>
         <h2>Open Storage Wall</h2>
         <p class="lede">No doors to hide behind: an open cubby wall holds its line because
         every division was set out on the drawing before the first board went on the saw.</p>
@@ -2010,7 +2068,7 @@ body.reading .stagetab,body.reading .hint{display:none;}
   <section class="docsec" id="detail-06">
     <div class="split">
       <div>
-        <p class="eyebrow">Partition systems — Project 06</p>
+        <p class="eyebrow">Partition system</p>
         <h2>CR Partition</h2>
         <p class="lede">Solid phenolic cubicles on a stainless top rail, with occupied/vacant
         indicator locks — waterproof and fire-retardant, to the same specification at three
@@ -2035,7 +2093,7 @@ body.reading .stagetab,body.reading .hint{display:none;}
   <section class="docsec" id="detail-07">
     <div class="split">
       <div>
-        <p class="eyebrow">Partition systems — Project 07</p>
+        <p class="eyebrow">Partition system</p>
         <h2>Reception Partition</h2>
         <p class="lede">Laminate desk partitions dividing a reception floor into individual
         windows, each panel and counter run itemised the same way a kitchen carcass is.</p>
@@ -2059,7 +2117,7 @@ body.reading .stagetab,body.reading .hint{display:none;}
   <section class="docsec" id="detail-08">
     <div class="split">
       <div>
-        <p class="eyebrow">Workspace systems — Project 08</p>
+        <p class="eyebrow">Workspace system</p>
         <h2>Office Workstations</h2>
         <p class="lede">Shelving, low dividers and a run of desks fitted to one office floor
         — the same drawing-first process, sized for a workplace instead of a home.</p>
@@ -2084,7 +2142,7 @@ body.reading .stagetab,body.reading .hint{display:none;}
   <section class="docsec" id="detail-09">
     <div class="split">
       <div>
-        <p class="eyebrow">Workspace systems — Project 09</p>
+        <p class="eyebrow">Workspace system</p>
         <h2>Corporate Floor</h2>
         <p class="lede">The same modular desk-and-divider system, repeated across a full
         floor. What holds one office square holds a hundred stations the same way.</p>
@@ -2109,7 +2167,6 @@ body.reading .stagetab,body.reading .hint{display:none;}
   <section class="docsec" id="gallery-kitchen">
     <div class="gallery-head">
       <div>
-        <p class="eyebrow">Kitchen systems — All work</p>
         <h2>Every kitchen on file.</h2>
         <p class="lede" style="max-width:64ch">Thirty-five kitchens, u-shaped and l-shaped runs, gloss and
         woodgrain and matte, islands and peninsulas — every finish and layout we have actually built,
@@ -2159,7 +2216,6 @@ body.reading .stagetab,body.reading .hint{display:none;}
   <section class="docsec" id="gallery-storage">
     <div class="gallery-head">
       <div>
-        <p class="eyebrow">Storage systems — All work</p>
         <h2>Every storage build on file.</h2>
         <p class="lede" style="max-width:64ch">TV consoles, wardrobes and closets, file cabinets and open
         shelving — the same carcass specification, closed behind a door or left open on a shelf.</p>
@@ -2188,7 +2244,6 @@ body.reading .stagetab,body.reading .hint{display:none;}
   <section class="docsec" id="gallery-partition">
     <div class="gallery-head">
       <div>
-        <p class="eyebrow">Partition systems — All work</p>
         <h2>Every partition build on file.</h2>
         <p class="lede" style="max-width:64ch">Toilet cubicles, washroom vanities and desk-height
         dividers, drawn and itemised the same way as a cabinet run.</p>
@@ -2207,7 +2262,6 @@ body.reading .stagetab,body.reading .hint{display:none;}
   <section class="docsec" id="gallery-workspace">
     <div class="gallery-head">
       <div>
-        <p class="eyebrow">Workspace systems — All work</p>
         <h2>Every workspace build on file.</h2>
         <p class="lede" style="max-width:64ch">The same modular desk-and-divider system, from a single
         office to a full corporate floor.</p>
@@ -2591,12 +2645,14 @@ body.reading .stagetab,body.reading .hint{display:none;}
       }).then(function(j){
         form.reset();
         if (btn) btn.disabled = false;
+        status.textContent = ""; void status.offsetWidth;   /* replay the slide-in for the answer */
         /* the 2-hour promise only when Telegram actually paged someone */
         status.textContent = j.telegram
           ? "Thank you — your inquiry is with us. We'll get back to you within 2 business hours to arrange the site visit."
           : "Thank you — your inquiry is with us. We will be in touch to arrange the site visit.";
       })["catch"](function(){
         if (btn) btn.disabled = false;
+        status.textContent = ""; void status.offsetWidth;
         status.innerHTML = "That did not send. <a href=\"" + inquiryMailto(data).replace(/"/g, "&quot;") +
           "\">Send it by email instead</a> (it's already filled in), " + contactLinks;
       });

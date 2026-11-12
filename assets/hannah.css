@@ -196,3 +196,23 @@
     height: calc(100dvh - 84px - var(--hn-mobile-bottom));
   }
 }
+
+/* ============================================================
+   DESIGN REVIEW (2026-11-14) — the 20-point pass
+   ============================================================ */
+/* (4) no monospace capitals on the button, the header line or Send */
+.hn-toggle,.hn-send,.hn-header-sub{
+  font-family: "Inter", "Helvetica Neue", Arial, sans-serif; text-transform: none; letter-spacing: 0;
+}
+.hn-toggle{ font-size: 13.5px; font-weight: 600; }
+.hn-send{ font-size: 13px; font-weight: 600; }
+.hn-header-sub{ font-size: 11.5px; }
+/* (10)(11) one red button per screen: the page's "Request a quotation" is the red one, so
+   Hannah's launcher is ink with a red badge. Still obvious, no longer competing. */
+.hn-toggle{ background: #17171A; border: 1px solid rgba(255,255,255,.16); }
+.hn-toggle:hover{ background: #26262B; }
+.hn-toggle-icon{ background: var(--hn-core); }
+/* (14) nested corners: inner radius = outer − padding (panel 14, form padding 12 → 4… kept at 6 for touch) */
+.hn-attach-btn,.hn-input,.hn-send{ border-radius: 6px; }
+/* (15) chips and the header line were dim grey on near-black */
+.hn-chip{ color: #C9C9CD; font-size: 12.5px; }

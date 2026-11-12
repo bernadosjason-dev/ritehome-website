@@ -223,3 +223,50 @@ footer.foot{padding:40px var(--pad) calc(40px + env(safe-area-inset-bottom,0px))
   border-left:2px solid var(--core); padding:9px 0 9px 13px; margin-top:18px;
 }
 .form-status:empty{display:none;}
+
+/* ============================================================
+   DESIGN REVIEW (2026-11-14) — the 20-point pass. One layer on top,
+   each rule tagged with the point it serves.
+   ============================================================ */
+/* (4) monospace was carrying every label, button and footnote; it now carries
+   nothing. Labels and figures use the body face, figures with (18) tabular numerals. */
+:root{ --f-mono: var(--f-body); }
+.tel,.foot-note,.step .n,.gallery .cap,.legal-updated{ font-variant-numeric: tabular-nums; }
+.eyebrow{ font-size:12px; font-weight:600; letter-spacing:.06em; }
+.cta{ font-size:13.5px; font-weight:600; letter-spacing:.01em; text-transform:none; }
+.missionstrip{ font-size:12.5px; letter-spacing:.01em; }
+.crumb{ font-size:13px; letter-spacing:0; }
+.gallery .cap{ font-size:12.5px; letter-spacing:0; }
+.foot-note{ font-size:13px; letter-spacing:0; line-height:1.75; }
+.footlinks a{ font-size:13px; letter-spacing:0; text-transform:none; }
+.legal-updated{ font-size:13px; letter-spacing:0; }
+.field label{ font-size:13px; font-weight:500; letter-spacing:0; text-transform:none; color:var(--ink); }
+.form-status{ font-size:14px; }
+
+/* (15) the stage numbers were drawn in the rule colour (1.4:1 on white) */
+.step .n{ color:var(--ink-dim); font-size:13px; font-weight:600; }
+
+/* (16) headlines already balance; paragraphs avoid one-word last lines */
+p{ text-wrap:pretty; }
+
+/* (7) the work is the product: the first photo leads at double size */
+.gallery>a:first-child{ grid-column:span 2; grid-row:span 2; aspect-ratio:4/3; }
+@media (max-width:760px){ .gallery>a:first-child{ grid-row:auto; aspect-ratio:16/10; } }
+@media (max-width:480px){ .gallery>a:first-child{ grid-column:auto; aspect-ratio:4/3; } }
+
+/* (19) a sending form shows it: the button spins instead of just going grey */
+.cta:disabled{ cursor:progress; opacity:.85; }
+.cta:disabled::before{
+  content:""; display:inline-block; width:11px; height:11px; margin-right:8px; vertical-align:-1px;
+  border:2px solid currentColor; border-right-color:transparent; border-radius:50%;
+  animation:rh-spin .7s linear infinite;
+}
+@keyframes rh-spin{ to{ transform:rotate(360deg); } }
+
+/* (20) the answer to a sent form slides in, so it's noticed */
+@keyframes rh-in{ from{ opacity:0; transform:translateY(-4px); } to{ opacity:1; transform:none; } }
+.form-status:not(:empty){ animation:rh-in .25s ease-out; }
+@media (prefers-reduced-motion: reduce){
+  .form-status:not(:empty){ animation:none; }
+  .cta:disabled::before{ animation-duration:2s; }
+}
